@@ -1,0 +1,18 @@
+#!/bin/bash
+#-------------------------------------------------------------------------------
+# silence-unless-error [command...]
+#   Runs [command...], capturing its stdout and stderr to a temporary file.  If
+#   the command succeeds, the file is dropped, and the output never displayed.
+#   If the command fails, the contents of the file are printed to stdout.
+
+DIR=$(mktemp -d)
+clean () {
+    rm -rf "$DIR"
+}
+trap clean EXIT
+
+FILE="$DIR"/out
+if ! "$@" >"$FILE" 2>&1; then
+    cat "$FILE"
+    exit 1
+fi
