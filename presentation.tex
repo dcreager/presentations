@@ -150,15 +150,50 @@
 \end{frame}
 
 \begin{frame}[fragile]
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=a.py]{python}
-        def broil():
-            pass
+    \begin{columns}
+    \begin{column}{0.3\textwidth}
+        \begin{minted}[autogobble,frame=single,framesep=6pt,label=a.py]{python}
+            def broil():
+                pass
 
-        def fry():
-            pass
+            def fry():
+                pass
 
-        broil()
-    \end{minted}
+            broil()
+        \end{minted}
+    \end{column}
+
+    \begin{column}{0.7\textwidth}
+        \begin{center}
+        \begin{tikzpicture}
+            \node (root)       [root node]                         {};
+            \node (a)          [definition]  [right=of root]       {a};
+            \node (dot)        [pop]         [right=of a]          {.};
+            \node (s1)         [anon scope]  [right=of dot]        {};
+            \node (s2)         [anon scope]  [above=1cm of s1]     {};
+            \node (broil ref)  [reference]   [right=of s2]         {broil};
+            \node (s3)         [anon scope]  [above=1cm of s2]     {};
+            \node (fry)        [definition]  [right=of s3]         {fry};
+            \node (s4)         [anon scope]  [above=1cm of s3]     {};
+            \node (broil def)  [definition]  [right=of s4]         {broil};
+            \node (s5)         [anon scope]  [above=1cm of s4]     {};
+
+            \path [-Stealth]
+              (root)      edge (a)
+              (a)         edge (dot)
+              (dot)       edge (s1)
+              (s1)        edge (s2)
+              (broil ref) edge (s2)
+              (s2)        edge (s3)
+              (s3)        edge (s4)
+                          edge (fry)
+              (s4)        edge (s5)
+                          edge (broil def)
+              ;
+        \end{tikzpicture}
+        \end{center}
+    \end{column}
+    \end{columns}
 \end{frame}
 
 \end{document}
