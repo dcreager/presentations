@@ -10,6 +10,6 @@ clean:
 
 $(NAME).pdf: $(NAME).tex
 	@echo "XELATEX     $@"
-	@script/silence-unless-error xelatex -halt-on-error $<
+	@script/silence-unless-error xelatex -halt-on-error -shell-escape $<
 	@echo "XELATEX     $@"
-	@script/silence-unless-error xelatex -halt-on-error $<
+	@script/silence-unless-error xelatex -halt-on-error -shell-escape $<

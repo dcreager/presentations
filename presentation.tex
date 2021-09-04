@@ -13,6 +13,9 @@
 
 \setbeamertemplate{navigation symbols}{}
 
+\usepackage{minted}
+\usemintedstyle{colorful}
+
 \usepackage{fontspec}
 \setsansfont{Arial}
 \setmonofont[Scale=0.8]{Iosevka Term}
@@ -186,6 +189,18 @@
               ;
         \end{tikzpicture}
     \end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=a.py]{python}
+        def broil():
+            pass
+
+        def fry():
+            pass
+
+        broil()
+    \end{minted}
 \end{frame}
 
 \end{document}

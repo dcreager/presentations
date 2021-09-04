@@ -6,3 +6,5 @@ presentation.pdf
 *.out
 *.snm
 *.toc
+*.vrb
+/_minted-presentation/
