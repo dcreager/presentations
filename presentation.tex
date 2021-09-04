@@ -1,6 +1,11 @@
 \documentclass{beamer}
 \mode<presentation>
 
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{fit}
+\usetikzlibrary{positioning}
+
 \title{Stack Graphs}
 \author{Douglas Creager}
 \institute{GitHub}
@@ -8,10 +13,175 @@
 
 \setbeamertemplate{navigation symbols}{}
 
+\definecolor{sgdef}  {RGB}{159,0,0}
+\definecolor{sgpop}  {RGB}{230,142,131}
+\definecolor{sgref}  {RGB}{0,134,67}
+\definecolor{sgpush} {RGB}{131,216,173}
+\definecolor{sgjump} {RGB}{161,64,140}
+
 \begin{document}
 
 \begin{frame}
     \titlepage
+\end{frame}
+
+\begin{frame}
+    \begin{center}
+        \begin{tikzpicture}
+            \draw [help lines] (0,0) grid (10,8);
+
+            % root
+            \node (root)
+              [circle, fill=black,
+               inner sep=0pt, minimum size=0.35cm]
+              at(1,1) {};
+
+            % scope
+            \node (s0)
+              [circle, fill=white,
+               draw=black, semithick,
+               inner sep=0pt, minimum size=0.35cm]
+              at(2,1) {};
+
+            % named scope
+            \node (sB)
+              [circle, fill=white,
+               draw=black, thick,
+               minimum size=0.35cm]
+              at(3,1) {B};
+
+            % exported scope
+            \node (s7)
+              [circle, fill=white,
+               draw=sgjump, thick,
+               text=sgjump,
+               minimum size=0.35cm]
+              at(4,1) {7};
+
+            % definitions
+            \node (A)
+              [fill=white,
+               draw=sgdef, semithick, double, double distance=1pt,
+               outer sep=1pt,
+               text=sgdef,
+               minimum size=0.75cm]
+              at(1,2)
+              {\texttt{\strut A}};
+            \node (a)
+              [right=0.5cm of A,
+               fill=white,
+               draw=sgdef, semithick, double, double distance=1pt,
+               outer sep=1pt,
+               text=sgdef,
+               minimum size=0.75cm]
+              {\texttt{\strut a}};
+
+            % pop
+            \node (A2)
+              [above=0.5cm of A,
+               fill=white,
+               draw=sgpop, thick, dash dot,
+               text=sgpop,
+               minimum size=0.75cm]
+              {\texttt{\strut A\textsubscript{2}}};
+            \node (main2) 
+              [right=0.5cm of A2,
+               fill=white,
+               draw=sgpop, thick, dash dot,
+               text=sgpop,
+               minimum size=0.75cm]
+              {\texttt{\strut \_\_main\_\_\textsubscript{2}}};
+
+            % pop scope
+            \node (bar symbol)
+              [right=0.5cm of main2,
+               fill=white,
+               text=sgpop,
+               minimum size=0.75cm]
+              {\texttt{\strut A\textsubscript{3}}};
+            \node (bar scope)
+              [right=0pt of bar symbol,
+               circle, fill=sgjump,
+               inner sep=0pt, minimum size=0.25cm]
+              {};
+            \node (bar pad)
+              [right=0pt of bar scope,
+               inner sep=0pt,
+               minimum width=6pt,
+               minimum height=0pt]
+              {};
+            \node (bar)
+              [draw=sgpop, thick, dash dot,
+               inner sep=0pt,
+               fit=(bar symbol) (bar scope) (bar pad)]
+              {};
+
+            % references
+            \node (A3)
+              [above=0.5cm of A2,
+               fill=white,
+               draw=sgref, thick,
+               text=sgref,
+               minimum size=0.75cm]
+              {\texttt{\strut A}};
+            \node (a3)
+              [right=0.5cm of A3,
+               fill=white,
+               draw=sgref, thick,
+               text=sgref,
+               minimum size=0.75cm]
+              {\texttt{\strut a}};
+
+            % push
+            \node (A4)
+              [above=0.5cm of A3,
+               fill=white,
+               draw=sgpush, thick, densely dashed,
+               text=sgpush,
+               minimum size=0.75cm]
+              {\texttt{\strut A\textsubscript{4}}};
+            \node (main4) 
+              [right=0.5cm of A4,
+               fill=white,
+               draw=sgpush, thick, densely dashed,
+               text=sgpush,
+               minimum size=0.75cm]
+              {\texttt{\strut \_\_main\_\_\textsubscript{4}}};
+
+            % push scope
+            \node (foo symbol)
+              [right=0.5cm of main4, fill=white,
+               text=sgpush,
+               minimum size=0.75cm]
+              {\texttt{\strut A\textsubscript{3}}};
+            \node (foo scope)
+              [right=0pt of foo symbol,
+               circle, fill=white,
+               draw=sgjump,
+               text=sgjump, inner sep=2pt,
+               minimum size=0.25cm]
+              {\tiny 7};
+            \node (foo pad)
+              [right=0pt of foo scope,
+               inner sep=0pt,
+               minimum width=6pt,
+               minimum height=0pt]
+              {};
+            \node (foo)
+              [draw=sgpush, thick, densely dashed,
+               inner sep=0pt,
+               fit=(foo symbol) (foo scope) (foo pad)]
+              {};
+
+            % edges
+            \path [-Stealth]
+              (root) edge (A)
+              (A) edge (a)
+                  edge (A2)
+              (a) edge (main2)
+              ;
+        \end{tikzpicture}
+    \end{center}
 \end{frame}
 
 \end{document}
