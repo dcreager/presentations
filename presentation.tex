@@ -5,6 +5,7 @@
 \usetikzlibrary{arrows.meta}
 \usetikzlibrary{fit}
 \usetikzlibrary{positioning}
+\usetikzlibrary{shapes.multipart}
 
 \title{Stack Graphs}
 \author{Douglas Creager}
@@ -100,28 +101,24 @@
               {\texttt{\strut \_\_main\_\_\textsubscript{2}}};
 
             % pop scope
-            \node (bar symbol)
+            \node (bar)
               [right=0.5cm of main2,
+               rectangle split,
+               rectangle split parts=2,
+               rectangle split horizontal,
+               rectangle split draw splits=false,
+               rectangle split ignore empty parts,
+               draw=sgpop, thick, dash dot,
                fill=white,
                text=sgpop,
+               inner xsep=7pt,
                minimum size=0.75cm]
-              {\texttt{\strut A\textsubscript{3}}};
-            \node (bar scope)
-              [right=0pt of bar symbol,
-               circle, fill=sgjump,
-               inner sep=0pt, minimum size=0.25cm]
-              {};
-            \node (bar pad)
-              [right=0pt of bar scope,
-               inner sep=0pt,
-               minimum width=6pt,
-               minimum height=0pt]
-              {};
-            \node (bar)
-              [draw=sgpop, thick, dash dot,
-               inner sep=0pt,
-               fit=(bar symbol) (bar scope) (bar pad)]
-              {};
+              {
+                  \texttt{\strut A\textsubscript{3}}
+                  \nodepart{two}
+                  \hspace{-10pt}
+                  \tikz \node [circle, fill=sgjump, inner sep=0pt, minimum size=0.25cm] {};
+              };
 
             % references
             \node (A3)
@@ -156,29 +153,24 @@
               {\texttt{\strut \_\_main\_\_\textsubscript{4}}};
 
             % push scope
-            \node (foo symbol)
-              [right=0.5cm of main4, fill=white,
-               text=sgpush,
-               minimum size=0.75cm]
-              {\texttt{\strut A\textsubscript{3}}};
-            \node (foo scope)
-              [right=0pt of foo symbol,
-               circle, fill=white,
-               draw=sgjump,
-               text=sgjump, inner sep=2pt,
-               minimum size=0.25cm]
-              {\tiny 7};
-            \node (foo pad)
-              [right=0pt of foo scope,
-               inner sep=0pt,
-               minimum width=6pt,
-               minimum height=0pt]
-              {};
             \node (foo)
-              [draw=sgpush, thick, densely dashed,
-               inner sep=0pt,
-               fit=(foo symbol) (foo scope) (foo pad)]
-              {};
+              [right=0.5cm of main4,
+               rectangle split,
+               rectangle split parts=2,
+               rectangle split horizontal,
+               rectangle split draw splits=false,
+               rectangle split ignore empty parts,
+               draw=sgpush, thick, densely dashed,
+               fill=white,
+               text=sgpush,
+               inner xsep=7pt,
+               minimum size=0.75cm]
+              {
+                  \texttt{\strut A\textsubscript{3}}
+                  \nodepart{two}
+                  \hspace{-10pt}
+                  \tikz \node [circle, fill=white, draw=sgjump, text=sgjump, inner sep=2pt, minimum size=0.25cm] {\tiny 7};
+              };
 
             % edges
             \path [-Stealth]
