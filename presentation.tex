@@ -6,6 +6,7 @@
 \usetikzlibrary{fit}
 \usetikzlibrary{positioning}
 \usetikzlibrary{shapes.multipart}
+\usetikzlibrary{shadows}
 
 \title{Stack Graphs}
 \author{Douglas Creager}
@@ -123,6 +124,18 @@
   }
 }
 
+\tikzset{
+    highlight node/.style={
+        general shadow={fill=blue, opacity=0.3},
+        shadow scale=1.2, shadow xshift=0pt, shadow yshift=0pt
+    }
+}
+\tikzset{
+    highlight node on/.code args={<#1>}{%
+        \alt<#1>{\pgfkeysalso{highlight node}}{}%
+    }
+}
+
 % Animating paths in a stack graph picture
 %   Just add [highlighted on=<slide>] to an edge's style.  The line of the edge
 %   will be blue and extra thick on <slide> AND ALL LATER SLIDES.  It will have
@@ -206,7 +219,7 @@
             \node (s2)         [anon scope]  [above=\scopegap of s1]  {};
             \node (broil ref)  [reference]   [right=of s2]            {\sized{broil}};
             \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
-            \node (fry)        [definition]  [right=of s3]            {\sized{fry}};
+            \node (fry)        [definition]  [right=of s3]  [highlight node on=<1->] {\sized{fry}};
             \node (s4)         [anon scope]  [above=\scopegap of s3]  {};
             \node (broil def)  [definition]  [right=of s4]            {\sized{broil}};
             \node (s5)         [anon scope]  [above=\scopegap of s4]  {};
