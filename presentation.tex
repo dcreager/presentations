@@ -117,6 +117,30 @@
 \newcommand{\setwidestsymbol}[1]{\renewcommand{\widestsymbol}{#1}}
 \newcommand{\sized}[2][\widestsymbol]{\makebox[\widthof{#1}]{#2}}
 
+\tikzset{
+  alt/.code args={<#1>#2#3}{%
+    \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}} % \pgfkeysalso doesn't change the path
+  }
+}
+
+% Animating paths in a stack graph picture
+%   Just add [highlighted on=<slide>] to an edge's style.  The line of the edge
+%   will be blue and extra thick on <slide> AND ALL LATER SLIDES.  It will have
+%   an arrowhead on SLIDE.
+%
+%   Together, this means that you add this to all of the edges that comprise a
+%   path, with increasing <slide> values for each one, and beamer will create an
+%   overlay animation showing the edges of the path get highlighted in order
+%   each time you advance to the next slide.
+\tikzset{highlight edge/.style={line width=2pt, blue, -}}
+\tikzset{highlight edge frontier/.style={-{Triangle[length=4pt,width=4pt]}}}
+\tikzset{
+    show path on/.code args={<#1>}{%
+        \alt<#1- >{\pgfkeysalso{highlight edge}}{}%
+        \alt<#1  >{\pgfkeysalso{highlight edge frontier}}{}%
+    }
+}
+
 \begin{document}
 
 \begin{frame}
@@ -192,8 +216,8 @@
               (a)         edge (dot)
               (dot)       edge (s1)
               (s1)        edge (s2)
-              (broil ref) edge (s2)
-              (s2)        edge (s3)
+              (broil ref) edge [show path on=<2>] (s2)
+              (s2)        edge [show path on=<3>] (s3)
               (s3)        edge (s4)
                           edge (fry)
               (s4)        edge (s5)
