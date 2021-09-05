@@ -21,6 +21,9 @@
 \setsansfont{Arial}
 \setmonofont[Scale=0.8]{Iosevka Term}
 
+\newlength{\scopegap}
+\setlength{\scopegap}{0.9cm}
+
 \definecolor{sgdef}  {RGB}{159,0,0}
 \definecolor{sgpop}  {RGB}{230,142,131}
 \definecolor{sgref}  {RGB}{0,134,67}
@@ -166,17 +169,17 @@
     \begin{column}{0.7\textwidth}
         \begin{center}
         \begin{tikzpicture}
-            \node (root)       [root node]                         {};
-            \node (a)          [definition]  [right=of root]       {a};
-            \node (dot)        [pop]         [right=of a]          {.};
-            \node (s1)         [anon scope]  [right=of dot]        {};
-            \node (s2)         [anon scope]  [above=1cm of s1]     {};
-            \node (broil ref)  [reference]   [right=of s2]         {broil};
-            \node (s3)         [anon scope]  [above=1cm of s2]     {};
-            \node (fry)        [definition]  [right=of s3]         {fry};
-            \node (s4)         [anon scope]  [above=1cm of s3]     {};
-            \node (broil def)  [definition]  [right=of s4]         {broil};
-            \node (s5)         [anon scope]  [above=1cm of s4]     {};
+            \node (root)       [root node]                            {};
+            \node (a)          [definition]  [right=of root]          {a};
+            \node (dot)        [pop]         [right=of a]             {.};
+            \node (s1)         [anon scope]  [right=of dot]           {};
+            \node (s2)         [anon scope]  [above=\scopegap of s1]  {};
+            \node (broil ref)  [reference]   [right=of s2]            {broil};
+            \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
+            \node (fry)        [definition]  [right=of s3]            {fry};
+            \node (s4)         [anon scope]  [above=\scopegap of s3]  {};
+            \node (broil def)  [definition]  [right=of s4]            {broil};
+            \node (s5)         [anon scope]  [above=\scopegap of s4]  {};
 
             \path [-Stealth]
               (root)      edge (a)
