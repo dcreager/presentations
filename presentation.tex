@@ -113,6 +113,10 @@
     ] {\tiny #1};
 }
 
+\newcommand{\widestsymbol}{}
+\newcommand{\setwidestsymbol}[1]{\renewcommand{\widestsymbol}{#1}}
+\newcommand{\sized}[2][\widestsymbol]{\makebox[\widthof{#1}]{#2}}
+
 \begin{document}
 
 \begin{frame}
@@ -173,12 +177,14 @@
             \node (a)          [definition]  [right=of root]          {a};
             \node (dot)        [pop]         [right=of a]             {.};
             \node (s1)         [anon scope]  [right=of dot]           {};
+
+            \setwidestsymbol{broil}
             \node (s2)         [anon scope]  [above=\scopegap of s1]  {};
-            \node (broil ref)  [reference]   [right=of s2]            {broil};
+            \node (broil ref)  [reference]   [right=of s2]            {\sized{broil}};
             \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
-            \node (fry)        [definition]  [right=of s3]            {fry};
+            \node (fry)        [definition]  [right=of s3]            {\sized{fry}};
             \node (s4)         [anon scope]  [above=\scopegap of s3]  {};
-            \node (broil def)  [definition]  [right=of s4]            {broil};
+            \node (broil def)  [definition]  [right=of s4]            {\sized{broil}};
             \node (s5)         [anon scope]  [above=\scopegap of s4]  {};
 
             \path [-Stealth]
