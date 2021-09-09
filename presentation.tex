@@ -7,6 +7,7 @@
 \usetikzlibrary{positioning}
 \usetikzlibrary{shapes.multipart}
 \usetikzlibrary{shadows}
+\usetikzlibrary{tikzmark}
 
 \title{Stack Graphs}
 \author{Douglas Creager}
@@ -154,6 +155,16 @@
     }
 }
 
+\tikzset{binding arrow/.style={->, red, thick, -{Triangle[]}}}
+
+\newcommand{\codeline}[3][]{%
+    \tikz[remember picture] \draw [overlay, binding arrow, #1] (#2) -- (#3);%
+}
+
+\newcommand{\curvecodeline}[4][]{%
+    \tikz[remember picture] \draw [overlay, binding arrow, #1] (#2) .. controls #3 .. (#4);%
+}
+
 \begin{document}
 
 \begin{frame}
@@ -196,15 +207,17 @@
 \begin{frame}[fragile]
     \begin{columns}
     \begin{column}{0.3\textwidth}
-        \begin{minted}[autogobble,frame=single,framesep=6pt,label=a.py]{python}
-            def broil():
+        \begin{minted}[autogobble,frame=single,framesep=6pt,label=a.py,escapeinside=??]{python}
+            def broil?\tikzmark{ex1broildef}?():
                 pass
 
             def fry():
                 pass
 
-            broil()
+            broil?\tikzmark{ex1broilref}?()
         \end{minted}
+        \uncover<1>  {\curvecodeline{[yshift=8pt] pic cs:ex1broilref}{+(25:2cm) and +(-45:1cm)}{[yshift=-4pt] pic cs:ex1broildef}}
+        \uncover<2- >{\codeline{pic cs:ex1broilref}{pic cs:ex1broildef}}
     \end{column}
 
     \begin{column}{0.7\textwidth}
