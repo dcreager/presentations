@@ -171,6 +171,172 @@
     \titlepage
 \end{frame}
 
+
+% easy
+\begin{frame}[fragile]
+    \frametitle{Why is this hard?}
+    \begin{center}
+    \begin{minipage}{9em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
+        def bake():
+            pass
+
+        def broil?\tikzmark{easy_broil_def}?():
+            pass
+
+        def fry():
+            pass
+
+        broil?\tikzmark{easy_broil_ref}?()
+    \end{minted}
+    \end{minipage}
+    \end{center}
+    \uncover<2>{\curvecodeline%
+      {[yshift=8pt] pic cs:easy_broil_ref}%
+      {+(25:2cm) and +(-45:1cm)}%
+      {[yshift=-4pt] pic cs:easy_broil_def}%
+    }%
+\end{frame}
+
+
+% easy_shadowed
+\begin{frame}[fragile]
+    \frametitle{Why is this hard?}
+    \begin{center}
+    \begin{minipage}{9em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
+        def broil?\tikzmark{easy_shadowed_broil_def1}?():
+            pass
+
+        def broil?\tikzmark{easy_shadowed_broil_def2}?():
+            pass
+
+        def fry():
+            pass
+
+        broil?\tikzmark{easy_shadowed_broil_ref}?()
+    \end{minted}
+    \end{minipage}
+    \end{center}
+    \uncover<2>{\curvecodeline%
+      [dotted]%
+      {[yshift=8pt] pic cs:easy_shadowed_broil_ref}%
+      {+(15:3cm) and +(-35:1cm)}%
+      {[yshift=-4pt] pic cs:easy_shadowed_broil_def1}%
+    }%
+    \uncover<2>{\curvecodeline%
+      {[yshift=8pt] pic cs:easy_shadowed_broil_ref}%
+      {+(25:2cm) and +(-45:1cm)}%
+      {[yshift=-4pt] pic cs:easy_shadowed_broil_def2}%
+    }%
+\end{frame}
+
+
+% easy_shadowed_rust
+\begin{frame}[fragile]
+    \frametitle{Why is this hard?}
+    \begin{center}
+    \begin{minipage}{9em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.rs,escapeinside=??]{rust}
+        fn broil() {}
+
+        fn broil?\tikzmark{easy_shadowed_rust_broil_def2}?() {}
+
+        fn fry() {}
+
+        fn main() {
+          broil();
+        }
+    \end{minted}
+    \end{minipage}
+    \end{center}
+    \uncover<2>{%
+        \tikz[remember picture]
+          \node [overlay, text=red]
+            at ([xshift=-2ex, yshift=0.5ex] pic cs:easy_shadowed_rust_broil_def2)
+            {\textbf{\Huge X}};%
+    }%
+\end{frame}
+
+
+% separate_files
+\begin{frame}[fragile]
+    \frametitle{Why is this hard?}
+    \begin{center}
+    \begin{minipage}[t]{9em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
+        def bake():
+            pass
+
+        def broil?\tikzmark{separate_files_broil_def}?():
+            pass
+
+        def fry():
+            pass
+    \end{minted}
+    \end{minipage}
+    \hspace{0.5em}
+    \begin{minipage}[t]{11em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
+        from stove import ?\tikzmark{separate_files_broil_import}?broil
+
+        ?\tikzmark{separate_files_broil_ref_left}?broil?\tikzmark{separate_files_broil_ref_right}?()
+    \end{minted}
+    \end{minipage}
+    \end{center}
+    \uncover<2>{\curvecodeline%
+      {[xshift=-2pt, yshift=3pt] pic cs:separate_files_broil_ref_left}%
+      {+(180:1cm) and +(-45:1cm)}%
+      {[yshift=-4pt] pic cs:separate_files_broil_def}%
+    }
+    \uncover<2>{\curvecodeline%
+      [densely dashed]%
+      {[yshift=8pt] pic cs:separate_files_broil_ref_right}%
+      {+(45:1cm) and +(-155:1cm)}%
+      {[yshift=-4pt] pic cs:separate_files_broil_import}%
+    }
+\end{frame}
+
+
+% separate_files_star
+\begin{frame}[fragile]
+    \frametitle{Why is this hard?}
+    \begin{center}
+    \begin{minipage}[t]{9em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
+        def bake():
+            pass
+
+        def broil?\tikzmark{separate_files_star_broil_def}?():
+            pass
+
+        def fry():
+            pass
+    \end{minted}
+    \end{minipage}
+    \hspace{0.5em}
+    \begin{minipage}[t]{11em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
+        from stove import ?\tikzmark{separate_files_star_import}?*
+
+        ?\tikzmark{separate_files_star_broil_ref_left}?broil?\tikzmark{separate_files_star_broil_ref_right}?()
+    \end{minted}
+    \end{minipage}
+    \end{center}
+    \uncover<2>{\curvecodeline%
+      {[xshift=-2pt, yshift=3pt] pic cs:separate_files_star_broil_ref_left}%
+      {+(180:1cm) and +(-45:1cm)}%
+      {[yshift=-4pt] pic cs:separate_files_star_broil_def}%
+    }
+    \uncover<2>{\curvecodeline%
+      [dotted]%
+      {[yshift=8pt] pic cs:separate_files_star_broil_ref_right}%
+      {+(45:1cm) and +(-105:1cm)}%
+      {[yshift=-2pt] pic cs:separate_files_star_import}%
+    }
+\end{frame}
+
+
 \begin{frame}
     \begin{center}
         \begin{tikzpicture}
@@ -208,16 +374,15 @@
     \begin{columns}
     \begin{column}{0.3\textwidth}
         \begin{minted}[autogobble,frame=single,framesep=6pt,label=a.py,escapeinside=??]{python}
-            def broil?\tikzmark{ex1broildef}?():
+            def broil?\tikzmark{testbroildef}?():
                 pass
 
             def fry():
                 pass
 
-            broil?\tikzmark{ex1broilref}?()
+            broil?\tikzmark{testbroilref}?()
         \end{minted}
-        \uncover<1>  {\curvecodeline{[yshift=8pt] pic cs:ex1broilref}{+(25:2cm) and +(-45:1cm)}{[yshift=-4pt] pic cs:ex1broildef}}
-        \uncover<2- >{\codeline{pic cs:ex1broilref}{pic cs:ex1broildef}}
+        \uncover<1>  {\curvecodeline{[yshift=8pt] pic cs:testbroilref}{+(25:2cm) and +(-45:1cm)}{[yshift=-4pt] pic cs:testbroildef}} \uncover<2- >{\codeline{pic cs:testbroilref}{pic cs:testbroildef}}
     \end{column}
 
     \begin{column}{0.7\textwidth}
