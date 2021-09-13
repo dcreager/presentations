@@ -184,7 +184,7 @@
         def broil?\tikzmark{easy_broil_def}?():
             pass
 
-        def fry():
+        def saute():
             pass
 
         broil?\tikzmark{easy_broil_ref}?()
@@ -211,7 +211,7 @@
         def broil?\tikzmark{easy_shadowed_broil_def2}?():
             pass
 
-        def fry():
+        def saute():
             pass
 
         broil?\tikzmark{easy_shadowed_broil_ref}?()
@@ -242,7 +242,7 @@
 
         fn broil?\tikzmark{easy_shadowed_rust_broil_def2}?() {}
 
-        fn fry() {}
+        fn saute() {}
 
         fn main() {
           broil();
@@ -271,7 +271,7 @@
         def broil?\tikzmark{separate_files_broil_def}?():
             pass
 
-        def fry():
+        def saute():
             pass
     \end{minted}
     \end{minipage}
@@ -280,20 +280,20 @@
     \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
         from stove import ?\tikzmark{separate_files_broil_import}?broil
 
-        ?\tikzmark{separate_files_broil_ref_left}?broil?\tikzmark{separate_files_broil_ref_right}?()
+        broil?\tikzmark{separate_files_broil_ref}?()
     \end{minted}
     \end{minipage}
     \end{center}
     \uncover<2>{\curvecodeline%
-      {[xshift=-2pt, yshift=3pt] pic cs:separate_files_broil_ref_left}%
-      {+(180:1cm) and +(-45:1cm)}%
-      {[yshift=-4pt] pic cs:separate_files_broil_def}%
-    }
-    \uncover<2>{\curvecodeline%
-      [densely dashed]%
-      {[yshift=8pt] pic cs:separate_files_broil_ref_right}%
+      [-]%
+      {[yshift=10pt] pic cs:separate_files_broil_ref}%
       {+(45:1cm) and +(-155:1cm)}%
       {[yshift=-4pt] pic cs:separate_files_broil_import}%
+    }
+    \uncover<2>{\curvecodeline%
+      {[xshift=12pt, yshift=10pt] pic cs:separate_files_broil_import}%
+      {+(90:2cm) and +(75:2cm)}%
+      {[xshift=-6pt, yshift=10pt] pic cs:separate_files_broil_def}%
     }
 \end{frame}
 
@@ -310,7 +310,7 @@
         def broil?\tikzmark{separate_files_star_broil_def}?():
             pass
 
-        def fry():
+        def saute():
             pass
     \end{minted}
     \end{minipage}
@@ -319,20 +319,20 @@
     \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
         from stove import ?\tikzmark{separate_files_star_import}?*
 
-        ?\tikzmark{separate_files_star_broil_ref_left}?broil?\tikzmark{separate_files_star_broil_ref_right}?()
+        broil?\tikzmark{separate_files_star_broil_ref}?()
     \end{minted}
     \end{minipage}
     \end{center}
     \uncover<2>{\curvecodeline%
-      {[xshift=-2pt, yshift=3pt] pic cs:separate_files_star_broil_ref_left}%
-      {+(180:1cm) and +(-45:1cm)}%
-      {[yshift=-4pt] pic cs:separate_files_star_broil_def}%
+      [-]%
+      {[yshift=10pt] pic cs:separate_files_star_broil_ref}%
+      {+(45:1cm) and +(-105:1cm)}%
+      {[xshift=1pt, yshift=-2pt] pic cs:separate_files_star_import}%
     }
     \uncover<2>{\curvecodeline%
-      [dotted]%
-      {[yshift=8pt] pic cs:separate_files_star_broil_ref_right}%
-      {+(45:1cm) and +(-105:1cm)}%
-      {[yshift=-2pt] pic cs:separate_files_star_import}%
+      {[xshift=3pt, yshift=10pt] pic cs:separate_files_star_import}%
+      {+(90:2cm) and +(75:2cm)}%
+      {[xshift=-6pt, yshift=10pt] pic cs:separate_files_star_broil_def}%
     }
 \end{frame}
 
