@@ -1,6 +1,8 @@
 \documentclass[aspectratio=169]{beamer}
 \mode<presentation>
 
+\usepackage{graphicx}
+
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta}
 \usetikzlibrary{fit}
@@ -333,6 +335,127 @@
       {[xshift=3pt, yshift=10pt] pic cs:separate_files_star_import}%
       {+(90:2cm) and +(75:2cm)}%
       {[xshift=-6pt, yshift=10pt] pic cs:separate_files_star_broil_def}%
+    }
+\end{frame}
+
+
+% three_files
+\begin{frame}[fragile]
+    \frametitle{Why is this hard?}
+    \begin{center}
+    \begin{minipage}[t]{22.5em}
+    \begin{center}
+        \includegraphics[height=2em]{images/pan.png}
+    \end{center}
+    \vskip -1em
+    \begin{minipage}[t]{7em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
+        def bake():
+            pass
+
+        def broil?\tikzmark{three_files_broil_def}?():
+            pass
+
+        def saute():
+            pass
+    \end{minted}
+    \end{minipage}
+    \hspace{0.5em}
+    \begin{minipage}[t]{15em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
+        from stove import ?\tikzmark{three_files_kitchen_import}?*
+    \end{minted}
+    \end{minipage}
+    \end{minipage}
+    \hspace{0.5em}
+    \begin{minipage}[t]{12em}
+    \vskip 8em
+    \begin{center}
+        \includegraphics[height=2em]{images/chef.png}
+    \end{center}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=chef.py,escapeinside=??]{python}
+        from kitchen import ?\tikzmark{three_files_chef_import}?broil
+
+        broil?\tikzmark{three_files_broil_ref}?()
+    \end{minted}
+    \end{minipage}
+    \end{center}
+    \uncover<2>{\curvecodeline%
+      [-]%
+      {[yshift=10pt] pic cs:three_files_broil_ref}%
+      {+(45:1cm) and +(-155:1cm)}%
+      {[yshift=-4pt] pic cs:three_files_chef_import}%
+    }
+    \uncover<2>{\curvecodeline%
+      [-]%
+      {[xshift=10pt, yshift=10pt] pic cs:three_files_chef_import}%
+      {+(90:5cm) and +(75:2cm)}%
+      {[xshift=4pt, yshift=10pt] pic cs:three_files_kitchen_import}%
+    }
+    \uncover<2>{\curvecodeline%
+      {[xshift=1pt, yshift=-4pt] pic cs:three_files_kitchen_import}%
+      {+(-105:1cm) and +(75:1cm)}%
+      {[xshift=-6pt, yshift=10pt] pic cs:three_files_broil_def}%
+    }
+\end{frame}
+
+
+% three_files_updated
+\begin{frame}[fragile]
+    \frametitle{Why is this hard?}
+    \begin{center}
+    \begin{minipage}[t]{22.5em}
+    \begin{center}
+        \includegraphics[height=2em]{images/pan.png}
+    \end{center}
+    \vskip -1em
+    \begin{minipage}[t]{7em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
+        def bake():
+            pass
+
+        def broil():
+            pass
+
+        def saute():
+            pass
+    \end{minted}
+    \end{minipage}
+    \hspace{0.5em}
+    \begin{minipage}[t]{15em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
+        from stove import *
+
+        def broil?\tikzmark{three_files_updated_broil_def}?():
+            print("We're broiling!")
+            import stove
+            return stove.broil()
+    \end{minted}
+    \end{minipage}
+    \end{minipage}
+    \hspace{0.5em}
+    \begin{minipage}[t]{12em}
+    \vskip 8em
+    \begin{center}
+        \includegraphics[height=2em]{images/chef.png}
+    \end{center}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=chef.py,escapeinside=??]{python}
+        from kitchen import ?\tikzmark{three_files_updated_chef_import}?broil
+
+        broil?\tikzmark{three_files_updated_broil_ref}?()
+    \end{minted}
+    \end{minipage}
+    \end{center}
+    \uncover<2>{\curvecodeline%
+      [-]%
+      {[yshift=10pt] pic cs:three_files_updated_broil_ref}%
+      {+(45:1cm) and +(-155:1cm)}%
+      {[yshift=-4pt] pic cs:three_files_updated_chef_import}%
+    }
+    \uncover<2>{\curvecodeline%
+      {[xshift=10pt, yshift=10pt] pic cs:three_files_updated_chef_import}%
+      {+(90:5cm) and +(75:2cm)}%
+      {[xshift=-6pt, yshift=10pt] pic cs:three_files_updated_broil_def}%
     }
 \end{frame}
 
