@@ -460,6 +460,105 @@
 \end{frame}
 
 
+% python_class
+\begin{frame}[fragile]
+    \frametitle{Why is this hard?}
+    \begin{center}
+    \begin{minipage}[t]{25.5em}
+    \begin{center}
+        \includegraphics[height=2em]{images/pan.png}
+    \end{center}
+    \vskip -1em
+    \begin{minipage}[t]{10em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
+        class?\tikzmark{python_class_stove_class}? Stove?\tikzmark{python_class_stove_class_def}?(object):
+            def bake():
+                pass
+
+            def broil?\tikzmark{python_class_broil_def}?():
+                pass
+
+            def saute():
+                pass
+    \end{minted}
+    \end{minipage}
+    \hspace{0.5em}
+    \begin{minipage}[t]{15em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
+        from stove import ?\tikzmark{python_class_kitchen_import}?*
+    \end{minted}
+    \end{minipage}
+    \end{minipage}
+    \hspace{-5.5em}
+    \begin{minipage}[t]{12em}
+    \vskip 6em
+    \begin{center}
+        \includegraphics[height=2em]{images/chef.png}
+    \end{center}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=chef.py,escapeinside=??]{python}
+        from kitchen import ?\tikzmark{python_class_chef_import}?Stove
+
+        stove?\tikzmark{python_class_stove_instance_def}? = Stove?\tikzmark{python_class_stove_class_ref}?()
+        stove?\tikzmark{python_class_stove_instance_ref}?.broil?\tikzmark{python_class_broil_ref}?()
+    \end{minted}
+    \end{minipage}
+    \end{center}
+    \uncover<2>{\curvecodeline%
+      [-]%
+      {[xshift=-10pt, yshift=-3pt] pic cs:python_class_broil_ref}%
+      {+(-135:0.2cm) and +(-45:0.2cm)}%
+      {[xshift=-10pt, yshift=-3pt] pic cs:python_class_stove_instance_ref}%
+    }
+    \uncover<2>{\curvecodeline%
+      [-]%
+      {[xshift=-23pt, yshift=2pt] pic cs:python_class_stove_instance_ref}%
+      {+(180:0.2cm) and +(180:0.2cm)}%
+      {[xshift=-23pt, yshift=2pt] pic cs:python_class_stove_instance_def}%
+    }
+    \uncover<2>{\curvecodeline%
+      [-]%
+      {[xshift=-10pt, yshift=8pt] pic cs:python_class_stove_instance_def}%
+      {+(65:0.3cm) and +(115:0.3cm)}%
+      {[xshift=-10pt, yshift=8pt] pic cs:python_class_stove_class_ref}%
+    }
+    \uncover<2>{\curvecodeline%
+      [-]%
+      {[xshift=-4pt, yshift=-3pt] pic cs:python_class_stove_class_ref}%
+      {+(-35:0.5cm) and +(-90:1cm)}%
+      {[xshift=10pt, yshift=-3pt] pic cs:python_class_chef_import}%
+    }
+    \uncover<2>{\curvecodeline%
+      [-]%
+      {[xshift=10pt, yshift=10pt] pic cs:python_class_chef_import}%
+      {+(90:3cm) and +(-90:1cm)}%
+      {[xshift=2pt, yshift=-3pt] pic cs:python_class_kitchen_import}%
+    }
+    \uncover<2>{\curvecodeline%
+      [-]%
+      {[xshift=2pt, yshift=10pt] pic cs:python_class_kitchen_import}%
+      {+(90:2cm) and +(90:2cm)}%
+      {[xshift=-10pt, yshift=8pt] pic cs:python_class_stove_class_def}%
+    }
+    \uncover<2>{\curvecodeline%
+      [-]%
+      {[xshift=-6pt, yshift=-2pt] pic cs:python_class_stove_class_def}%
+      {+(-45:2cm) and +(90:2cm)}%
+      {[xshift=4pt, yshift=10pt] pic cs:python_class_stove_class_ref}%
+    }
+    \uncover<2>{\curvecodeline%
+      [-]%
+      {[xshift=4pt, yshift=-3pt] pic cs:python_class_stove_class_ref}%
+      {+(-90:2.5cm) and +(-90:6.5cm)}%
+      {[xshift=-10pt, yshift=-2pt] pic cs:python_class_stove_class}%
+    }
+    \uncover<2>{\curvecodeline%
+      {[xshift=-10pt, yshift=8pt] pic cs:python_class_stove_class}%
+      {+(75:1cm) and +(115:1cm)}%
+      {[xshift=-10pt, yshift=6pt] pic cs:python_class_broil_def}%
+    }
+\end{frame}
+
+
 \begin{frame}
     \begin{center}
         \begin{tikzpicture}
