@@ -977,11 +977,12 @@
     \frametitle{Stack graphs}
 
     \uncover<2>{\highlightdef{def}}
+    \uncover<3>{\highlightdef{mod}}
 
     \begin{center}
 
     \begin{minipage}{9em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label={\tikzmark{mod_start}stove.py\tikzmark{mod_end}},escapeinside=??]{python}
         def bake():
             pass
 
@@ -995,18 +996,20 @@
     \hspace{2em}
     \begin{tikzpicture}[baseline={(current bounding box.center)}]
         \node (root)       [root node]                            {};
-        \node (stove)      [definition]  [right=of root]          {stove};
-        \node (dot)        [pop]         [right=of stove]         {.};
-        \node (s1)         [anon scope]  [right=of dot]           {};
+        \node (stove)      [highlight node on=<3>]
+                           [definition]  [left=of root]           {stove};
+        \node (dot)        [highlight node on=<3>]
+                           [pop]         [left=of stove]          {.};
+        \node (s1)         [anon scope]  [left=of dot]            {};
 
         \setwidestsymbol{broil}
         \node (s2)         [anon scope]  [above=\scopegap of s1]  {};
-        \node (saute def)  [definition]  [right=of s2]            {\sized{saute}};
+        \node (saute def)  [definition]  [left=of s2]             {\sized{saute}};
         \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
         \node (broil def)  [highlight node on=<2>]
-                           [definition]  [right=of s3]            {\sized{broil}};
+                           [definition]  [left=of s3]             {\sized{broil}};
         \node (s4)         [anon scope]  [above=\scopegap of s3]  {};
-        \node (bake def)   [definition]  [right=of s4]            {\sized{bake}};
+        \node (bake def)   [definition]  [left=of s4]             {\sized{bake}};
         \node (s5)         [anon scope]  [above=\scopegap of s4]  {};
 
         \path [-Stealth]
@@ -1031,12 +1034,13 @@
     \frametitle{Stack graphs}
 
     \uncover<2>{\highlightref{ref}}
+    \uncover<3>{\highlightboth{import}}
 
     \begin{center}
 
     \begin{minipage}{11em}
     \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
-        from stove import ?\tikzmark{import_start}?broil?\tikzmark{import_end}?
+        ?\tikzmark{import_start}?from stove import broil?\tikzmark{import_end}?
 
         ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
     \end{minted}
@@ -1046,26 +1050,30 @@
         \node (root)       [root node]                            {};
         \node (kitchen)    [definition]  [right=of root]          {kitchen};
         \node (dot)        [pop]         [right=of kitchen]       {.};
-        \node (s1)         [anon scope]  [right=of dot]           {};
+        \node (k1)         [anon scope]  [right=of dot]           {};
 
-        \node (s2)         [anon scope]  [above=\scopegap of s1]  {};
+        \node (k2)         [anon scope]  [above=\scopegap of k1]  {};
         \node (broil ref)  [highlight node on=<2>]
-                           [reference]   [right=of s2]            {broil};
-        \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
-        \node (import def) [pop]         [right=of s3]            {broil};
-        \node (import ref) [push]        [right=of import def]    {broil};
-        \node (import dot) [push]        [right=of import ref]    {.};
-        \node (import mod) [push]        [right=of import dot]    {stove};
-        \node (s4)         [anon scope]  [above=\scopegap of s3]  {};
+                           [reference]   [right=of k2]            {broil};
+        \node (k3)         [anon scope]  [above=\scopegap of k2]  {};
+        \node (import def) [highlight node on=<3>]
+                           [pop]         [right=of k3]            {broil};
+        \node (import ref) [highlight node on=<3>]
+                           [push]        [right=of import def]    {broil};
+        \node (import dot) [highlight node on=<3>]
+                           [push]        [right=of import ref]    {.};
+        \node (import mod) [highlight node on=<3>]
+                           [push]        [right=of import dot]    {stove};
+        \node (k4)         [anon scope]  [above=\scopegap of k3]  {};
 
         \path [-Stealth]
           (root)      edge (kitchen)
           (kitchen)    edge (dot)
-          (dot)        edge (s1)
-          (s1)         edge (s2)
-          (broil ref)  edge (s2)
-          (s2)         edge (s3)
-          (s3)         edge (s4)
+          (dot)        edge (k1)
+          (k1)         edge (k2)
+          (broil ref)  edge (k2)
+          (k2)         edge (k3)
+          (k3)         edge (k4)
                        edge (import def)
           (import def) edge (import ref)
           (import ref) edge (import dot)
@@ -1074,6 +1082,73 @@
           ;
     \end{tikzpicture}
 
+    \end{center}
+\end{frame}
+
+
+% Combined
+
+\begin{frame}[fragile]
+    \frametitle{Stack graphs}
+    \begin{center}
+    \scalebox{0.75}{
+    \begin{tikzpicture}
+        \node (root)       [root node]                            {};
+        \node (stove)      [definition]  [left=of root]           {stove};
+        \node (dot)        [pop]         [left=of stove]          {.};
+        \node (s1)         [anon scope]  [left=of dot]            {};
+
+        \setwidestsymbol{broil}
+        \node (s2)         [anon scope]  [above=\scopegap of s1]  {};
+        \node (saute def)  [definition]  [left=of s2]             {\sized{saute}};
+        \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
+        \node (broil def)  [definition]  [left=of s3]             {\sized{broil}};
+        \node (s4)         [anon scope]  [above=\scopegap of s3]  {};
+        \node (bake def)   [definition]  [left=of s4]             {\sized{bake}};
+        \node (s5)         [anon scope]  [above=\scopegap of s4]  {};
+
+        \path [-Stealth]
+          (root)      edge (stove)
+          (stove)     edge (dot)
+          (dot)       edge (s1)
+          (s1)        edge (s2)
+          (s2)        edge (s3)
+                      edge (saute def)
+          (s3)        edge (s4)
+                      edge (broil def)
+          (s4)        edge (s5)
+                      edge (bake def)
+          ;
+
+        \node (kitchen)    [definition]  [right=of root]          {kitchen};
+        \node (dot)        [pop]         [right=of kitchen]       {.};
+        \node (k1)         [anon scope]  [right=of dot]           {};
+
+        \node (k2)         [anon scope]  [above=\scopegap of k1]  {};
+        \node (broil ref)  [reference]   [right=of k2]            {broil};
+        \node (k3)         [anon scope]  [above=\scopegap of k2]  {};
+        \node (import def) [pop]         [right=of k3]            {broil};
+        \node (import ref) [push]        [right=of import def]    {broil};
+        \node (import dot) [push]        [right=of import ref]    {.};
+        \node (import mod) [push]        [right=of import dot]    {stove};
+        \node (k4)         [anon scope]  [above=\scopegap of k3]  {};
+
+        \path [-Stealth]
+          (root)      edge (kitchen)
+          (kitchen)    edge (dot)
+          (dot)        edge (k1)
+          (k1)         edge (k2)
+          (broil ref)  edge (k2)
+          (k2)         edge (k3)
+          (k3)         edge (k4)
+                       edge (import def)
+          (import def) edge (import ref)
+          (import ref) edge (import dot)
+          (import dot) edge (import mod)
+          (import mod) edge [overlay, in control=+(-60:3cm), out control=+(-90:4cm)] (root)
+          ;
+    \end{tikzpicture}
+    }
     \end{center}
 \end{frame}
 
