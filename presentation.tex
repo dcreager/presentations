@@ -575,6 +575,17 @@
 
 \begin{frame}
     \frametitle{Zero configuration}
+    \begin{center}
+        We don't want to have to ask the package \\ owner how to collect the data
+        we need.
+    \end{center}
+    \begin{center}
+        Or ask them to configure a job to produce that data.
+    \end{center}
+    \begin{center}
+        We \strong{especially} can't ask an open-source maintainer \\ to expend
+        effort to generate data that we need \\ for an enterprise customer!
+    \end{center}
 \end{frame}
 
 
@@ -586,6 +597,19 @@
 
 \begin{frame}
     \frametitle{Incremental processing}
+    \begin{center}
+        In a typical commit, a small fraction of files in the repo change.
+    \end{center}
+    \begin{center}
+        We want to reuse results that we've \\ already calculated for unchanged
+        files.
+    \end{center}
+    \begin{center}
+        \emph{Structural sharing} (like git itself) helps save storage.
+    \end{center}
+    \begin{center}
+        \emph{Incremental processing} also helps save compute.
+    \end{center}
 \end{frame}
 
 
