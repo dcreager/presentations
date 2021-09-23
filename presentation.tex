@@ -637,11 +637,49 @@
             fill=gray!20,
         ] {};
 
+        \node at(bar.west) [
+            rectangle, anchor=west,
+            minimum width=0.8\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=yellow!20,
+        ] {};
+
+        \node at(bar.west) [
+            rectangle, anchor=west, inner xsep=2ex,
+            text height=1.5ex, text depth=0.25ex,
+            text=black,
+        ] {Index};
+        \node at(bar.east) [
+            rectangle, anchor=east, inner xsep=2ex,
+            text height=1.5ex, text depth=0.25ex,
+            text=black,
+        ] {Query};
+    \end{tikzpicture}
+
+    \begin{center}
+        If we do too much work at index time, then we're not being incremental!
+
+        (Costs are too high, work is wasted, etc.)
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[t]
+    \frametitle{When do we do the work?}
+    \vskip 2em
+    \begin{tikzpicture}
+        \node (bar) at(0,0) [
+            rectangle, anchor=west,
+            minimum width=\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=gray!20,
+        ] {};
+
         \node at(bar.east) [
             rectangle, anchor=east,
             minimum width=0.8\columnwidth, minimum height=1cm,
             draw=black, thin,
-            fill=yellow!20,
+            fill=blue!20,
         ] {};
 
         \node at(bar.west) [
@@ -679,9 +717,15 @@
 
         \node at(bar.west) [
             rectangle, anchor=west,
-            minimum width=0.8\columnwidth, minimum height=1cm,
+            minimum width=0.5\columnwidth, minimum height=1cm,
             draw=black, thin,
             fill=yellow!20,
+        ] {};
+        \node at(bar.east) [
+            rectangle, anchor=east,
+            minimum width=0.5\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=blue!20,
         ] {};
 
         \node at(bar.west) [
@@ -697,9 +741,13 @@
     \end{tikzpicture}
 
     \begin{center}
-        If we do too much work at index time, then we're not being incremental!
-        \\
-        (Costs are too high, work is wasted, etc.)
+        We want to strike a balance.
+    \end{center}
+
+    \begin{center}
+        Precalculate as much as we can while still being incremental.
+
+        Defer \strong{some} of the work until query time to make that happen.
     \end{center}
 \end{frame}
 
