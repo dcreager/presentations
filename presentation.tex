@@ -173,7 +173,7 @@
         ([xshift=-1pt, yshift=8pt] pic cs:#1_start)
         rectangle
         ([xshift=1pt, yshift=-2pt] pic cs:#1_end)
-        ;
+        ;%
 }
 
 \newcommand{\highlightboth}[1]{%
@@ -182,7 +182,7 @@
         ([xshift=-1pt, yshift=8pt] pic cs:#1_start)
         rectangle
         ([xshift=1pt, yshift=-2pt] pic cs:#1_end)
-        ;
+        ;%
 }
 
 \newcommand{\highlightref}[1]{%
@@ -320,7 +320,7 @@
 \begin{frame}[fragile]
     \frametitle{Why is this hard?}
     \uncover<2-3>{\highlightdef{def}}
-    \uncover<2-3>{\highlightboth{import}}
+    \uncover<  3>{\highlightboth{import}}
     \uncover<2-3>{\highlightref{ref}}
     \begin{center}
     \begin{minipage}[t]{9em}
@@ -362,7 +362,7 @@
 \begin{frame}[fragile]
     \frametitle{Why is this hard?}
     \uncover<2-3>{\highlightdef{def}}
-    \uncover<2-3>{\highlightboth{import}}
+    \uncover<  3>{\highlightboth{import}}
     \uncover<2-3>{\highlightref{ref}}
     \begin{center}
     \begin{minipage}[t]{9em}
@@ -403,8 +403,8 @@
 % three_files
 \begin{frame}[fragile]
     \uncover<2-3>{\highlightdef{def}}
-    \uncover<2-3>{\highlightboth{kitchen_import}}
-    \uncover<2-3>{\highlightboth{chef_import}}
+    \uncover<  3>{\highlightboth{kitchen_import}}
+    \uncover<  3>{\highlightboth{chef_import}}
     \uncover<2-3>{\highlightref{ref}}
     \frametitle{Why is this hard?}
     \begin{center}
@@ -470,7 +470,7 @@
     \frametitle{Why is this hard?}
     \uncover<2-3>{\highlightdef{def1}}
     \uncover<2-3>{\highlightdef{def2}}
-    \uncover<2-3>{\highlightboth{import}}
+    \uncover<  3>{\highlightboth{import}}
     \uncover<2-3>{\highlightref{ref}}
     \begin{center}
     \begin{minipage}[t]{22.5em}
@@ -533,6 +533,8 @@
 \begin{frame}[fragile]
     \frametitle{Why is this hard?}
     \begin{center}
+    \uncover<2- >{\highlightdef{def}}%
+    \uncover<2- >{\highlightref{ref}}%
     \begin{minipage}[t]{25.5em}
     \begin{center}
         \includegraphics[height=2em]{images/pan.png}
@@ -544,7 +546,7 @@
             def bake():
                 pass
 
-            def broil?\tikzmark{broil_def}?():
+            def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?():
                 pass
 
             def saute():
@@ -568,63 +570,63 @@
         from kitchen import ?\tikzmark{chef_import}?Stove
 
         stove?\tikzmark{instance_def}? = Stove?\tikzmark{class_ref}?()
-        stove?\tikzmark{instance_ref}?.broil?\tikzmark{broil_ref}?()
+        stove?\tikzmark{instance_ref}?.?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
     \end{minted}
     \end{minipage}
     \end{center}
-    \uncover<2- >{\curvecodeline%
-      [-, alt=<3>{line width=2pt, blue}{}]%
-      {[xshift=-10pt, yshift=-3pt] pic cs:broil_ref}%
+    \uncover<3- >{\curvecodeline%
+      [-, alt=<4>{line width=2pt, blue}{}]%
+      {[xshift=-10pt, yshift=-3pt] pic cs:ref_end}%
       {+(-135:0.2cm) and +(-45:0.2cm)}%
       {[xshift=-10pt, yshift=-3pt] pic cs:instance_ref}%
     }
-    \uncover<2- >{\curvecodeline%
-      [-, alt=<4>{line width=2pt, blue}{}]%
+    \uncover<3- >{\curvecodeline%
+      [-, alt=<5>{line width=2pt, blue}{}]%
       {[xshift=-23pt, yshift=2pt] pic cs:instance_ref}%
       {+(180:0.2cm) and +(180:0.2cm)}%
       {[xshift=-23pt, yshift=2pt] pic cs:instance_def}%
     }
-    \uncover<2- >{\curvecodeline%
-      [-, alt=<5>{line width=2pt, blue}{}]%
+    \uncover<3- >{\curvecodeline%
+      [-, alt=<6>{line width=2pt, blue}{}]%
       {[xshift=-10pt, yshift=8pt] pic cs:instance_def}%
       {+(65:0.3cm) and +(115:0.3cm)}%
       {[xshift=-10pt, yshift=8pt] pic cs:class_ref}%
     }
-    \uncover<2- >{\curvecodeline%
-      [-, alt=<6>{line width=2pt, blue}{}]%
+    \uncover<3- >{\curvecodeline%
+      [-, alt=<7>{line width=2pt, blue}{}]%
       {[xshift=-4pt, yshift=-3pt] pic cs:class_ref}%
       {+(-35:0.5cm) and +(-90:1cm)}%
       {[xshift=10pt, yshift=-3pt] pic cs:chef_import}%
     }
-    \uncover<2- >{\curvecodeline%
-      [-, alt=<7>{line width=2pt, blue}{}]%
+    \uncover<3- >{\curvecodeline%
+      [-, alt=<8>{line width=2pt, blue}{}]%
       {[xshift=10pt, yshift=10pt] pic cs:chef_import}%
       {+(90:3cm) and +(-90:1cm)}%
       {[xshift=2pt, yshift=-3pt] pic cs:kitchen_import}%
     }
-    \uncover<2- >{\curvecodeline%
-      [-, alt=<8>{line width=2pt, blue}{}]%
+    \uncover<3- >{\curvecodeline%
+      [-, alt=<9>{line width=2pt, blue}{}]%
       {[xshift=2pt, yshift=10pt] pic cs:kitchen_import}%
       {+(90:2cm) and +(90:2cm)}%
       {[xshift=-10pt, yshift=8pt] pic cs:class_def}%
     }
-    \uncover<2- >{\curvecodeline%
-      [-, alt=<9>{line width=2pt, blue}{}]%
+    \uncover<3- >{\curvecodeline%
+      [-, alt=<10>{line width=2pt, blue}{}]%
       {[xshift=-6pt, yshift=-2pt] pic cs:class_def}%
       {+(-45:2cm) and +(90:2cm)}%
       {[xshift=4pt, yshift=10pt] pic cs:class_ref}%
     }
-    \uncover<2- >{\curvecodeline%
-      [-, alt=<10>{line width=2pt, blue}{}]%
+    \uncover<3- >{\curvecodeline%
+      [-, alt=<11>{line width=2pt, blue}{}]%
       {[xshift=4pt, yshift=-3pt] pic cs:class_ref}%
       {+(-90:2.5cm) and +(-90:6.5cm)}%
       {[xshift=-10pt, yshift=-2pt] pic cs:class}%
     }
-    \uncover<2- >{\curvecodeline%
-      [alt=<11>{line width=2pt, blue}{}]%
+    \uncover<3- >{\curvecodeline%
+      [alt=<12>{line width=2pt, blue}{}]%
       {[xshift=-10pt, yshift=8pt] pic cs:class}%
       {+(75:1cm) and +(115:1cm)}%
-      {[xshift=-10pt, yshift=6pt] pic cs:broil_def}%
+      {[xshift=-10pt, yshift=6pt] pic cs:def_end}%
     }
 \end{frame}
 
@@ -906,6 +908,60 @@
       {[xshift=12pt, yshift=10pt] pic cs:import_start}%
       {+(90:2cm) and +(75:2cm)}%
       {[xshift=-6pt, yshift=10pt] pic cs:def_end}%
+    }
+\end{frame}
+
+
+% incremental_python_class
+\begin{frame}[fragile]
+    \frametitle{What would incremental results look like?}
+
+    \highlightref{ref}
+
+    \begin{center}
+    \begin{minipage}[t]{12em}
+    \begin{center}
+        \includegraphics[height=2em]{images/chef.png}
+    \end{center}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=chef.py,escapeinside=??]{python}
+        from kitchen import ?\tikzmark{chef_import}?Stove
+
+        stove?\tikzmark{instance_def}? = Stove?\tikzmark{class_ref}?()
+        stove?\tikzmark{instance_ref}?.?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
+    \end{minted}
+    \end{minipage}
+    \vskip 2em
+    \hspace{5em}
+    \begin{minipage}[t]{0.65\textwidth}
+    \uncover<3- >{If you can find what \texttt{kitchen.stove} resolves to} \\
+    \uncover<4- >{and can call it} \\
+    \uncover<5- >{then the result should have a member named \texttt{broil}} \\
+    \uncover<6- >{which the reference at \textsl{chef.py:4:7} resolves to.} \\
+    \end{minipage}
+    \end{center}
+    \uncover<2- >{\curvecodeline%
+      [-]%
+      {[xshift=-10pt, yshift=-3pt] pic cs:ref_end}%
+      {+(-135:0.2cm) and +(-45:0.2cm)}%
+      {[xshift=-10pt, yshift=-3pt] pic cs:instance_ref}%
+    }
+    \uncover<2- >{\curvecodeline%
+      [-]%
+      {[xshift=-23pt, yshift=2pt] pic cs:instance_ref}%
+      {+(180:0.2cm) and +(180:0.2cm)}%
+      {[xshift=-23pt, yshift=2pt] pic cs:instance_def}%
+    }
+    \uncover<2- >{\curvecodeline%
+      [-]%
+      {[xshift=-10pt, yshift=8pt] pic cs:instance_def}%
+      {+(65:0.3cm) and +(115:0.3cm)}%
+      {[xshift=-10pt, yshift=8pt] pic cs:class_ref}%
+    }
+    \uncover<2- >{\curvecodeline%
+      [-]%
+      {[xshift=-4pt, yshift=-3pt] pic cs:class_ref}%
+      {+(-35:0.5cm) and +(-90:1cm)}%
+      {[xshift=10pt, yshift=-3pt] pic cs:chef_import}%
     }
 \end{frame}
 
