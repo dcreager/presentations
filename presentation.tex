@@ -176,6 +176,15 @@
         ;
 }
 
+\newcommand{\highlightboth}[1]{%
+    \tikz[remember picture]
+      \draw [overlay, draw=brown, thin, fill=yellow!25]
+        ([xshift=-1pt, yshift=8pt] pic cs:#1_start)
+        rectangle
+        ([xshift=1pt, yshift=-2pt] pic cs:#1_end)
+        ;
+}
+
 \newcommand{\highlightref}[1]{%
     \tikz[remember picture]
       \draw [overlay, draw=none, fill=blue!25]
@@ -208,26 +217,28 @@
 % easy
 \begin{frame}[fragile]
     \frametitle{Code Navigation}
+    \uncover<2-3>{\highlightdef{def}}
+    \uncover<2-3>{\highlightref{ref}}
     \begin{center}
     \begin{minipage}{9em}
     \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
         def bake():
             pass
 
-        def broil?\tikzmark{def}?():
+        def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?():
             pass
 
         def saute():
             pass
 
-        broil?\tikzmark{ref}?()
+        ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
     \end{minted}
     \end{minipage}
     \end{center}
-    \uncover<2>{\curvecodeline%
-      {[yshift=8pt] pic cs:ref}%
+    \uncover<3>{\curvecodeline%
+      {[yshift=8pt] pic cs:ref_end}%
       {+(25:2cm) and +(-45:1cm)}%
-      {[yshift=-4pt] pic cs:def}%
+      {[yshift=-4pt] pic cs:def_end}%
     }%
 \end{frame}
 
@@ -242,32 +253,35 @@
 % easy_shadowed
 \begin{frame}[fragile]
     \frametitle{Why is this hard?}
+    \uncover<2-3>{\highlightdef{def1}}
+    \uncover<2-3>{\highlightdef{def2}}
+    \uncover<2-3>{\highlightref{ref}}
     \begin{center}
     \begin{minipage}{9em}
     \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
-        def broil?\tikzmark{def1}?():
+        def ?\tikzmark{def1_start}?broil?\tikzmark{def1_end}?():
             pass
 
-        def broil?\tikzmark{def2}?():
+        def ?\tikzmark{def2_start}?broil?\tikzmark{def2_end}?():
             pass
 
         def saute():
             pass
 
-        broil?\tikzmark{ref}?()
+        ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
     \end{minted}
     \end{minipage}
     \end{center}
-    \uncover<2>{\curvecodeline%
+    \uncover<3>{\curvecodeline%
       [dotted]%
-      {[yshift=8pt] pic cs:ref}%
+      {[yshift=8pt] pic cs:ref_end}%
       {+(15:3cm) and +(-35:1cm)}%
-      {[yshift=-4pt] pic cs:def1}%
+      {[yshift=-4pt] pic cs:def1_end}%
     }%
-    \uncover<2>{\curvecodeline%
-      {[yshift=8pt] pic cs:ref}%
+    \uncover<3>{\curvecodeline%
+      {[yshift=8pt] pic cs:ref_end}%
       {+(25:2cm) and +(-45:1cm)}%
-      {[yshift=-4pt] pic cs:def2}%
+      {[yshift=-4pt] pic cs:def2_end}%
     }%
 \end{frame}
 
@@ -275,25 +289,28 @@
 % easy_shadowed_rust
 \begin{frame}[fragile]
     \frametitle{Why is this hard?}
+    \uncover<2-3>{\highlightdef{def1}}
+    \uncover<2-3>{\highlightdef{def2}}
+    \uncover<2-3>{\highlightref{ref}}
     \begin{center}
     \begin{minipage}{9em}
     \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.rs,escapeinside=??]{rust}
-        fn broil() {}
+        fn ?\tikzmark{def1_start}?broil?\tikzmark{def1_end}?() {}
 
-        fn broil?\tikzmark{def2}?() {}
+        fn ?\tikzmark{def2_start}?broil?\tikzmark{def2_end}?() {}
 
         fn saute() {}
 
         fn main() {
-          broil();
+          ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?();
         }
     \end{minted}
     \end{minipage}
     \end{center}
-    \uncover<2>{%
+    \uncover<3>{%
         \tikz[remember picture]
           \node [overlay, text=red]
-            at ([xshift=-2ex, yshift=0.5ex] pic cs:def2)
+            at ([xshift=-2ex, yshift=0.5ex] pic cs:def2_end)
             {\textbf{\Huge X}};%
     }%
 \end{frame}
@@ -302,13 +319,16 @@
 % separate_files
 \begin{frame}[fragile]
     \frametitle{Why is this hard?}
+    \uncover<2-3>{\highlightdef{def}}
+    \uncover<2-3>{\highlightboth{import}}
+    \uncover<2-3>{\highlightref{ref}}
     \begin{center}
     \begin{minipage}[t]{9em}
     \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
         def bake():
             pass
 
-        def broil?\tikzmark{def}?():
+        def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?():
             pass
 
         def saute():
@@ -318,22 +338,22 @@
     \hspace{0.5em}
     \begin{minipage}[t]{11em}
     \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
-        from stove import ?\tikzmark{import}?broil
+        from stove import ?\tikzmark{import_start}?broil?\tikzmark{import_end}?
 
-        broil?\tikzmark{ref}?()
+        ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
     \end{minted}
     \end{minipage}
     \end{center}
-    \uncover<2>{\curvecodeline%
+    \uncover<3>{\curvecodeline%
       [-]%
-      {[yshift=10pt] pic cs:ref}%
+      {[yshift=10pt] pic cs:ref_end}%
       {+(45:1cm) and +(-155:1cm)}%
-      {[yshift=-4pt] pic cs:import}%
+      {[yshift=-4pt] pic cs:import_start}%
     }
-    \uncover<2>{\curvecodeline%
-      {[xshift=12pt, yshift=10pt] pic cs:import}%
+    \uncover<3>{\curvecodeline%
+      {[xshift=12pt, yshift=10pt] pic cs:import_start}%
       {+(90:2cm) and +(75:2cm)}%
-      {[xshift=-6pt, yshift=10pt] pic cs:def}%
+      {[xshift=-6pt, yshift=10pt] pic cs:def_end}%
     }
 \end{frame}
 
@@ -341,13 +361,16 @@
 % separate_files_star
 \begin{frame}[fragile]
     \frametitle{Why is this hard?}
+    \uncover<2-3>{\highlightdef{def}}
+    \uncover<2-3>{\highlightboth{import}}
+    \uncover<2-3>{\highlightref{ref}}
     \begin{center}
     \begin{minipage}[t]{9em}
     \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
         def bake():
             pass
 
-        def broil?\tikzmark{def}?():
+        def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?():
             pass
 
         def saute():
@@ -357,28 +380,32 @@
     \hspace{0.5em}
     \begin{minipage}[t]{11em}
     \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
-        from stove import ?\tikzmark{import}?*
+        from stove import ?\tikzmark{import_start}?*?\tikzmark{import_end}?
 
-        broil?\tikzmark{ref}?()
+        ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
     \end{minted}
     \end{minipage}
     \end{center}
-    \uncover<2>{\curvecodeline%
+    \uncover<3>{\curvecodeline%
       [-]%
-      {[yshift=10pt] pic cs:ref}%
+      {[yshift=10pt] pic cs:ref_end}%
       {+(45:1cm) and +(-105:1cm)}%
-      {[xshift=1pt, yshift=-2pt] pic cs:import}%
+      {[xshift=1pt, yshift=-2pt] pic cs:import_start}%
     }
-    \uncover<2>{\curvecodeline%
-      {[xshift=3pt, yshift=10pt] pic cs:import}%
+    \uncover<3>{\curvecodeline%
+      {[xshift=3pt, yshift=10pt] pic cs:import_start}%
       {+(90:2cm) and +(75:2cm)}%
-      {[xshift=-6pt, yshift=10pt] pic cs:def}%
+      {[xshift=-6pt, yshift=10pt] pic cs:def_end}%
     }
 \end{frame}
 
 
 % three_files
 \begin{frame}[fragile]
+    \uncover<2-3>{\highlightdef{def}}
+    \uncover<2-3>{\highlightboth{kitchen_import}}
+    \uncover<2-3>{\highlightboth{chef_import}}
+    \uncover<2-3>{\highlightref{ref}}
     \frametitle{Why is this hard?}
     \begin{center}
     \begin{minipage}[t]{22.5em}
@@ -391,7 +418,7 @@
         def bake():
             pass
 
-        def broil?\tikzmark{def}?():
+        def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?():
             pass
 
         def saute():
@@ -401,7 +428,7 @@
     \hspace{0.5em}
     \begin{minipage}[t]{15em}
     \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
-        from stove import ?\tikzmark{kitchen_import}?*
+        from stove import ?\tikzmark{kitchen_import_start}?*?\tikzmark{kitchen_import_end}?
     \end{minted}
     \end{minipage}
     \end{minipage}
@@ -412,28 +439,28 @@
         \includegraphics[height=2em]{images/chef.png}
     \end{center}
     \begin{minted}[autogobble,frame=single,framesep=6pt,label=chef.py,escapeinside=??]{python}
-        from kitchen import ?\tikzmark{chef_import}?broil
+        from kitchen import ?\tikzmark{chef_import_start}?broil?\tikzmark{chef_import_end}?
 
-        broil?\tikzmark{ref}?()
+        ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
     \end{minted}
     \end{minipage}
     \end{center}
-    \uncover<2>{\curvecodeline%
+    \uncover<3>{\curvecodeline%
       [-]%
-      {[yshift=10pt] pic cs:ref}%
+      {[yshift=10pt] pic cs:ref_end}%
       {+(45:1cm) and +(-155:1cm)}%
-      {[yshift=-4pt] pic cs:chef_import}%
+      {[yshift=-4pt] pic cs:chef_import_start}%
     }
-    \uncover<2>{\curvecodeline%
+    \uncover<3>{\curvecodeline%
       [-]%
-      {[xshift=10pt, yshift=10pt] pic cs:chef_import}%
+      {[xshift=10pt, yshift=10pt] pic cs:chef_import_start}%
       {+(90:5cm) and +(75:2cm)}%
-      {[xshift=4pt, yshift=10pt] pic cs:kitchen_import}%
+      {[xshift=4pt, yshift=10pt] pic cs:kitchen_import_start}%
     }
-    \uncover<2>{\curvecodeline%
-      {[xshift=1pt, yshift=-4pt] pic cs:kitchen_import}%
+    \uncover<3>{\curvecodeline%
+      {[xshift=1pt, yshift=-4pt] pic cs:kitchen_import_start}%
       {+(-105:1cm) and +(75:1cm)}%
-      {[xshift=-6pt, yshift=10pt] pic cs:def}%
+      {[xshift=-6pt, yshift=10pt] pic cs:def_end}%
     }
 \end{frame}
 
@@ -441,6 +468,10 @@
 % three_files_updated
 \begin{frame}[fragile]
     \frametitle{Why is this hard?}
+    \uncover<2-3>{\highlightdef{def1}}
+    \uncover<2-3>{\highlightdef{def2}}
+    \uncover<2-3>{\highlightboth{import}}
+    \uncover<2-3>{\highlightref{ref}}
     \begin{center}
     \begin{minipage}[t]{22.5em}
     \begin{center}
@@ -452,7 +483,7 @@
         def bake():
             pass
 
-        def broil():
+        def ?\tikzmark{def1_start}?broil?\tikzmark{def1_end}?():
             pass
 
         def saute():
@@ -464,7 +495,7 @@
     \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
         from stove import *
 
-        def broil?\tikzmark{def}?():
+        def ?\tikzmark{def2_start}?broil?\tikzmark{def2_end}?():
             print("We're broiling!")
             import stove
             return stove.broil()
@@ -478,22 +509,22 @@
         \includegraphics[height=2em]{images/chef.png}
     \end{center}
     \begin{minted}[autogobble,frame=single,framesep=6pt,label=chef.py,escapeinside=??]{python}
-        from kitchen import ?\tikzmark{import}?broil
+        from kitchen import ?\tikzmark{import_start}?broil?\tikzmark{import_end}?
 
-        broil?\tikzmark{ref}?()
+        ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
     \end{minted}
     \end{minipage}
     \end{center}
-    \uncover<2>{\curvecodeline%
+    \uncover<3>{\curvecodeline%
       [-]%
-      {[yshift=10pt] pic cs:ref}%
+      {[yshift=10pt] pic cs:ref_end}%
       {+(45:1cm) and +(-155:1cm)}%
-      {[yshift=-4pt] pic cs:import}%
+      {[yshift=-4pt] pic cs:import_start}%
     }
-    \uncover<2>{\curvecodeline%
-      {[xshift=10pt, yshift=10pt] pic cs:import}%
+    \uncover<3>{\curvecodeline%
+      {[xshift=10pt, yshift=10pt] pic cs:import_start}%
       {+(90:5cm) and +(75:2cm)}%
-      {[xshift=-6pt, yshift=10pt] pic cs:def}%
+      {[xshift=-6pt, yshift=10pt] pic cs:def2_end}%
     }
 \end{frame}
 
