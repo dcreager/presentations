@@ -910,6 +910,118 @@
 \end{frame}
 
 
+\section{Stack graphs}
+
+\begin{frame}
+    \sectionpage
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Stack graphs}
+
+    \uncover<2>{\highlightdef{def}}
+
+    \begin{center}
+
+    \begin{minipage}{9em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
+        def bake():
+            pass
+
+        def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?():
+            pass
+
+        def saute():
+            pass
+    \end{minted}
+    \end{minipage}
+    \hspace{2em}
+    \begin{tikzpicture}[baseline={(current bounding box.center)}]
+        \node (root)       [root node]                            {};
+        \node (stove)      [definition]  [right=of root]          {stove};
+        \node (dot)        [pop]         [right=of stove]         {.};
+        \node (s1)         [anon scope]  [right=of dot]           {};
+
+        \setwidestsymbol{broil}
+        \node (s2)         [anon scope]  [above=\scopegap of s1]  {};
+        \node (saute def)  [definition]  [right=of s2]            {\sized{saute}};
+        \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
+        \node (broil def)  [highlight node on=<2>]
+                           [definition]  [right=of s3]            {\sized{broil}};
+        \node (s4)         [anon scope]  [above=\scopegap of s3]  {};
+        \node (bake def)   [definition]  [right=of s4]            {\sized{bake}};
+        \node (s5)         [anon scope]  [above=\scopegap of s4]  {};
+
+        \path [-Stealth]
+          (root)      edge (stove)
+          (stove)     edge (dot)
+          (dot)       edge (s1)
+          (s1)        edge (s2)
+          (s2)        edge (s3)
+                      edge (saute def)
+          (s3)        edge (s4)
+                      edge (broil def)
+          (s4)        edge (s5)
+                      edge (bake def)
+          ;
+    \end{tikzpicture}
+
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Stack graphs}
+
+    \uncover<2>{\highlightref{ref}}
+
+    \begin{center}
+
+    \begin{minipage}{11em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
+        from stove import ?\tikzmark{import_start}?broil?\tikzmark{import_end}?
+
+        ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
+    \end{minted}
+    \end{minipage}
+    \hspace{-7em}
+    \begin{tikzpicture}[baseline={([yshift=2em] current bounding box.center)}]
+        \node (root)       [root node]                            {};
+        \node (kitchen)    [definition]  [right=of root]          {kitchen};
+        \node (dot)        [pop]         [right=of kitchen]       {.};
+        \node (s1)         [anon scope]  [right=of dot]           {};
+
+        \node (s2)         [anon scope]  [above=\scopegap of s1]  {};
+        \node (broil ref)  [highlight node on=<2>]
+                           [reference]   [right=of s2]            {broil};
+        \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
+        \node (import def) [pop]         [right=of s3]            {broil};
+        \node (import ref) [push]        [right=of import def]    {broil};
+        \node (import dot) [push]        [right=of import ref]    {.};
+        \node (import mod) [push]        [right=of import dot]    {stove};
+        \node (s4)         [anon scope]  [above=\scopegap of s3]  {};
+
+        \path [-Stealth]
+          (root)      edge (kitchen)
+          (kitchen)    edge (dot)
+          (dot)        edge (s1)
+          (s1)         edge (s2)
+          (broil ref)  edge (s2)
+          (s2)         edge (s3)
+          (s3)         edge (s4)
+                       edge (import def)
+          (import def) edge (import ref)
+          (import ref) edge (import dot)
+          (import dot) edge (import mod)
+          (import mod) edge [overlay, in control=+(-60:3cm), out control=+(-90:4cm)] (root)
+          ;
+    \end{tikzpicture}
+
+    \end{center}
+\end{frame}
+
+
 \begin{frame}
     \begin{center}
         \begin{tikzpicture}
