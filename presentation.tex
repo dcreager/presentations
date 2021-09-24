@@ -882,9 +882,9 @@
 \begin{frame}[fragile]
     \frametitle{What would incremental results look like?}
 
-    \uncover<2,4>{\highlightdef{def}}
-    \uncover<3,4>{\highlightboth{import}}
-    \uncover<3,4>{\highlightref{ref}}
+    \uncover<1,2,4>{\highlightdef{def}}
+    \uncover<1,3,4>{\highlightboth{import}}
+    \uncover<1,3,4>{\highlightref{ref}}
 
     \begin{center}
     \begin{minipage}{21em}
@@ -919,7 +919,7 @@
     \begin{center}
         \uncover<3,4>{
             The reference at \textsl{kitchen.py:3:1} \\
-            might refer to \texttt{stove.broil} in some other file
+            refers to \texttt{stove.broil} in some other file
         }
         \\
         \uncover<4>{+}
@@ -935,13 +935,13 @@
     \end{center}
     \end{minipage}
     \end{center}
-    \uncover<3,4>{\curvecodeline%
+    \uncover<1,3,4>{\curvecodeline%
       [-]%
       {[yshift=10pt] pic cs:ref_end}%
       {+(45:1cm) and +(-155:1cm)}%
       {[yshift=-4pt] pic cs:import_start}%
     }
-    \uncover<4>{\curvecodeline%
+    \uncover<1,4>{\curvecodeline%
       {[xshift=12pt, yshift=10pt] pic cs:import_start}%
       {+(90:2cm) and +(75:2cm)}%
       {[xshift=-6pt, yshift=10pt] pic cs:def_end}%
@@ -953,7 +953,11 @@
 \begin{frame}[fragile]
     \frametitle{What would incremental results look like?}
 
-    \highlightref{ref}
+    \uncover<1-2,6>{\highlightref{ref}}
+    \uncover<3>    {\highlightboth{mod}}
+    \uncover<3>    {\highlightboth{import}}
+    \uncover<4>    {\highlightboth{call}}
+    \uncover<5>    {\highlightboth{member}}
 
     \begin{center}
     \begin{minipage}[t]{12em}
@@ -961,16 +965,16 @@
         \includegraphics[height=2em]{images/chef.png}
     \end{center}
     \begin{minted}[autogobble,frame=single,framesep=6pt,label=chef.py,escapeinside=??]{python}
-        from kitchen import ?\tikzmark{chef_import}?Stove
+        from ?\tikzmark{mod_start}?kitchen?\tikzmark{mod_end}? import ?\tikzmark{import_start}?Stove?\tikzmark{import_end}?
 
-        stove?\tikzmark{instance_def}? = Stove?\tikzmark{class_ref}?()
-        stove?\tikzmark{instance_ref}?.?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
+        stove?\tikzmark{instance_def}? = ?\tikzmark{call_start}?Stove?\tikzmark{class_ref}?()?\tikzmark{call_end}?
+        stove?\tikzmark{member_start}?.?\tikzmark{ref_start}?broil?\tikzmark{ref_end}\tikzmark{member_end}?()
     \end{minted}
     \end{minipage}
     \vskip 2em
     \hspace{5em}
     \begin{minipage}[t]{0.65\textwidth}
-    \uncover<3- >{If you can find what \texttt{kitchen.stove} resolves to} \\
+    \uncover<3- >{If you can find what \texttt{kitchen.Stove} resolves to} \\
     \uncover<4- >{and can call it} \\
     \uncover<5- >{then the result should have a member named \texttt{broil}} \\
     \uncover<6- >{which the reference at \textsl{chef.py:4:7} resolves to.} \\
@@ -980,11 +984,11 @@
       [-]%
       {[xshift=-10pt, yshift=-3pt] pic cs:ref_end}%
       {+(-135:0.2cm) and +(-45:0.2cm)}%
-      {[xshift=-10pt, yshift=-3pt] pic cs:instance_ref}%
+      {[xshift=-10pt, yshift=-3pt] pic cs:member_start}%
     }
     \uncover<2- >{\curvecodeline%
       [-]%
-      {[xshift=-23pt, yshift=2pt] pic cs:instance_ref}%
+      {[xshift=-23pt, yshift=2pt] pic cs:member_start}%
       {+(180:0.2cm) and +(180:0.2cm)}%
       {[xshift=-23pt, yshift=2pt] pic cs:instance_def}%
     }
@@ -998,7 +1002,7 @@
       [-]%
       {[xshift=-4pt, yshift=-3pt] pic cs:class_ref}%
       {+(-35:0.5cm) and +(-90:1cm)}%
-      {[xshift=10pt, yshift=-3pt] pic cs:chef_import}%
+      {[xshift=10pt, yshift=-3pt] pic cs:import_start}%
     }
 \end{frame}
 
@@ -1012,9 +1016,9 @@
 
 \begin{frame}[fragile]
     \frametitle{Stack graphs}
-    \uncover<2-3>{\highlightdef{def}}
-    \uncover<  3>{\highlightboth{import}}
-    \uncover<2-3>{\highlightref{ref}}
+    \highlightdef{def}
+    \highlightboth{import}
+    \highlightref{ref}
     \begin{center}
     \begin{minipage}[t]{9em}
     \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
@@ -1037,17 +1041,15 @@
     \end{minted}
     \end{minipage}
     \end{center}
-    \uncover<3>{\curvecodeline%
+    \curvecodeline%
       [-]%
       {[yshift=10pt] pic cs:ref_end}%
       {+(45:1cm) and +(-155:1cm)}%
       {[yshift=-4pt] pic cs:import_start}%
-    }
-    \uncover<3>{\curvecodeline%
+    \curvecodeline%
       {[xshift=12pt, yshift=10pt] pic cs:import_start}%
       {+(90:2cm) and +(75:2cm)}%
       {[xshift=-6pt, yshift=10pt] pic cs:def_end}%
-    }
 \end{frame}
 
 
@@ -1055,7 +1057,7 @@
     \frametitle{Stack graphs}
 
     \uncover<3>{\highlightdef{def}}
-    \uncover<4>{\highlightdef{mod}}
+    \uncover<5>{\highlightdef{mod}}
 
     \begin{center}
 
@@ -1074,22 +1076,28 @@
     \hspace{2em}
     \begin{uncoverenv}<2- >
     \begin{tikzpicture}[baseline={(current bounding box.center)}]
-        \node (root)       [root node]                            {};
-        \node (stove)      [highlight node on=<4>]
+        \node (root)       [highlight node on=<5>]
+                           [root node]                            {};
+        \node (stove)      [highlight node on=<5>]
                            [definition]  [left=of root]           {stove};
-        \node (dot)        [highlight node on=<4>]
+        \node (dot)        [highlight node on=<5>]
                            [pop]         [left=of stove]          {.};
-        \node (s1)         [anon scope]  [left=of dot]            {};
+        \node (s1)         [highlight node on=<4>]
+                           [anon scope]  [left=of dot]            {};
 
         \setwidestsymbol{broil}
-        \node (s2)         [anon scope]  [above=\scopegap of s1]  {};
+        \node (s2)         [highlight node on=<4>]
+                           [anon scope]  [above=\scopegap of s1]  {};
         \node (saute def)  [definition]  [left=of s2]             {\sized{saute}};
-        \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
+        \node (s3)         [highlight node on=<4>]
+                           [anon scope]  [above=\scopegap of s2]  {};
         \node (broil def)  [highlight node on=<3>]
                            [definition]  [left=of s3]             {\sized{broil}};
-        \node (s4)         [anon scope]  [above=\scopegap of s3]  {};
+        \node (s4)         [highlight node on=<4>]
+                           [anon scope]  [above=\scopegap of s3]  {};
         \node (bake def)   [definition]  [left=of s4]             {\sized{bake}};
-        \node (s5)         [anon scope]  [above=\scopegap of s4]  {};
+        \node (s5)         [highlight node on=<4>]
+                           [anon scope]  [above=\scopegap of s4]  {};
 
         \path [-Stealth]
           (root)      edge (stove)
@@ -1128,7 +1136,8 @@
     \hspace{-7em}
     \begin{uncoverenv}<2- >
     \begin{tikzpicture}[baseline={([yshift=2em] current bounding box.center)}]
-        \node (root)       [root node]                            {};
+        \node (root)       [highlight node on=<4>]
+                           [root node]                            {};
         \node (kitchen)    [definition]  [right=of root]          {kitchen};
         \node (dot)        [pop]         [right=of kitchen]       {.};
         \node (k1)         [anon scope]  [right=of dot]           {};
@@ -1175,84 +1184,92 @@
     \begin{center}
     \scalebox{0.75}{
     \begin{tikzpicture}
-        \node (root)       [highlight node on=<11>]
+        \node (root)       [highlight node on={<2,3,13>}]
                            [root node]                            {};
-        \node (stove)      [highlight node on=<12>]
+        \node (stove)      [highlight node on={<2,14>}]
                            [definition]  [left=of root]           {stove};
-        \node (dot)        [highlight node on=<13>]
+        \node (dot)        [highlight node on={<2,15>}]
                            [pop]         [left=of stove]          {.};
-        \node (s1)         [highlight node on=<14>]
+        \node (s1)         [highlight node on={<2,16>}]
                            [anon scope]  [left=of dot]            {};
 
         \setwidestsymbol{broil}
-        \node (s2)         [highlight node on=<15>]
+        \node (s2)         [highlight node on={<2,17>}]
                            [anon scope]  [above=\scopegap of s1]  {};
-        \node (saute def)  [definition]  [left=of s2]             {\sized{saute}};
-        \node (s3)         [highlight node on=<16>]
+        \node (saute def)  [highlight node on=<2>]
+                           [definition]  [left=of s2]             {\sized{saute}};
+        \node (s3)         [highlight node on={<2,18>}]
                            [anon scope]  [above=\scopegap of s2]  {};
-        \node (broil def)  [highlight node on=<17>]
+        \node (broil def)  [highlight node on={<2,4,19>}]
                            [definition]  [left=of s3]             {\sized{broil}};
-        \node (s4)         [anon scope]  [above=\scopegap of s3]  {};
-        \node (bake def)   [definition]  [left=of s4]             {\sized{bake}};
-        \node (s5)         [anon scope]  [above=\scopegap of s4]  {};
+        \node (s4)         [highlight node on=<2>]
+                           [anon scope]  [above=\scopegap of s3]  {};
+        \node (bake def)   [highlight node on=<2>]
+                           [definition]  [left=of s4]             {\sized{bake}};
+        \node (s5)         [highlight node on=<2>]
+                           [anon scope]  [above=\scopegap of s4]  {};
 
         \path [-Stealth]
-          (root)      edge [highlight inner edge on=<2>, show path on=<12>] (stove)
-          (stove)     edge [highlight inner edge on=<2>, show path on=<13>] (dot)
-          (dot)       edge [highlight inner edge on=<2>, show path on=<14>] (s1)
-          (s1)        edge [highlight inner edge on=<2>, show path on=<15>] (s2)
-          (s2)        edge [highlight inner edge on=<2>, show path on=<16>] (s3)
+          (root)      edge [highlight inner edge on=<4>, show path on=<14>] (stove)
+          (stove)     edge [highlight inner edge on=<4>, show path on=<15>] (dot)
+          (dot)       edge [highlight inner edge on=<4>, show path on=<16>] (s1)
+          (s1)        edge [highlight inner edge on=<4>, show path on=<17>] (s2)
+          (s2)        edge [highlight inner edge on=<4>, show path on=<18>] (s3)
                       edge (saute def)
           (s3)        edge (s4)
-                      edge [highlight end edge on=<2>, show path on=<17>]   (broil def)
+                      edge [highlight end edge on=<4>, show path on=<19>]   (broil def)
           (s4)        edge (s5)
                       edge (bake def)
           ;
 
-        \node (kitchen)    [definition]  [right=of root]          {kitchen};
-        \node (dot)        [pop]         [right=of kitchen]       {.};
-        \node (k1)         [anon scope]  [right=of dot]           {};
+        \node (kitchen)    [highlight node on=<3>]
+                           [definition]  [right=of root]          {kitchen};
+        \node (dot)        [highlight node on=<3>]
+                           [pop]         [right=of kitchen]       {.};
+        \node (k1)         [highlight node on=<3>]
+                           [anon scope]  [right=of dot]           {};
 
-        \node (k2)         [highlight node on=<5>]
+        \node (k2)         [highlight node on={<3,7>}]
                            [anon scope]  [above=\scopegap of k1]  {};
-        \node (broil ref)  [highlight node on=<4>]
+        \node (broil ref)  [highlight node on={<3,4,6>}]
                            [reference]   [right=of k2]            {broil};
-        \node (k3)         [highlight node on=<6>]
+        \node (k3)         [highlight node on={<3,8>}]
                            [anon scope]  [above=\scopegap of k2]  {};
-        \node (import def) [highlight node on=<7>]
+        \node (import def) [highlight node on={<3,9>}]
                            [pop]         [right=of k3]            {broil};
-        \node (import ref) [highlight node on=<8>]
+        \node (import ref) [highlight node on={<3,10>}]
                            [push]        [right=of import def]    {broil};
-        \node (import dot) [highlight node on=<9>]
+        \node (import dot) [highlight node on={<3,11>}]
                            [push]        [right=of import ref]    {.};
-        \node (import mod) [highlight node on=<10>]
+        \node (import mod) [highlight node on={<3,12>}]
                            [push]        [right=of import dot]    {stove};
-        \node (k4)         [anon scope]  [above=\scopegap of k3]  {};
+        \node (k4)         [highlight node on=<3>]
+                           [anon scope]  [above=\scopegap of k3]  {};
 
         \path [-Stealth]
           (root)      edge (kitchen)
           (kitchen)    edge (dot)
           (dot)        edge (k1)
           (k1)         edge (k2)
-          (broil ref)  edge [highlight inner edge on=<2>, show path on=<5>] (k2)
-          (k2)         edge [highlight inner edge on=<2>, show path on=<6>] (k3)
+          (broil ref)  edge [highlight inner edge on=<4>, show path on=<7>] (k2)
+          (k2)         edge [highlight inner edge on=<4>, show path on=<8>] (k3)
           (k3)         edge (k4)
-                       edge [highlight inner edge on=<2>, show path on=<7>] (import def)
-          (import def) edge [highlight inner edge on=<2>, show path on=<8>] (import ref)
-          (import ref) edge [highlight inner edge on=<2>, show path on=<9>] (import dot)
-          (import dot) edge [highlight inner edge on=<2>, show path on=<10>] (import mod)
+                       edge [highlight inner edge on=<4>, show path on=<9>] (import def)
+          (import def) edge [highlight inner edge on=<4>, show path on=<10>] (import ref)
+          (import ref) edge [highlight inner edge on=<4>, show path on=<11>] (import dot)
+          (import dot) edge [highlight inner edge on=<4>, show path on=<12>] (import mod)
           (import mod) edge [overlay, in control=+(-60:3cm), out control=+(-90:4cm)]
-                            [highlight inner edge on=<2>, show path on=<11>] (root)
+                            [highlight inner edge on=<4>, show path on=<13>] (root)
           ;
     \end{tikzpicture}
     }
     \vskip 2em
     \begin{minipage}{0.5\textwidth}
     \begin{overprint}
-        \onslide<4-6,8,13-16> \currentsymbolstack{broil}
-        \onslide<3,7,17>      \currentsymbolstack{}
-        \onslide<9,12>        \currentsymbolstack{.broil}
-        \onslide<10-11>       \currentsymbolstack{stove.broil}
+        \onslide<6-8,10,15-18> \currentsymbolstack{broil}
+        \onslide<5,9,19>       \currentsymbolstack{}
+        \onslide<11,14>        \currentsymbolstack{.broil}
+        \onslide<12-13>        \currentsymbolstack{stove.broil}
     \end{overprint}
     \end{minipage}
     \end{center}
@@ -1309,7 +1326,7 @@
     \vskip 5em
     \uncover<3- >{\partialpath{\$1}{\node [reference] {broil}}{\node [root node] {}}{stove.broil \$1}}
     \vskip 0.75em
-    \uncover<4>{The reference at \textsl{kitchen.py:3:1}  might refer to \texttt{stove.broil} in some other file}
+    \uncover<4>{The reference at \textsl{kitchen.py:3:1}  refers to \texttt{stove.broil} in some other file}
 
     \end{center}
 \end{frame}
