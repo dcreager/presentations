@@ -157,6 +157,17 @@
     }
 }
 
+\tikzset{
+    highlight inner edge on/.code args={<#1>}{%
+        \alt<#1>{\pgfkeysalso{highlight edge}}{}%
+    }
+}
+\tikzset{
+    highlight end edge on/.code args={<#1>}{%
+        \alt<#1>{\pgfkeysalso{highlight edge, highlight edge frontier}}{}%
+    }
+}
+
 \tikzset{binding arrow/.style={->, red, thick, -{Triangle[]}}}
 
 \newcommand{\codeline}[3][]{%
@@ -200,6 +211,8 @@
     tikzmark suffix=-\theframenumber-\the\beamer@slideinframe
 }
 \makeatother
+
+\newcommand{\symbolstack}[1]{{\scriptsize Symbol stack:} $\langle {\small \texttt{#1}} \rangle$}
 
 \begin{document}
 
@@ -1093,29 +1106,36 @@
     \begin{center}
     \scalebox{0.75}{
     \begin{tikzpicture}
-        \node (root)       [root node]                            {};
-        \node (stove)      [definition]  [left=of root]           {stove};
-        \node (dot)        [pop]         [left=of stove]          {.};
-        \node (s1)         [anon scope]  [left=of dot]            {};
+        \node (root)       [highlight node on=<11>]
+                           [root node]                            {};
+        \node (stove)      [highlight node on=<12>]
+                           [definition]  [left=of root]           {stove};
+        \node (dot)        [highlight node on=<13>]
+                           [pop]         [left=of stove]          {.};
+        \node (s1)         [highlight node on=<14>]
+                           [anon scope]  [left=of dot]            {};
 
         \setwidestsymbol{broil}
-        \node (s2)         [anon scope]  [above=\scopegap of s1]  {};
+        \node (s2)         [highlight node on=<15>]
+                           [anon scope]  [above=\scopegap of s1]  {};
         \node (saute def)  [definition]  [left=of s2]             {\sized{saute}};
-        \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
-        \node (broil def)  [definition]  [left=of s3]             {\sized{broil}};
+        \node (s3)         [highlight node on=<16>]
+                           [anon scope]  [above=\scopegap of s2]  {};
+        \node (broil def)  [highlight node on=<17>]
+                           [definition]  [left=of s3]             {\sized{broil}};
         \node (s4)         [anon scope]  [above=\scopegap of s3]  {};
         \node (bake def)   [definition]  [left=of s4]             {\sized{bake}};
         \node (s5)         [anon scope]  [above=\scopegap of s4]  {};
 
         \path [-Stealth]
-          (root)      edge (stove)
-          (stove)     edge (dot)
-          (dot)       edge (s1)
-          (s1)        edge (s2)
-          (s2)        edge (s3)
+          (root)      edge [highlight inner edge on=<2>, show path on=<12>] (stove)
+          (stove)     edge [highlight inner edge on=<2>, show path on=<13>] (dot)
+          (dot)       edge [highlight inner edge on=<2>, show path on=<14>] (s1)
+          (s1)        edge [highlight inner edge on=<2>, show path on=<15>] (s2)
+          (s2)        edge [highlight inner edge on=<2>, show path on=<16>] (s3)
                       edge (saute def)
           (s3)        edge (s4)
-                      edge (broil def)
+                      edge [highlight end edge on=<2>, show path on=<17>]   (broil def)
           (s4)        edge (s5)
                       edge (bake def)
           ;
@@ -1124,13 +1144,20 @@
         \node (dot)        [pop]         [right=of kitchen]       {.};
         \node (k1)         [anon scope]  [right=of dot]           {};
 
-        \node (k2)         [anon scope]  [above=\scopegap of k1]  {};
-        \node (broil ref)  [reference]   [right=of k2]            {broil};
-        \node (k3)         [anon scope]  [above=\scopegap of k2]  {};
-        \node (import def) [pop]         [right=of k3]            {broil};
-        \node (import ref) [push]        [right=of import def]    {broil};
-        \node (import dot) [push]        [right=of import ref]    {.};
-        \node (import mod) [push]        [right=of import dot]    {stove};
+        \node (k2)         [highlight node on=<5>]
+                           [anon scope]  [above=\scopegap of k1]  {};
+        \node (broil ref)  [highlight node on=<4>]
+                           [reference]   [right=of k2]            {broil};
+        \node (k3)         [highlight node on=<6>]
+                           [anon scope]  [above=\scopegap of k2]  {};
+        \node (import def) [highlight node on=<7>]
+                           [pop]         [right=of k3]            {broil};
+        \node (import ref) [highlight node on=<8>]
+                           [push]        [right=of import def]    {broil};
+        \node (import dot) [highlight node on=<9>]
+                           [push]        [right=of import ref]    {.};
+        \node (import mod) [highlight node on=<10>]
+                           [push]        [right=of import dot]    {stove};
         \node (k4)         [anon scope]  [above=\scopegap of k3]  {};
 
         \path [-Stealth]
@@ -1138,17 +1165,27 @@
           (kitchen)    edge (dot)
           (dot)        edge (k1)
           (k1)         edge (k2)
-          (broil ref)  edge (k2)
-          (k2)         edge (k3)
+          (broil ref)  edge [highlight inner edge on=<2>, show path on=<5>] (k2)
+          (k2)         edge [highlight inner edge on=<2>, show path on=<6>] (k3)
           (k3)         edge (k4)
-                       edge (import def)
-          (import def) edge (import ref)
-          (import ref) edge (import dot)
-          (import dot) edge (import mod)
-          (import mod) edge [overlay, in control=+(-60:3cm), out control=+(-90:4cm)] (root)
+                       edge [highlight inner edge on=<2>, show path on=<7>] (import def)
+          (import def) edge [highlight inner edge on=<2>, show path on=<8>] (import ref)
+          (import ref) edge [highlight inner edge on=<2>, show path on=<9>] (import dot)
+          (import dot) edge [highlight inner edge on=<2>, show path on=<10>] (import mod)
+          (import mod) edge [overlay, in control=+(-60:3cm), out control=+(-90:4cm)]
+                            [highlight inner edge on=<2>, show path on=<11>] (root)
           ;
     \end{tikzpicture}
     }
+    \vskip 2em
+    \begin{minipage}{0.5\textwidth}
+    \begin{overprint}
+        \onslide<4-6,8,13-16> \symbolstack{broil}
+        \onslide<3,7,17>      \symbolstack{}
+        \onslide<9,12>        \symbolstack{.broil}
+        \onslide<10-11>       \symbolstack{stove.broil}
+    \end{overprint}
+    \end{minipage}
     \end{center}
 \end{frame}
 
