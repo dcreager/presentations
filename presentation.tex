@@ -657,6 +657,12 @@
 
 
 \begin{frame}
+    \textlarger{Oh is that all?} \\
+    \emph{[Ed: Insert piece of cake picture here]}
+\end{frame}
+
+
+\begin{frame}
     \frametitle{Zero configuration}
     \begin{center}
         We don't want to have to ask the package \\ owner how to collect the data
@@ -678,43 +684,6 @@
 \end{frame}
 
 
-\begin{frame}
-    \frametitle{Incremental processing}
-    \begin{center}
-        In a typical commit, a small fraction of files in the repo change.
-    \end{center}
-    \begin{center}
-        We want to reuse results that we've \\ already calculated for unchanged
-        files.
-    \end{center}
-    \begin{center}
-        \emph{Structural sharing} (like git itself) helps save storage.
-    \end{center}
-    \begin{center}
-        \emph{Incremental processing} also helps save compute.
-    \end{center}
-\end{frame}
-
-
-\begin{frame}
-    \frametitle{Why is this hard?}
-    \begin{itemize}
-        \item Different languages have different name binding rules.
-        \item Some of those rules can be quite complex.
-        \item The result might depend on intermediate files.
-        \item We don't want to require manual per-repo configuration.
-        \item We need incremental processing to handle our scale.
-    \end{itemize}
-\end{frame}
-
-
-\section{Incremental results}
-
-\begin{frame}
-    \sectionpage
-\end{frame}
-
-
 \begin{frame}[t]
     \frametitle{When do we do the work?}
     \vskip 2em
@@ -751,50 +720,14 @@
             fill=gray!20,
         ] {};
 
-        \node at(bar.west) [
-            rectangle, anchor=west,
-            minimum width=0.8\columnwidth, minimum height=1cm,
-            draw=black, thin,
-            fill=yellow!20,
-        ] {};
-
-        \node at(bar.west) [
-            rectangle, anchor=west, inner xsep=2ex,
-            text height=1.5ex, text depth=0.25ex,
-            text=black,
-        ] {Index};
-        \node at(bar.east) [
-            rectangle, anchor=east, inner xsep=2ex,
-            text height=1.5ex, text depth=0.25ex,
-            text=black,
-        ] {Query};
-    \end{tikzpicture}
-
-    \begin{center}
-        If we do too much work at index time, then we're not being incremental!
-
-        (Costs are too high, work is wasted, etc.)
-    \end{center}
-\end{frame}
-
-
-\begin{frame}[t]
-    \frametitle{When do we do the work?}
-    \vskip 2em
-    \begin{tikzpicture}
-        \node (bar) at(0,0) [
-            rectangle, anchor=west,
-            minimum width=\columnwidth, minimum height=1cm,
-            draw=black, thin,
-            fill=gray!20,
-        ] {};
-
-        \node at(bar.east) [
+        \node (query) at(bar.east) [
             rectangle, anchor=east,
             minimum width=0.8\columnwidth, minimum height=1cm,
             draw=black, thin,
             fill=blue!20,
         ] {};
+
+        \node at (query.center) [overlay, text=red] {\scalebox{2}{\textbf{\Huge X}}};%
 
         \node at(bar.west) [
             rectangle, anchor=west, inner xsep=2ex,
@@ -814,6 +747,46 @@
     \end{center}
     \begin{center}
         Goal: < 100ms
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[t]
+    \frametitle{When do we do the work?}
+    \vskip 2em
+    \begin{tikzpicture}
+        \node (bar) at(0,0) [
+            rectangle, anchor=west,
+            minimum width=\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=gray!20,
+        ] {};
+
+        \node (index) at(bar.west) [
+            rectangle, anchor=west,
+            minimum width=0.8\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=yellow!20,
+        ] {};
+
+        \node at (index.center) [overlay, text=red] {\scalebox{2}{\textbf{\Huge X}}};%
+
+        \node at(bar.west) [
+            rectangle, anchor=west, inner xsep=2ex,
+            text height=1.5ex, text depth=0.25ex,
+            text=black,
+        ] {Index};
+        \node at(bar.east) [
+            rectangle, anchor=east, inner xsep=2ex,
+            text height=1.5ex, text depth=0.25ex,
+            text=black,
+        ] {Query};
+    \end{tikzpicture}
+
+    \begin{center}
+        Because of our scale, we can't doo too much work at index time, either!
+
+        (Compute and storage costs are too high, work is wasted, etc.)
     \end{center}
 \end{frame}
 
@@ -859,10 +832,49 @@
     \end{center}
 
     \begin{center}
-        Precalculate as much as we can while still being incremental.
+        Precalculate as much as we can.
 
-        Defer \strong{some} of the work until query time to make that happen.
+        Minimize the amount of \strong{duplicated} work.
+
+        Defer \strong{some} work until query time to make that happen.
     \end{center}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Incremental processing}
+    \begin{center}
+        In a typical commit, a small fraction of files in the repo change.
+    \end{center}
+    \begin{center}
+        We want to reuse results that we've \\ already calculated for unchanged
+        files.
+    \end{center}
+    \begin{center}
+        \emph{Structural sharing} (like git itself) helps save storage.
+    \end{center}
+    \begin{center}
+        \emph{Incremental processing} also helps save compute.
+    \end{center}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Why is this hard?}
+    \begin{itemize}
+        \item Different languages have different name binding rules.
+        \item Some of those rules can be quite complex.
+        \item The result might depend on intermediate files.
+        \item We don't want to require manual per-repo configuration.
+        \item We need incremental processing to handle our scale.
+    \end{itemize}
+\end{frame}
+
+
+\section{Incremental results}
+
+\begin{frame}
+    \sectionpage
 \end{frame}
 
 
