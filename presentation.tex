@@ -1,6 +1,7 @@
 \documentclass[aspectratio=169]{beamer}
 \mode<presentation>
 
+\usepackage{relsize}
 \usepackage{graphicx}
 
 \usepackage{tikz}
@@ -212,7 +213,18 @@
 }
 \makeatother
 
-\newcommand{\symbolstack}[1]{{\scriptsize Symbol stack:} $\langle {\small \texttt{#1}} \rangle$}
+\newcommand{\symbolstack}[1]{$\langle \texttt{#1} \rangle$}
+\newcommand{\currentsymbolstack}[1]{\textsmaller[2]{Symbol stack:} \symbolstack{#1}}
+
+\newcommand{\partialpath}[4]{
+    \symbolstack{#1}
+    \hspace{0.01em}
+    \scalebox{0.75}{\tikz[baseline={([yshift=-0.7ex] current bounding box.center)}] #2;}
+    →
+    \scalebox{0.75}{\tikz[baseline={([yshift=-0.7ex] current bounding box.center)}] #3;}
+    \hspace{0.01em}
+    \symbolstack{#4}
+}
 
 \begin{document}
 
@@ -1225,12 +1237,126 @@
     \vskip 2em
     \begin{minipage}{0.5\textwidth}
     \begin{overprint}
-        \onslide<4-6,8,13-16> \symbolstack{broil}
-        \onslide<3,7,17>      \symbolstack{}
-        \onslide<9,12>        \symbolstack{.broil}
-        \onslide<10-11>       \symbolstack{stove.broil}
+        \onslide<4-6,8,13-16> \currentsymbolstack{broil}
+        \onslide<3,7,17>      \currentsymbolstack{}
+        \onslide<9,12>        \currentsymbolstack{.broil}
+        \onslide<10-11>       \currentsymbolstack{stove.broil}
     \end{overprint}
     \end{minipage}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Partial paths}
+
+    \begin{center}
+
+    \begin{minipage}{11em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
+        ?\tikzmark{import_start}?from stove import broil?\tikzmark{import_end}?
+
+        ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
+    \end{minted}
+    \end{minipage}
+    \hspace{2em}
+    \scalebox{0.75}{
+    \begin{tikzpicture}[baseline={([yshift=-2em] current bounding box.center)}]
+        \node (root)       [root node]                            {};
+        \node (kitchen)    [definition]  [right=of root]          {kitchen};
+        \node (dot)        [pop]         [right=of kitchen]       {.};
+        \node (k1)         [anon scope]  [right=of dot]           {};
+
+        \node (k2)         [anon scope]  [above=\scopegap of k1]  {};
+        \node (broil ref)  [reference]   [right=of k2]            {broil};
+        \node (k3)         [anon scope]  [above=\scopegap of k2]  {};
+        \node (import def) [pop]         [right=of k3]            {broil};
+        \node (import ref) [push]        [right=of import def]    {broil};
+        \node (import dot) [push]        [right=of import ref]    {.};
+        \node (import mod) [push]        [right=of import dot]    {stove};
+        \node (k4)         [anon scope]  [above=\scopegap of k3]  {};
+
+        \path [-Stealth]
+          (root)      edge (kitchen)
+          (kitchen)    edge (dot)
+          (dot)        edge (k1)
+          (k1)         edge (k2)
+          (broil ref)  edge [highlight inner edge on=<2- >] (k2)
+          (k2)         edge [highlight inner edge on=<2- >] (k3)
+          (k3)         edge (k4)
+                       edge [highlight inner edge on=<2- >] (import def)
+          (import def) edge [highlight inner edge on=<2- >] (import ref)
+          (import ref) edge [highlight inner edge on=<2- >] (import dot)
+          (import dot) edge [highlight inner edge on=<2- >] (import mod)
+          (import mod) edge [highlight end edge on=<2- >]
+                            [overlay, in control=+(-60:3cm), out control=+(-90:4cm)] (root)
+          ;
+    \end{tikzpicture}
+    }
+
+    \vskip 5em
+    \uncover<3- >{\partialpath{\$1}{\node [reference] {broil}}{\node [root node] {}}{stove.broil \$1}}
+    \vskip 0.75em
+    \uncover<4>{The reference at \textsl{kitchen.py:3:1}  might refer to \texttt{stove.broil} in some other file}
+
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Partial paths}
+
+    \begin{center}
+
+    \begin{minipage}{9em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label={\tikzmark{mod_start}stove.py\tikzmark{mod_end}},escapeinside=??]{python}
+        def bake():
+            pass
+
+        def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?():
+            pass
+
+        def saute():
+            pass
+    \end{minted}
+    \end{minipage}
+    \hspace{2em}
+    \scalebox{0.75}{
+    \begin{tikzpicture}[baseline={(current bounding box.center)}]
+        \node (root)       [root node]                            {};
+        \node (stove)      [definition]  [left=of root]           {stove};
+        \node (dot)        [pop]         [left=of stove]          {.};
+        \node (s1)         [anon scope]  [left=of dot]            {};
+
+        \setwidestsymbol{broil}
+        \node (s2)         [anon scope]  [above=\scopegap of s1]  {};
+        \node (saute def)  [definition]  [left=of s2]             {\sized{saute}};
+        \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
+        \node (broil def)  [definition]  [left=of s3]             {\sized{broil}};
+        \node (s4)         [anon scope]  [above=\scopegap of s3]  {};
+        \node (bake def)   [definition]  [left=of s4]             {\sized{bake}};
+        \node (s5)         [anon scope]  [above=\scopegap of s4]  {};
+
+        \path [-Stealth]
+          (root)      edge [highlight inner edge on=<2- >] (stove)
+          (stove)     edge [highlight inner edge on=<2- >] (dot)
+          (dot)       edge [highlight inner edge on=<2- >] (s1)
+          (s1)        edge [highlight inner edge on=<2- >] (s2)
+          (s2)        edge [highlight inner edge on=<2- >] (s3)
+                      edge (saute def)
+          (s3)        edge (s4)
+                      edge [highlight end edge on=<2- >] (broil def)
+          (s4)        edge (s5)
+                      edge (bake def)
+          ;
+    \end{tikzpicture}
+    }
+
+    \vskip 2em
+    \uncover<3- >{\partialpath{stove.broil}{\node [root node] {}}{\node [definition] {broil}}{}}
+    \vskip 0.75em
+    \uncover<4>{\texttt{stove.broil} is defined at \textsl{stove.py:4:5}}
+
     \end{center}
 \end{frame}
 
