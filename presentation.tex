@@ -988,9 +988,50 @@
 
 \begin{frame}[fragile]
     \frametitle{Stack graphs}
+    \uncover<2-3>{\highlightdef{def}}
+    \uncover<  3>{\highlightboth{import}}
+    \uncover<2-3>{\highlightref{ref}}
+    \begin{center}
+    \begin{minipage}[t]{9em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
+        def bake():
+            pass
 
-    \uncover<2>{\highlightdef{def}}
-    \uncover<3>{\highlightdef{mod}}
+        def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?():
+            pass
+
+        def saute():
+            pass
+    \end{minted}
+    \end{minipage}
+    \hspace{0.5em}
+    \begin{minipage}[t]{11em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
+        from stove import ?\tikzmark{import_start}?broil?\tikzmark{import_end}?
+
+        ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
+    \end{minted}
+    \end{minipage}
+    \end{center}
+    \uncover<3>{\curvecodeline%
+      [-]%
+      {[yshift=10pt] pic cs:ref_end}%
+      {+(45:1cm) and +(-155:1cm)}%
+      {[yshift=-4pt] pic cs:import_start}%
+    }
+    \uncover<3>{\curvecodeline%
+      {[xshift=12pt, yshift=10pt] pic cs:import_start}%
+      {+(90:2cm) and +(75:2cm)}%
+      {[xshift=-6pt, yshift=10pt] pic cs:def_end}%
+    }
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Stack graphs}
+
+    \uncover<3>{\highlightdef{def}}
+    \uncover<4>{\highlightdef{mod}}
 
     \begin{center}
 
@@ -1007,11 +1048,12 @@
     \end{minted}
     \end{minipage}
     \hspace{2em}
+    \begin{uncoverenv}<2- >
     \begin{tikzpicture}[baseline={(current bounding box.center)}]
         \node (root)       [root node]                            {};
-        \node (stove)      [highlight node on=<3>]
+        \node (stove)      [highlight node on=<4>]
                            [definition]  [left=of root]           {stove};
-        \node (dot)        [highlight node on=<3>]
+        \node (dot)        [highlight node on=<4>]
                            [pop]         [left=of stove]          {.};
         \node (s1)         [anon scope]  [left=of dot]            {};
 
@@ -1019,7 +1061,7 @@
         \node (s2)         [anon scope]  [above=\scopegap of s1]  {};
         \node (saute def)  [definition]  [left=of s2]             {\sized{saute}};
         \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
-        \node (broil def)  [highlight node on=<2>]
+        \node (broil def)  [highlight node on=<3>]
                            [definition]  [left=of s3]             {\sized{broil}};
         \node (s4)         [anon scope]  [above=\scopegap of s3]  {};
         \node (bake def)   [definition]  [left=of s4]             {\sized{bake}};
@@ -1038,6 +1080,7 @@
                       edge (bake def)
           ;
     \end{tikzpicture}
+    \end{uncoverenv}
 
     \end{center}
 \end{frame}
@@ -1046,8 +1089,8 @@
 \begin{frame}[fragile]
     \frametitle{Stack graphs}
 
-    \uncover<2>{\highlightref{ref}}
-    \uncover<3>{\highlightboth{import}}
+    \uncover<3>{\highlightref{ref}}
+    \uncover<4>{\highlightboth{import}}
 
     \begin{center}
 
@@ -1059,6 +1102,7 @@
     \end{minted}
     \end{minipage}
     \hspace{-7em}
+    \begin{uncoverenv}<2- >
     \begin{tikzpicture}[baseline={([yshift=2em] current bounding box.center)}]
         \node (root)       [root node]                            {};
         \node (kitchen)    [definition]  [right=of root]          {kitchen};
@@ -1066,16 +1110,16 @@
         \node (k1)         [anon scope]  [right=of dot]           {};
 
         \node (k2)         [anon scope]  [above=\scopegap of k1]  {};
-        \node (broil ref)  [highlight node on=<2>]
+        \node (broil ref)  [highlight node on=<3>]
                            [reference]   [right=of k2]            {broil};
         \node (k3)         [anon scope]  [above=\scopegap of k2]  {};
-        \node (import def) [highlight node on=<3>]
+        \node (import def) [highlight node on=<4>]
                            [pop]         [right=of k3]            {broil};
-        \node (import ref) [highlight node on=<3>]
+        \node (import ref) [highlight node on=<4>]
                            [push]        [right=of import def]    {broil};
-        \node (import dot) [highlight node on=<3>]
+        \node (import dot) [highlight node on=<4>]
                            [push]        [right=of import ref]    {.};
-        \node (import mod) [highlight node on=<3>]
+        \node (import mod) [highlight node on=<4>]
                            [push]        [right=of import dot]    {stove};
         \node (k4)         [anon scope]  [above=\scopegap of k3]  {};
 
@@ -1094,6 +1138,7 @@
           (import mod) edge [overlay, in control=+(-60:3cm), out control=+(-90:4cm)] (root)
           ;
     \end{tikzpicture}
+    \end{uncoverenv}
 
     \end{center}
 \end{frame}
