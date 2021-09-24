@@ -1539,6 +1539,54 @@
 \end{frame}
 
 
+\section{Partial paths}
+
+\begin{frame}
+    \sectionpage
+\end{frame}
+
+
+\begin{frame}[t]
+    \frametitle{Are we done?}
+    \vskip 2em
+    \begin{tikzpicture}
+        \node (bar) at(0,0) [
+            rectangle, anchor=west,
+            minimum width=\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=gray!20,
+        ] {};
+
+        \node (query) at(bar.east) [
+            rectangle, anchor=east,
+            minimum width=0.8\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=blue!20,
+        ] {};
+
+        \node at(bar.west) [
+            rectangle, anchor=west, inner xsep=2ex,
+            text height=1.5ex, text depth=0.25ex,
+            text=black,
+        ] {Index};
+        \node at(bar.east) [
+            rectangle, anchor=east, inner xsep=2ex,
+            text height=1.5ex, text depth=0.25ex,
+            text=black,
+        ] {Query};
+    \end{tikzpicture}
+
+    \begin{center}
+        We're still doing too much work at query time!
+    \end{center}
+
+    \begin{center}
+        Can we shift more of the work to index time, \\
+        while still remaining incremental?
+    \end{center}
+\end{frame}
+
+
 \begin{frame}[fragile]
     \frametitle{Partial paths}
 
@@ -1648,6 +1696,81 @@
     \uncover<3- >{\partialpath{stove.broil}{\node [root node] {}}{\node [definition] {broil}}{}}
     \vskip 0.75em
     \uncover<4>{\texttt{stove.broil} is defined at \textsl{stove.py:4:5}}
+
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Partial paths}
+
+    \begin{center}
+
+    \begin{minipage}{12em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=chef.py,escapeinside=??]{python}
+        from kitchen import ?\tikzmark{chef_import}?Stove
+
+        stove?\tikzmark{instance_def}? = Stove?\tikzmark{class_ref}?()
+        stove?\tikzmark{instance_ref}?.?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
+    \end{minted}
+    \end{minipage}
+    \hspace{-5em}
+    \scalebox{0.75}{
+    \begin{tikzpicture}[baseline={(current bounding box.center)}]
+        \node (root)       [root node]                            {};
+        \node (chef)       [definition]  [right=3em of root]      {chef};
+        \node (dot)        [pop]         [right=of chef]          {.};
+        \node (c1)         [anon scope]  [right=of dot]           {};
+
+        \node (c2)         [anon scope]  [above=\scopegap of c1]  {};
+        \node (stove ref)  [reference]   [right=of c2]            {stove};
+        \node (member dot) [push]        [right=of stove ref]     {.};
+        \node (broil ref)  [reference]   [right=of member dot]    {broil};
+        \node (c3)         [anon scope]  [above=\scopegap of c2]  {};
+        \node (stove def)  [definition]  [right=of c3]            {stove};
+        \node (Stove call) [push]        [right=of stove def]     {()};
+        \node (Stove ref)  [reference]   [right=of Stove call]    {Stove};
+        \node (c4)         [anon scope]  [above=\scopegap of c3]  {};
+        \node (import def) [pop]         [right=of c4]            {Stove};
+        \node (import ref) [push]        [right=of import def]    {Stove};
+        \node (import dot) [push]        [right=of import ref]    {.};
+        \node (import mod) [push]        [right=of import dot]    {kitchen};
+        \node (c5)         [anon scope]  [above=\scopegap of c4]  {};
+
+        \path [-Stealth]
+          (root)       edge (chef)
+          (chef)       edge (dot)
+          (dot)        edge (c1)
+          (c1)         edge (c2)
+          (broil ref)  edge [highlight inner edge on=<2- >] (member dot)
+          (member dot)  edge [highlight inner edge on=<2- >] (stove ref)
+          (stove ref)  edge [highlight inner edge on=<2- >] (c2)
+          (c2)         edge [highlight inner edge on=<2- >] (c3)
+          (c3)         edge (c4)
+                       edge [highlight inner edge on=<2- >] (stove def)
+          (stove def)  edge [highlight inner edge on=<2- >] (Stove call)
+          (Stove call) edge [highlight inner edge on=<2- >] (Stove ref)
+          (Stove ref)  edge [highlight inner edge on=<2- >] 
+                            [in control=+(-65:1cm), out control=+(90:1cm)] (c4)
+          (c4)         edge (c5)
+                       edge [highlight inner edge on=<2- >] (import def)
+          (import def) edge [highlight inner edge on=<2- >] (import ref)
+          (import ref) edge [highlight inner edge on=<2- >] (import dot)
+          (import dot) edge [highlight inner edge on=<2- >] (import mod)
+          (import mod) edge [overlay, in control=+(-45:3cm), out control=+(-90:6cm)]
+                            [highlight end edge on=<2- >] (root)
+          ;
+    \end{tikzpicture}
+    }
+
+    \vskip 3em
+    \uncover<3- >{\partialpath{}{\node [reference] {broil}}{\node [root node]{}}{kitchen.Stove().broil}}
+    \vskip 0.75em
+    \uncover<4>{
+        If you can find what \texttt{kitchen.Stove} resolves to and can call it \\
+        then the result should have a member named \texttt{broil} \\
+        which the reference at \textsl{chef.py:4:7} resolves to.
+    }
 
     \end{center}
 \end{frame}
