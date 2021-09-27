@@ -383,48 +383,6 @@
 \end{frame}
 
 
-% separate_files_star
-\begin{frame}[fragile]
-    \frametitle{Why is this hard?}
-    \uncover<2-3>{\highlightdef{def}}
-    \uncover<  3>{\highlightboth{import}}
-    \uncover<2-3>{\highlightref{ref}}
-    \begin{center}
-    \begin{minipage}[t]{9em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
-        def bake():
-            pass
-
-        def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?():
-            pass
-
-        def saute():
-            pass
-    \end{minted}
-    \end{minipage}
-    \hspace{0.5em}
-    \begin{minipage}[t]{11em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
-        from stove import ?\tikzmark{import_start}?*?\tikzmark{import_end}?
-
-        ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
-    \end{minted}
-    \end{minipage}
-    \end{center}
-    \uncover<3>{\curvecodeline%
-      [-]%
-      {[yshift=10pt] pic cs:ref_end}%
-      {+(45:1cm) and +(-105:1cm)}%
-      {[xshift=1pt, yshift=-2pt] pic cs:import_start}%
-    }
-    \uncover<3>{\curvecodeline%
-      {[xshift=3pt, yshift=10pt] pic cs:import_start}%
-      {+(90:2cm) and +(75:2cm)}%
-      {[xshift=-6pt, yshift=10pt] pic cs:def_end}%
-    }
-\end{frame}
-
-
 % three_files
 \begin{frame}[fragile]
     \uncover<2-3>{\highlightdef{def}}
