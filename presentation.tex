@@ -1560,7 +1560,7 @@
 \begin{frame}[fragile]
     \frametitle{The more complex example}
     \begin{center}
-    \scalebox{0.65}{
+    \scalebox{0.6}{
     \begin{tikzpicture}
         \node (root)       [highlight node on={<2,3,4,20,27>}]
                            [root node]                            {};
@@ -1582,18 +1582,20 @@
         \node (call)       [highlight node on={<2,33>}]
                            [pop]  [left=of Stove def]             {()};
         \node (instance)   [highlight node on={<2,34>}]
-                           [pop]  [left=of call]                  {.};
-        \node (m1)         [highlight node on={<2,35>}]
-                           [anon scope]  [left=of instance]       {};
+                           [exported scope]  [left=of call]       {IM};
+        \node (member)     [highlight node on={<2,35>}]
+                           [pop]  [left=of instance]              {.};
+        \node (m1)         [highlight node on={<2,36>}]
+                           [anon scope]  [left=of member]         {};
 
         \setwidestsymbol{broil}
-        \node (m2)         [highlight node on={<2,36>}]
+        \node (m2)         [highlight node on={<2,37>}]
                            [anon scope]  [above=\scopegap of m1]  {};
         \node (saute def)  [highlight node on={<2>}]
                            [definition]  [left=of m2]             {\sized{saute}};
-        \node (m3)         [highlight node on={<2,37>}]
+        \node (m3)         [highlight node on={<2,38>}]
                            [anon scope]  [above=\scopegap of m2]  {};
-        \node (broil def)  [highlight node on={<2,5,38>}]
+        \node (broil def)  [highlight node on={<2,5,39>}]
                            [definition]  [left=of m3]             {\sized{broil}};
         \node (m4)         [highlight node on=<2>]
                            [anon scope]  [above=\scopegap of m3]  {};
@@ -1611,12 +1613,13 @@
                       edge [highlight inner edge on=<5>, show path on=<32>] (Stove def)
           (Stove def) edge [highlight inner edge on=<5>, show path on=<33>] (call)
           (call)      edge [highlight inner edge on=<5>, show path on=<34>] (instance)
-          (instance)  edge [highlight inner edge on=<5>, show path on=<35>] (m1)
-          (m1)        edge [highlight inner edge on=<5>, show path on=<36>] (m2)
-          (m2)        edge [highlight inner edge on=<5>, show path on=<37>] (m3)
+          (instance)  edge [highlight inner edge on=<5>, show path on=<35>] (member)
+          (member)    edge [highlight inner edge on=<5>, show path on=<36>] (m1)
+          (m1)        edge [highlight inner edge on=<5>, show path on=<37>] (m2)
+          (m2)        edge [highlight inner edge on=<5>, show path on=<38>] (m3)
                       edge (saute def)
           (m3)        edge (m4)
-                      edge [highlight end edge on=<5>, show path on=<38>]   (broil def)
+                      edge [highlight end edge on=<5>, show path on=<39>]   (broil def)
           (m4)        edge (m5)
                       edge (bake def)
           ;
@@ -1713,9 +1716,9 @@
     \vskip 2em
     \begin{minipage}{0.5\textwidth}
     \begin{overprint}
-        \onslide<6,38>                  \currentsymbolstack{}
-        \onslide<7,34-37>               \currentsymbolstack{broil}
-        \onslide<8,12,33>               \currentsymbolstack{.broil}
+        \onslide<6,39>                  \currentsymbolstack{}
+        \onslide<7,35-38>               \currentsymbolstack{broil}
+        \onslide<8,12,33-34>            \currentsymbolstack{.broil}
         \onslide<9-11>                  \currentsymbolstack{stove.broil}
         \onslide<13,16,32>              \currentsymbolstack{().broil}
         \onslide<14-15,17,22-24,29-31>  \currentsymbolstack{Stove().broil}
@@ -1884,7 +1887,7 @@
     \vskip 2em
     \uncover<3- >{\partialpath{stove.broil}{\node [root node] {}}{\node [definition] {broil}}{}}
     \vskip 0.75em
-    \uncover<4>{\texttt{stove.broil} is defined at \textsl{stove.py:4:5}}
+    \uncover<4>{\texttt{stove.broil} is defined at \textsl{stove.py:4:5}.}
 
     \end{center}
 \end{frame}
@@ -1937,9 +1940,215 @@
         \begin{minipage}[c][2cm][c]{0.45\textwidth}
             \begin{center}
             The reference at \textsl{kitchen.py:3:1} \\
-            is defined at \textsl{stove.py:4:5}
+            is defined at \textsl{stove.py:4:5}. \\
             \end{center}
         \end{minipage}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[t,fragile]
+    \frametitle{The more complex example}
+
+    \begin{center}
+
+    \begin{minipage}{10em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label={\tikzmark{file_start}stove.py\tikzmark{file_end}},escapeinside=??]{python}
+        ?\tikzmark{class_start}?class?\tikzmark{class_end}? ?\tikzmark{Stove_start}?Stove?\tikzmark{Stove_end}?(object):
+            def bake(self):
+                pass
+
+            def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?(self):
+                pass
+
+            def saute(self):
+                pass
+    \end{minted}
+    \end{minipage}
+    \hspace{2em}
+    \scalebox{0.6}{
+    \begin{tikzpicture}[baseline={(current bounding box.center)}]
+        \node (root)       [root node]                            {};
+        \node (stove)      [definition]  [below=4em of root] {stove};
+        \node (dot)        [pop]         [left=of stove]          {.};
+        \node (s1)         [anon scope]  [left=of dot]            {};
+
+        \node (s2)         [anon scope]  [above=\scopegap of s1]  {};
+        \node (Stove def)  [definition]  [left=of s2]             {Stove};
+        \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
+
+        \node (call)       [pop]  [left=of Stove def]             {()};
+        \node (instance)   [exported scope]  [left=of call]       {IM};
+        \node (member)     [pop]  [left=of instance]              {.};
+        \node (m1)         [anon scope]  [left=of member]         {};
+
+        \setwidestsymbol{broil}
+        \node (m2)         [anon scope]  [above=\scopegap of m1]  {};
+        \node (saute def)  [definition]  [left=of m2]             {\sized{saute}};
+        \node (m3)         [anon scope]  [above=\scopegap of m2]  {};
+        \node (broil def)  [definition]  [left=of m3]             {\sized{broil}};
+        \node (m4)         [anon scope]  [above=\scopegap of m3]  {};
+        \node (bake def)   [definition]  [left=of m4]             {\sized{bake}};
+        \node (m5)         [anon scope]  [above=\scopegap of m4]  {};
+
+        \path [-Stealth]
+          (root)      edge [highlight inner edge on=<2- >] (stove)
+          (stove)     edge [highlight inner edge on=<2- >] (dot)
+          (dot)       edge [highlight inner edge on=<2- >] (s1)
+          (s1)        edge [highlight inner edge on=<2- >] (s2)
+          (s2)        edge (s3)
+                      edge [highlight inner edge on=<2- >] (Stove def)
+          (Stove def) edge [highlight inner edge on=<2- >] (call)
+          (call)      edge [highlight end edge on=<2- >] (instance)
+          (instance)  edge (member)
+          (member)    edge (m1)
+          (m1)        edge (m2)
+          (m2)        edge (m3)
+                      edge (saute def)
+          (m3)        edge (m4)
+                      edge (broil def)
+          (m4)        edge (m5)
+                      edge (bake def)
+          ;
+    \end{tikzpicture}
+    }
+    \hspace{3em}
+
+    \uncover<3- >{\partialpath{stove.Stove()}{\node [root node]{}}{\node [exported scope] {IM}}{}}
+    \vskip 0.75em
+    \uncover<4>{
+        Invoking \texttt{stove.Stove} \\
+        gives you an instance of the \texttt{Stove} class. \\
+    }
+
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[t,fragile]
+    \frametitle{The more complex example}
+
+    \begin{center}
+
+    \begin{minipage}{10em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label={\tikzmark{file_start}stove.py\tikzmark{file_end}},escapeinside=??]{python}
+        ?\tikzmark{class_start}?class?\tikzmark{class_end}? ?\tikzmark{Stove_start}?Stove?\tikzmark{Stove_end}?(object):
+            def bake(self):
+                pass
+
+            def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?(self):
+                pass
+
+            def saute(self):
+                pass
+    \end{minted}
+    \end{minipage}
+    \hspace{2em}
+    \scalebox{0.6}{
+    \begin{tikzpicture}[baseline={(current bounding box.center)}]
+        \node (root)       [root node]                            {};
+        \node (stove)      [definition]  [below=4em of root] {stove};
+        \node (dot)        [pop]         [left=of stove]          {.};
+        \node (s1)         [anon scope]  [left=of dot]            {};
+
+        \node (s2)         [anon scope]  [above=\scopegap of s1]  {};
+        \node (Stove def)  [definition]  [left=of s2]             {Stove};
+        \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
+
+        \node (call)       [pop]  [left=of Stove def]             {()};
+        \node (instance)   [exported scope]  [left=of call]       {IM};
+        \node (member)     [pop]  [left=of instance]              {.};
+        \node (m1)         [anon scope]  [left=of member]         {};
+
+        \setwidestsymbol{broil}
+        \node (m2)         [anon scope]  [above=\scopegap of m1]  {};
+        \node (saute def)  [definition]  [left=of m2]             {\sized{saute}};
+        \node (m3)         [anon scope]  [above=\scopegap of m2]  {};
+        \node (broil def)  [definition]  [left=of m3]             {\sized{broil}};
+        \node (m4)         [anon scope]  [above=\scopegap of m3]  {};
+        \node (bake def)   [definition]  [left=of m4]             {\sized{bake}};
+        \node (m5)         [anon scope]  [above=\scopegap of m4]  {};
+
+        \path [-Stealth]
+          (root)      edge (stove)
+          (stove)     edge (dot)
+          (dot)       edge (s1)
+          (s1)        edge (s2)
+          (s2)        edge (s3)
+                      edge (Stove def)
+          (Stove def) edge (call)
+          (call)      edge (instance)
+          (instance)  edge [highlight inner edge on=<1- >] (member)
+          (member)    edge [highlight inner edge on=<1- >] (m1)
+          (m1)        edge [highlight inner edge on=<1- >] (m2)
+          (m2)        edge [highlight inner edge on=<1- >] (m3)
+                      edge (saute def)
+          (m3)        edge (m4)
+                      edge [highlight end edge on=<1- >] (broil def)
+          (m4)        edge (m5)
+                      edge (bake def)
+          ;
+    \end{tikzpicture}
+    }
+    \hspace{3em}
+
+    \uncover<2- >{\partialpath{.broil}{\node [exported scope] {IM}}{\node [definition]{broil}}{}}
+    \vskip 0.75em
+    \uncover<3>{
+        The \texttt{Stove} class \\
+        has an instance member named \texttt{broil} \\
+        defined at \textsl{stove.py:5:9}. \\
+    }
+
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The more complex example}
+
+    \begin{center}
+
+    \begin{minipage}[t]{15em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label={\tikzmark{file_start}kitchen.py\tikzmark{file_end}},escapeinside=??]{python}
+        from ?\tikzmark{import_start}?stove?\tikzmark{import_end}? import ?\tikzmark{star_start}?*?\tikzmark{star_end}?
+    \end{minted}
+    \end{minipage}
+    \hspace{2em}
+    \scalebox{0.6}{
+        \begin{tikzpicture}[baseline={([yshift=1em] current bounding box.center)}]
+        \node (root)         [root node]                            {};
+        \node (kitchen)      [definition]  [above=4em of root]  {kitchen};
+        \node (dot)          [pop]         [left=of kitchen]        {.};
+        \node (k1)           [anon scope]  [left=of dot]            {};
+
+        \node (k2)           [anon scope]  [above=\scopegap of k1]  {};
+        \node (reimport dot) [push]        [left=of k2]             {.};
+        \node (reimport mod) [push]        [left=of reimport dot]   {stove};
+        \node (k3)           [anon scope]  [above=\scopegap of k2]  {};
+
+        \path [-Stealth]
+          (root)         edge [highlight inner edge on=<2- >] (kitchen)
+          (kitchen)      edge [highlight inner edge on=<2- >] (dot)
+          (dot)          edge [highlight inner edge on=<2- >] (k1)
+          (k1)           edge [highlight inner edge on=<2- >] (k2)
+          (k2)           edge (k3)
+                         edge [highlight inner edge on=<2- >] (reimport dot)
+          (reimport dot) edge [highlight inner edge on=<2- >] (reimport mod)
+          (reimport mod) edge [overlay, in control=+(135:2cm), out control=+(-90:1.5cm)]
+                              [highlight end edge on=<2- >] (root)
+          ;
+    \end{tikzpicture}
+    }
+
+    \vskip 3em
+    \uncover<3- >{\partialpath{kitchen.}{\node [root node] {}}{\node [root node]{}}{stove.}}
+    \vskip 0.75em
+    \uncover<4>{
+        If you are looking for \texttt{kitchen.[anything]} \\
+        then you might find it at \texttt{stove.[anything]}. \\
+    }
+
     \end{center}
 \end{frame}
 
@@ -1958,8 +2167,8 @@
     \end{minted}
     \end{minipage}
     \hspace{-5em}
-    \scalebox{0.75}{
-    \begin{tikzpicture}[baseline={(current bounding box.center)}]
+    \scalebox{0.6}{
+        \begin{tikzpicture}[baseline={([yshift=1em] current bounding box.center)}]
         \node (root)       [root node]                            {};
         \node (chef)       [definition]  [right=3em of root]      {chef};
         \node (dot)        [pop]         [right=of chef]          {.};
@@ -2012,9 +2221,162 @@
     \uncover<4>{
         If you can find what \texttt{kitchen.Stove} resolves to and can call it \\
         then the result should have a member named \texttt{broil} \\
-        which the reference at \textsl{chef.py:4:7} resolves to.
+        which the reference at \textsl{chef.py:4:7} resolves to. \\
     }
 
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The more complex example}
+
+    \vskip 2em
+    \begin{center}
+        \begin{minipage}[t]{0.45\textwidth}
+            \begin{center}
+            \partialpath{}{\node [reference] {broil}}{\node [root node]{}}{kitchen.Stove().broil}
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2>
+            \; $+$ \;
+        \begin{minipage}[t]{0.45\textwidth}
+            \begin{center}
+            \partialpath{kitchen.}{\node [root node] {}}{\node [root node]{}}{stove.}
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+        \vskip 2em
+        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+            \begin{center}
+            If you can find what \texttt{kitchen.Stove} \\
+            resolves to and can call it, then the \\
+            result should have a member \\
+            named \texttt{broil} which the reference at \\
+            \textsl{chef.py:4:7} resolves to.
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2>
+            \; $+$ \;
+        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+            \begin{center}
+            \texttt{stove.broil} is defined at \textsl{stove.py:4:5}.
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The more complex example}
+
+    \vskip 2em
+    \begin{center}
+        \begin{minipage}[t]{0.45\textwidth}
+            \begin{center}
+            \partialpath{}{\node [reference] {broil}}{\node [root node]{}}{stove.Stove().broil}
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2>
+            \; $+$ \;
+        \begin{minipage}[t]{0.45\textwidth}
+            \begin{center}
+            \partialpath{stove.Stove()}{\node [root node]{}}{\node [exported scope] {IM}}{}
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+        \vskip 2em
+        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+            \begin{center}
+            If you can find what \texttt{stove.Stove} \\
+            resolves to and can call it, then the \\
+            result should have a member \\
+            named \texttt{broil} which the reference at \\
+            \textsl{chef.py:4:7} resolves to.
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2>
+            \; $+$ \;
+        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+            \begin{center}
+            Invoking \texttt{stove.Stove} gives you \\
+            an instance of the \texttt{Stove} class.
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The more complex example}
+
+    \vskip 2em
+    \begin{center}
+        \begin{minipage}[t]{0.45\textwidth}
+            \begin{center}
+            \partialpath{}{\node [reference] {broil}}{\node [exported scope]{IM}}{.broil}
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2>
+            \; $+$ \;
+        \begin{minipage}[t]{0.45\textwidth}
+            \begin{center}
+            \partialpath{.broil}{\node [exported scope] {IM}}{\node [definition]{broil}}{}
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+        \vskip 2em
+        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+            \begin{center}
+            If you can find what \texttt{stove.Stove} \\
+            resolves to and can call it, then the \\
+            result should have a member \\
+            named \texttt{broil} which the reference at \\
+            \textsl{chef.py:4:7} resolves to.
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2>
+            \; $+$ \;
+        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+            \begin{center}
+            The \texttt{Stove} class has an \\
+            instance member named \texttt{broil} \\
+            defined at \textsl{stove.py:5:9}.
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The more complex example}
+
+    \vskip 2em
+    \begin{center}
+        \begin{minipage}[t]{0.45\textwidth}
+            \begin{center}
+            \partialpath{}{\node [reference] {broil}}{\node [definition]{broil}}{}
+            \end{center}
+        \end{minipage}
+        \phantom{\; $+$ \;}
+        \begin{minipage}[t]{0.45\textwidth}
+            \strut
+        \end{minipage}
+        \vskip 2em
+        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+            \begin{center}
+            The definition at \textsl{stove.py:5:9} \\
+            is what the reference at \\
+            \textsl{chef.py:4:7} resolves to.
+            \end{center}
+        \end{minipage}
+        \phantom{\; $+$ \;}
+        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+            \strut
+        \end{minipage}
     \end{center}
 \end{frame}
 
