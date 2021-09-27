@@ -207,6 +207,25 @@
 }
 
 
+\newcommand{\highlightparse}[2]{%
+    \tikz[remember picture]
+      \draw [overlay, draw=none, fill={#1}]
+        ([xshift=-1pt, yshift=5pt] pic cs:#2_start)
+        rectangle
+        ([xshift=1pt, yshift=-2pt] pic cs:#2_end)
+        ;%
+}
+
+\newcommand{\highlightcapture}[2]{%
+    \tikz[remember picture]
+      \draw [overlay, draw=none, fill={#1}]
+        ([xshift=-1pt, yshift=8pt] pic cs:#2_capture_start)
+        rectangle
+        ([xshift=1pt, yshift=-2pt] pic cs:#2_capture_end)
+        ;
+}
+
+
 \makeatletter
 \tikzset{
     tikzmark suffix=-\theframenumber-\the\beamer@slideinframe
@@ -2377,6 +2396,123 @@
         \begin{minipage}[c][2cm][c]{0.45\textwidth}
             \strut
         \end{minipage}
+    \end{center}
+\end{frame}
+
+
+\section{Producing stack graphs}
+
+\begin{frame}
+    \sectionpage
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Why is this hard?}
+    \begin{itemize}
+        \item \textcolor<2,4>{lightgray}{Different languages have different name binding rules.}
+        \item \textcolor<2,4>{lightgray}{Some of those rules can be quite complex.}
+        \item \textcolor<3,4>{lightgray}{The result might depend on intermediate files.}
+        \item \textcolor<2,3>{lightgray}{We don't want to require manual per-repo configuration.}
+        \item \textcolor<3,4>{lightgray}{We need incremental processing to handle our scale.}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \emph{[Ed: Insert tree-sitter slide here]}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{tree-sitter}
+    \begin{center}
+    \begin{minipage}{0.75\textwidth}
+    \begin{minipage}{9em}
+    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py]{python}
+        def bake():
+            pass
+
+        def broil():
+            pass
+
+        def saute():
+            pass
+
+        broil()
+    \end{minted}
+    \end{minipage}
+    \end{minipage}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{tree-sitter}
+
+    \uncover<3-4>{\highlightparse{blue!25}{func}}
+    \uncover<3-4>{\highlightcapture{blue!25}{func}}
+    \uncover<4>  {\highlightparse{yellow!50}{name}}
+    \uncover<4>  {\highlightcapture{yellow!50}{name}}
+
+    \begin{center}
+    \begin{minipage}{0.75\textwidth}
+    \begin{minipage}{12em}
+    \begin{minted}[autogobble,fontsize=\tiny,escapeinside=??]{text}
+        (module [0, 0] - [10, 0]
+          (function_definition [0, 0] - [1, 8]
+            name: (identifier [0, 4] - [0, 8])
+            parameters: (parameters [0, 8] - [0, 10])
+            body: (block [1, 4] - [1, 8]
+              (pass_statement [1, 4] - [1, 8])))
+          ?\tikzmark{func_start}?(function_definition [3, 0] - [4, 8]
+            name: ?\tikzmark{name_start}?(identifier [3, 4] - [3, 9])?\tikzmark{name_end}?
+            parameters: (parameters [3, 9] - [3, 11])
+            body: (block [4, 4] - [4, 8]
+              (pass_statement [4, 4] - [4, 8])))     ?\tikzmark{func_end}?
+          (function_definition [6, 0] - [7, 8]
+            name: (identifier [6, 4] - [6, 9])
+            parameters: (parameters [6, 9] - [6, 11])
+            body: (block [7, 4] - [7, 8]
+              (pass_statement [7, 4] - [7, 8])))
+          (expression_statement [9, 0] - [9, 7]
+            (call [9, 0] - [9, 7]
+              function: (identifier [9, 0] - [9, 5])
+              arguments: (argument_list [9, 5] - [9, 7]))))
+    \end{minted}
+    \end{minipage}
+    \hspace{1em}
+    \begin{minipage}{15em}
+    \begin{uncoverenv}<2- >
+    \begin{minted}[autogobble,escapeinside=??,fontsize=\footnotesize]{text}
+        (function_definition
+          name: (identifier) ?\tikzmark{name_capture_start}?@name?\tikzmark{name_capture_end}?) ?\tikzmark{func_capture_start}?@function?\tikzmark{func_capture_end}?
+    \end{minted}
+    \end{uncoverenv}
+
+    \begin{uncoverenv}<5- >
+    \begin{minted}[autogobble,escapeinside=??,fontsize=\footnotesize]{text}
+        {
+            node @function.def
+            attr (@function.def) kind = "definition"
+            attr (@function.def) symbol = @name
+
+            edge @function.containing_scope -> @function.def
+        }
+    \end{minted}
+    \end{uncoverenv}
+    \begin{uncoverenv}<6>
+    \begin{center}
+    \begin{tikzpicture}
+        \node (s) [anon scope] {};
+        \node (d) [definition] [right=of s] {\textsl{@name}};
+        \path [-Stealth] (s) edge (d);
+    \end{tikzpicture}
+    \end{center}
+    \end{uncoverenv}
+    \end{minipage}
+
+    \end{minipage}
     \end{center}
 \end{frame}
 
