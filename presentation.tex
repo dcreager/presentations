@@ -880,11 +880,11 @@
             refers to \texttt{stove.broil} in some other file
         }
         \\
-        \uncover<4>{+}
+        \uncover<4>{$+$}
         \\
         \uncover<2,4>{\texttt{stove.broil} is defined at \textsl{stove.py:4:5}}
         \\
-        \uncover<4>{=}
+        \uncover<4>{$=$}
         \\
         \uncover<4>{
             The reference at \textsl{kitchen.py:3:1} \\
@@ -1123,7 +1123,7 @@
 
     \begin{uncoverenv}<2- >
         \begin{center}
-            +
+            $+$
         \end{center}
         If you are looking for \texttt{kitchen.[anything]} \\
         then you might find it at \texttt{stove.[anything]}.
@@ -1147,7 +1147,7 @@
 
     \begin{uncoverenv}<2- >
         \begin{center}
-            +
+            $+$
         \end{center}
         Invoking \texttt{stove.Stove} \\
         gives you an instance of the \texttt{Stove} class.
@@ -1171,7 +1171,7 @@
 
     \begin{uncoverenv}<2- >
         \begin{center}
-            +
+            $+$
         \end{center}
         The \texttt{Stove} class \\
         has an instance member named \texttt{broil} \\
@@ -1824,7 +1824,7 @@
     }
 
     \vskip 5em
-    \uncover<3- >{\partialpath{\$1}{\node [reference] {broil}}{\node [root node] {}}{stove.broil \$1}}
+    \uncover<3- >{\partialpath{}{\node [reference] {broil}}{\node [root node] {}}{stove.broil}}
     \vskip 0.75em
     \uncover<4>{The reference at \textsl{kitchen.py:3:1}  refers to \texttt{stove.broil} in some other file}
 
@@ -1891,7 +1891,61 @@
 
 
 \begin{frame}[fragile]
-    \frametitle{Partial paths}
+    \frametitle{Concatenating partial paths}
+
+    \vskip 2em
+    \begin{center}
+        \begin{minipage}[t]{0.45\textwidth}
+            \begin{center}
+            \partialpath{}{\node [reference] {broil}}{\node [root node] {}}{stove.broil}
+            \end{center}
+        \end{minipage}
+            \; $+$ \;
+        \begin{minipage}[t]{0.45\textwidth}
+            \begin{center}
+            \partialpath{stove.broil}{\node [root node] {}}{\node [definition] {broil}}{}
+            \end{center}
+        \end{minipage}
+        \vskip 2em
+        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+            \begin{center}
+            The reference at \textsl{kitchen.py:3:1} \\
+            refers to \texttt{stove.broil} in some other file
+            \end{center}
+        \end{minipage}
+            \; $+$ \;
+        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+            \begin{center}
+            \texttt{stove.broil} is defined at \textsl{stove.py:4:5}
+            \end{center}
+        \end{minipage}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Concatenating partial paths}
+
+    \vskip 2em
+    \begin{center}
+        \begin{minipage}[t]{\textwidth}
+            \begin{center}
+            \partialpath{}{\node [reference] {broil}}{\node [definition] {broil}}{}
+            \end{center}
+        \end{minipage}
+        \vskip 2em
+        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+            \begin{center}
+            The reference at \textsl{kitchen.py:3:1} \\
+            is defined at \textsl{stove.py:4:5}
+            \end{center}
+        \end{minipage}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The more complex example}
 
     \begin{center}
 
