@@ -1,8 +1,10 @@
 \documentclass[aspectratio=169]{beamer}
 \mode<presentation>
 
+\usepackage{calc}
 \usepackage{relsize}
 \usepackage{graphicx}
+\usepackage[overlay,absolute]{textpos}
 
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta}
@@ -23,7 +25,7 @@
 \usemintedstyle{colorful}
 
 \usepackage{fontspec}
-\setsansfont{Arial}
+\setsansfont{Helvetica Neue}
 \setmonofont[Scale=0.8]{Iosevka Term}
 
 \newlength{\scopegap}
@@ -245,6 +247,24 @@
     \symbolstack{#4}
 }
 
+\newlength{\titlewidth}
+\newcommand{\flattitle}[3]{
+    \settowidth{\titlewidth}{\textbf{\LARGE #3}}
+    \begin{textblock*}{\titlewidth}(#1,#2)
+        \textbf{\LARGE #3}
+    \end{textblock*}
+}
+\newcommand{\shadowedtitle}[3]{
+    \settowidth{\titlewidth}{\textbf{\LARGE #3}}
+    \addtolength{\titlewidth}{0.5mm}
+    \begin{textblock*}{\titlewidth}(#1+0.4mm,#2+0.4mm)
+        \textbf{\LARGE #3}
+    \end{textblock*}
+    \begin{textblock*}{\titlewidth}(#1,#2)
+        \textbf{\textcolor{white}{\LARGE #3}}
+    \end{textblock*}
+}
+
 \begin{document}
 
 \begin{frame}
@@ -255,7 +275,14 @@
 \section{Code Navigation}
 
 \begin{frame}
-    \sectionpage
+    \begin{textblock*}{160mm}(0mm,0mm)
+        % Ivan Radic
+        % "Close-up of a compass graffiti on the ground"
+        % CC-BY-2.0
+        % https://flic.kr/p/2kGKMtM
+        \includegraphics[width=160mm]{images/compass.jpg}
+    \end{textblock*}
+    \shadowedtitle{10mm}{10mm}{Code Navigation}
 \end{frame}
 
 % easy
@@ -290,7 +317,14 @@
 \section{Why is this hard?}
 
 \begin{frame}
-    \sectionpage
+    \begin{textblock*}{160mm}(0mm,0mm)
+        % Mustang Joe
+        % "I swear..."
+        % Public domain
+        % https://flic.kr/p/VSLwD6
+        \includegraphics[width=160mm]{images/facepalm.jpg}
+    \end{textblock*}
+    \shadowedtitle{140mm - \titlewidth}{25mm}{Why is this hard?}
 \end{frame}
 
 
@@ -634,8 +668,14 @@
 
 
 \begin{frame}
-    \textlarger{Oh is that all?} \\
-    \emph{[Ed: Insert piece of cake picture here]}
+    \begin{textblock*}{160mm}(0mm,0mm)
+        % Marco Verch
+        % "Close-up, a piece of yellow cake with red currant berries"
+        % CC-BY-2.0
+        % https://flic.kr/p/2jikJsQ
+        \includegraphics[width=160mm]{images/cake.jpg}
+    \end{textblock*}
+    \flattitle{10mm}{80mm}{Oh is that all?}
 \end{frame}
 
 
@@ -851,7 +891,14 @@
 \section{Incremental results}
 
 \begin{frame}
-    \sectionpage
+    \begin{textblock*}{160mm}(0mm,-15mm)
+        % Katja Schulz
+        % "Inchworm"
+        % CC-BY-2.0
+        % https://flic.kr/p/PJMP4w
+        \includegraphics[width=160mm]{images/inchworm.jpg}
+    \end{textblock*}
+    \shadowedtitle{32mm}{7mm}{Incremental results}
 \end{frame}
 
 
@@ -1218,7 +1265,14 @@
 \section{Stack graphs}
 
 \begin{frame}
-    \sectionpage
+    \begin{textblock*}{160mm}(0mm,0mm)
+        % Marco Verch
+        % "Stack of pancakes with berries on a plate"
+        % CC-BY-2.0
+        % https://flic.kr/p/2jYUh8M
+        \includegraphics[width=160mm]{images/pancakes.jpg}
+    \end{textblock*}
+    \flattitle{110mm}{10mm}{Stack graphs}
 \end{frame}
 
 
@@ -1753,7 +1807,14 @@
 \section{Partial paths}
 
 \begin{frame}
-    \sectionpage
+    \begin{textblock*}{160mm}(0mm,0mm)
+        % Seattle Municipal Archives
+        % "West Seattle Bridge under construction, circa 1983"
+        % CC-BY-2.0
+        % https://flic.kr/p/7jKWYi
+        \includegraphics[width=160mm]{images/bridge.jpg}
+    \end{textblock*}
+    \shadowedtitle{150mm - \titlewidth}{10mm}{Partial paths}
 \end{frame}
 
 
@@ -2403,7 +2464,14 @@
 \section{Producing stack graphs}
 
 \begin{frame}
-    \sectionpage
+    \begin{textblock*}{160mm}(0mm,-16mm)
+        % Dave Lawler
+        % "Good Morning"
+        % CC-BY-2.0
+        % https://flic.kr/p/WYowT7
+        \includegraphics[width=160mm]{images/pancake-stove.jpg}
+    \end{textblock*}
+    \shadowedtitle{8mm}{80mm}{Making stack graphs}
 \end{frame}
 
 
@@ -2420,7 +2488,14 @@
 
 
 \begin{frame}
-    \emph{[Ed: Insert tree-sitter slide here]}
+    \begin{textblock*}{160mm}(0mm,-16mm)
+        % Tony Guyton
+        % "Treehouse Point"
+        % CC-BY-2.0
+        % https://flic.kr/p/rRrT5F
+        \includegraphics[width=160mm]{images/treehouse.jpg}
+    \end{textblock*}
+    \shadowedtitle{80mm - 0.5\titlewidth}{75mm}{\href{https://tree-sitter.github.io/}{tree-sitter}}
 \end{frame}
 
 
