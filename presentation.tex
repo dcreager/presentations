@@ -25,8 +25,8 @@
 \usemintedstyle{colorful}
 
 \usepackage{fontspec}
-\setsansfont{Helvetica Neue}
-\setmonofont[Scale=0.8]{Iosevka Term}
+\setsansfont{Helvetica Neue Light}
+\setmonofont{Iosevka Term}
 
 \newlength{\scopegap}
 \setlength{\scopegap}{0.9cm}
@@ -66,7 +66,7 @@
 
 \tikzset{symbol text/.style={
     fill=white,
-    text height=1.5ex, text depth=0.25ex, node font=\ttfamily,
+    text height=1.5ex, text depth=0.25ex, node font={\ttfamily \relscale{0.8}},
     inner xsep=7pt,
     minimum size=0.75cm,
 }}
@@ -234,14 +234,14 @@
 }
 \makeatother
 
-\newcommand{\symbolstack}[1]{$\langle \texttt{#1} \rangle$}
+\newcommand{\symbolstack}[1]{$\langle \texttt{\relscale{0.8}#1} \rangle$}
 \newcommand{\currentsymbolstack}[1]{\textsmaller[2]{Symbol stack:} \symbolstack{#1}}
 
 \newcommand{\partialpath}[4]{
     \symbolstack{#1}
     \hspace{0.01em}
     \scalebox{0.75}{\tikz[baseline={([yshift=-0.7ex] current bounding box.center)}] #2;}
-    →
+    \texttt{\relscale{0.8}\textasciitilde\textasciitilde>}  % all that just to get a ~~> ligature
     \scalebox{0.75}{\tikz[baseline={([yshift=-0.7ex] current bounding box.center)}] #3;}
     \hspace{0.01em}
     \symbolstack{#4}
@@ -267,6 +267,8 @@
 
 \setbeamercolor{frametitle}{fg=black}
 \setbeamerfont{frametitle}{series=\bfseries}
+
+\setminted{autogobble,fontsize=\relscale{0.8},frame=single,framesep=6pt,escapeinside=??}
 
 \begin{document}
 
@@ -295,7 +297,7 @@
     \uncover<2-3>{\highlightref{ref}}
     \begin{center}
     \begin{minipage}{9em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
+    \begin{minted}[label=stove.py]{python}
         def bake():
             pass
 
@@ -339,7 +341,7 @@
     \uncover<2-3>{\highlightref{ref}}
     \begin{center}
     \begin{minipage}{9em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
+    \begin{minted}[label=stove.py]{python}
         def ?\tikzmark{def1_start}?broil?\tikzmark{def1_end}?():
             pass
 
@@ -375,7 +377,7 @@
     \uncover<2-3>{\highlightref{ref}}
     \begin{center}
     \begin{minipage}{9em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.rs,escapeinside=??]{rust}
+    \begin{minted}[label=stove.rs]{rust}
         fn ?\tikzmark{def1_start}?broil?\tikzmark{def1_end}?() {}
 
         fn ?\tikzmark{def2_start}?broil?\tikzmark{def2_end}?() {}
@@ -405,7 +407,7 @@
     \uncover<2-3>{\highlightref{ref}}
     \begin{center}
     \begin{minipage}[t]{9em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
+    \begin{minted}[label=stove.py]{python}
         def bake():
             pass
 
@@ -418,7 +420,7 @@
     \end{minipage}
     \hspace{0.5em}
     \begin{minipage}[t]{11em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
+    \begin{minted}[label=kitchen.py]{python}
         from stove import ?\tikzmark{import_start}?broil?\tikzmark{import_end}?
 
         ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
@@ -453,7 +455,7 @@
     \end{center}
     \vskip -1em
     \begin{minipage}[t]{7em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
+    \begin{minted}[label=stove.py]{python}
         def bake():
             pass
 
@@ -466,7 +468,7 @@
     \end{minipage}
     \hspace{0.5em}
     \begin{minipage}[t]{15em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
+    \begin{minted}[label=kitchen.py]{python}
         from stove import ?\tikzmark{kitchen_import_start}?*?\tikzmark{kitchen_import_end}?
     \end{minted}
     \end{minipage}
@@ -477,7 +479,7 @@
     \begin{center}
         \includegraphics[height=2em]{images/chef.png}
     \end{center}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=chef.py,escapeinside=??]{python}
+    \begin{minted}[label=chef.py]{python}
         from kitchen import ?\tikzmark{chef_import_start}?broil?\tikzmark{chef_import_end}?
 
         ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
@@ -518,7 +520,7 @@
     \end{center}
     \vskip -1em
     \begin{minipage}[t]{7em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
+    \begin{minted}[label=stove.py]{python}
         def bake():
             pass
 
@@ -531,7 +533,7 @@
     \end{minipage}
     \hspace{0.5em}
     \begin{minipage}[t]{15em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
+    \begin{minted}[label=kitchen.py]{python}
         from stove import *
 
         def ?\tikzmark{def2_start}?broil?\tikzmark{def2_end}?():
@@ -547,7 +549,7 @@
     \begin{center}
         \includegraphics[height=2em]{images/chef.png}
     \end{center}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=chef.py,escapeinside=??]{python}
+    \begin{minted}[label=chef.py]{python}
         from kitchen import ?\tikzmark{import_start}?broil?\tikzmark{import_end}?
 
         ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
@@ -580,7 +582,7 @@
     \end{center}
     \vskip -1em
     \begin{minipage}[t]{10em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
+    \begin{minted}[label=stove.py]{python}
         class?\tikzmark{class}? Stove?\tikzmark{class_def}?(object):
             def bake(self):
                 pass
@@ -594,7 +596,7 @@
     \end{minipage}
     \hspace{0.5em}
     \begin{minipage}[t]{15em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
+    \begin{minted}[label=kitchen.py]{python}
         from stove import ?\tikzmark{kitchen_import}?*
     \end{minted}
     \end{minipage}
@@ -605,7 +607,7 @@
     \begin{center}
         \includegraphics[height=2em]{images/chef.png}
     \end{center}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=chef.py,escapeinside=??]{python}
+    \begin{minted}[label=chef.py]{python}
         from kitchen import ?\tikzmark{chef_import}?Stove
 
         stove?\tikzmark{instance_def}? = Stove?\tikzmark{class_ref}?()
@@ -917,7 +919,7 @@
     \begin{minipage}{21em}
     \begin{minipage}[t]{9em}
     \begin{uncoverenv}<1,2,4>
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
+    \begin{minted}[label=stove.py]{python}
         def bake():
             pass
 
@@ -932,7 +934,7 @@
     \hspace{0.5em}
     \begin{minipage}[t]{11em}
     \begin{uncoverenv}<1,3,4>
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
+    \begin{minted}[label=kitchen.py]{python}
         from stove import ?\tikzmark{import_start}?broil?\tikzmark{import_end}?
 
         ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
@@ -989,7 +991,7 @@
     \end{center}
     \vskip -1em
     \begin{minipage}[t]{10em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
+    \begin{minted}[label=stove.py]{python}
         class?\tikzmark{class}? Stove?\tikzmark{class_def}?(object):
             def bake(self):
                 pass
@@ -1003,7 +1005,7 @@
     \end{minipage}
     \hspace{0.5em}
     \begin{minipage}[t]{15em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
+    \begin{minted}[label=kitchen.py]{python}
         from stove import ?\tikzmark{kitchen_import}?*
     \end{minted}
     \end{minipage}
@@ -1014,7 +1016,7 @@
     \begin{center}
         \includegraphics[height=2em]{images/chef.png}
     \end{center}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=chef.py,escapeinside=??]{python}
+    \begin{minted}[label=chef.py]{python}
         from kitchen import ?\tikzmark{chef_import}?Stove
 
         stove?\tikzmark{instance_def}? = Stove?\tikzmark{class_ref}?()
@@ -1080,7 +1082,7 @@
 
     \begin{center}
     \begin{minipage}{10em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label={\tikzmark{file_start}stove.py\tikzmark{file_end}},escapeinside=??]{python}
+    \begin{minted}[label={\tikzmark{file_start}stove.py\tikzmark{file_end}}]{python}
         ?\tikzmark{class_start}?class?\tikzmark{class_end}? ?\tikzmark{Stove_start}?Stove?\tikzmark{Stove_end}?(object):
             def bake(self):
                 pass
@@ -1114,7 +1116,7 @@
 
     \begin{center}
     \begin{minipage}[t]{15em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label={\tikzmark{file_start}kitchen.py\tikzmark{file_end}},escapeinside=??]{python}
+    \begin{minted}[label={\tikzmark{file_start}kitchen.py\tikzmark{file_end}}]{python}
         from ?\tikzmark{import_start}?stove?\tikzmark{import_end}? import ?\tikzmark{star_start}?*?\tikzmark{star_end}?
     \end{minted}
     \end{minipage}
@@ -1139,7 +1141,7 @@
 
     \begin{center}
     \begin{minipage}[t]{12em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=chef.py,escapeinside=??]{python}
+    \begin{minted}[label=chef.py]{python}
         from ?\tikzmark{mod_start}?kitchen?\tikzmark{mod_end}? import ?\tikzmark{import_start}?Stove?\tikzmark{import_end}?
 
         stove?\tikzmark{instance_def}? = ?\tikzmark{call_start}?Stove?\tikzmark{class_ref}?()?\tikzmark{call_end}?
@@ -1148,7 +1150,7 @@
     \end{minipage}
     \vskip 2em
     \hspace{2.5em}
-    \begin{minipage}[t]{0.7\textwidth}
+    \begin{minipage}[t]{0.75\textwidth}
     \uncover<2- >{If you can find what \texttt{kitchen.Stove} resolves to}
     \uncover<3- >{and can call it} \\
     \uncover<4- >{then the result should have a member named \texttt{broil}} \\
@@ -1183,7 +1185,7 @@
 
     \vskip 5em
     \begin{center}
-    \begin{minipage}{0.7\textwidth}
+    \begin{minipage}{0.75\textwidth}
     \begin{uncoverenv}<1- >
         If you can find what \texttt{kitchen.Stove} resolves to and can call it \\
         then the result should have a member named \texttt{broil} \\
@@ -1207,7 +1209,7 @@
 
     \vskip 5em
     \begin{center}
-    \begin{minipage}{0.7\textwidth}
+    \begin{minipage}{0.75\textwidth}
     \begin{uncoverenv}<1- >
         If you can find what \texttt{stove.Stove} resolves to and can call it \\
         then the result should have a member named \texttt{broil} \\
@@ -1231,7 +1233,7 @@
 
     \vskip 5em
     \begin{center}
-    \begin{minipage}{0.7\textwidth}
+    \begin{minipage}{0.75\textwidth}
     \begin{uncoverenv}<1- >
         The \texttt{Stove} class \\
         should have a member named \texttt{broil} \\
@@ -1256,7 +1258,7 @@
 
     \vskip 5em
     \begin{center}
-    \begin{minipage}{0.7\textwidth}
+    \begin{minipage}{0.75\textwidth}
         \vspace*{\baselineskip}
         The definition at \textsl{stove.py:5:9} \\
         is what the reference at \textsl{chef.py:4:7} resolves to.
@@ -1286,7 +1288,7 @@
     \highlightref{ref}
     \begin{center}
     \begin{minipage}[t]{9em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
+    \begin{minted}[label=stove.py]{python}
         def bake():
             pass
 
@@ -1299,7 +1301,7 @@
     \end{minipage}
     \hspace{0.5em}
     \begin{minipage}[t]{11em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
+    \begin{minted}[label=kitchen.py]{python}
         from stove import ?\tikzmark{import_start}?broil?\tikzmark{import_end}?
 
         ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
@@ -1327,7 +1329,7 @@
     \begin{center}
 
     \begin{minipage}{9em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label={\tikzmark{mod_start}stove.py\tikzmark{mod_end}},escapeinside=??]{python}
+    \begin{minted}[label={\tikzmark{mod_start}stove.py\tikzmark{mod_end}}]{python}
         def bake():
             pass
 
@@ -1392,7 +1394,7 @@
     \begin{center}
 
     \begin{minipage}{11em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
+    \begin{minted}[label=kitchen.py]{python}
         ?\tikzmark{import_start}?from stove import broil?\tikzmark{import_end}?
 
         ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
@@ -1554,7 +1556,7 @@
     \end{center}
     \vskip -1em
     \begin{minipage}[t]{10em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py,escapeinside=??]{python}
+    \begin{minted}[label=stove.py]{python}
         class?\tikzmark{class}? Stove?\tikzmark{class_def}?(object):
             def bake(self):
                 pass
@@ -1568,7 +1570,7 @@
     \end{minipage}
     \hspace{0.5em}
     \begin{minipage}[t]{15em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
+    \begin{minted}[label=kitchen.py]{python}
         from stove import ?\tikzmark{kitchen_import}?*
     \end{minted}
     \end{minipage}
@@ -1579,7 +1581,7 @@
     \begin{center}
         \includegraphics[height=2em]{images/chef.png}
     \end{center}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=chef.py,escapeinside=??]{python}
+    \begin{minted}[label=chef.py]{python}
         from kitchen import ?\tikzmark{chef_import}?Stove
 
         stove?\tikzmark{instance_def}? = Stove?\tikzmark{class_ref}?()
@@ -1868,7 +1870,7 @@
     \begin{center}
 
     \begin{minipage}{11em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=kitchen.py,escapeinside=??]{python}
+    \begin{minted}[label=kitchen.py]{python}
         ?\tikzmark{import_start}?from stove import broil?\tikzmark{import_end}?
 
         ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
@@ -1924,7 +1926,7 @@
     \begin{center}
 
     \begin{minipage}{9em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label={\tikzmark{mod_start}stove.py\tikzmark{mod_end}},escapeinside=??]{python}
+    \begin{minted}[label={\tikzmark{mod_start}stove.py\tikzmark{mod_end}}]{python}
         def bake():
             pass
 
@@ -1981,26 +1983,26 @@
 
     \vskip 2em
     \begin{center}
-        \begin{minipage}[t]{0.45\textwidth}
+        \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
             \partialpath{}{\node [reference] {broil}}{\node [root node] {}}{stove.broil}
             \end{center}
         \end{minipage}
             \; $+$ \;
-        \begin{minipage}[t]{0.45\textwidth}
+        \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
             \partialpath{stove.broil}{\node [root node] {}}{\node [definition] {broil}}{}
             \end{center}
         \end{minipage}
         \vskip 2em
-        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
             The reference at \textsl{kitchen.py:3:1} \\
             refers to \texttt{stove.broil} in some other file
             \end{center}
         \end{minipage}
             \; $+$ \;
-        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
             \texttt{stove.broil} is defined at \textsl{stove.py:4:5}
             \end{center}
@@ -2020,7 +2022,7 @@
             \end{center}
         \end{minipage}
         \vskip 2em
-        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
             The reference at \textsl{kitchen.py:3:1} \\
             is defined at \textsl{stove.py:4:5}. \\
@@ -2036,7 +2038,7 @@
     \begin{center}
 
     \begin{minipage}{10em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label={\tikzmark{file_start}stove.py\tikzmark{file_end}},escapeinside=??]{python}
+    \begin{minted}[label={\tikzmark{file_start}stove.py\tikzmark{file_end}}]{python}
         ?\tikzmark{class_start}?class?\tikzmark{class_end}? ?\tikzmark{Stove_start}?Stove?\tikzmark{Stove_end}?(object):
             def bake(self):
                 pass
@@ -2114,7 +2116,7 @@
     \begin{center}
 
     \begin{minipage}{10em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label={\tikzmark{file_start}stove.py\tikzmark{file_end}},escapeinside=??]{python}
+    \begin{minted}[label={\tikzmark{file_start}stove.py\tikzmark{file_end}}]{python}
         ?\tikzmark{class_start}?class?\tikzmark{class_end}? ?\tikzmark{Stove_start}?Stove?\tikzmark{Stove_end}?(object):
             def bake(self):
                 pass
@@ -2193,7 +2195,7 @@
     \begin{center}
 
     \begin{minipage}[t]{15em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label={\tikzmark{file_start}kitchen.py\tikzmark{file_end}},escapeinside=??]{python}
+    \begin{minted}[label={\tikzmark{file_start}kitchen.py\tikzmark{file_end}}]{python}
         from ?\tikzmark{import_start}?stove?\tikzmark{import_end}? import ?\tikzmark{star_start}?*?\tikzmark{star_end}?
     \end{minted}
     \end{minipage}
@@ -2242,7 +2244,7 @@
     \begin{center}
 
     \begin{minipage}{12em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=chef.py,escapeinside=??]{python}
+    \begin{minted}[label=chef.py]{python}
         from kitchen import ?\tikzmark{chef_import}?Stove
 
         stove?\tikzmark{instance_def}? = Stove?\tikzmark{class_ref}?()
@@ -2316,21 +2318,21 @@
 
     \vskip 2em
     \begin{center}
-        \begin{minipage}[t]{0.45\textwidth}
+        \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
             \partialpath{}{\node [reference] {broil}}{\node [root node]{}}{kitchen.Stove().broil}
             \end{center}
         \end{minipage}
         \begin{uncoverenv}<2>
             \; $+$ \;
-        \begin{minipage}[t]{0.45\textwidth}
+        \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
             \partialpath{kitchen.}{\node [root node] {}}{\node [root node]{}}{stove.}
             \end{center}
         \end{minipage}
         \end{uncoverenv}
         \vskip 2em
-        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
             If you can find what \texttt{kitchen.Stove} \\
             resolves to and can call it, then the \\
@@ -2341,7 +2343,7 @@
         \end{minipage}
         \begin{uncoverenv}<2>
             \; $+$ \;
-        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
             \texttt{stove.broil} is defined at \textsl{stove.py:4:5}.
             \end{center}
@@ -2356,21 +2358,21 @@
 
     \vskip 2em
     \begin{center}
-        \begin{minipage}[t]{0.45\textwidth}
+        \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
             \partialpath{}{\node [reference] {broil}}{\node [root node]{}}{stove.Stove().broil}
             \end{center}
         \end{minipage}
         \begin{uncoverenv}<2>
             \; $+$ \;
-        \begin{minipage}[t]{0.45\textwidth}
+        \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
             \partialpath{stove.Stove()}{\node [root node]{}}{\node [exported scope] {IM}}{}
             \end{center}
         \end{minipage}
         \end{uncoverenv}
         \vskip 2em
-        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
             If you can find what \texttt{stove.Stove} \\
             resolves to and can call it, then the \\
@@ -2381,7 +2383,7 @@
         \end{minipage}
         \begin{uncoverenv}<2>
             \; $+$ \;
-        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
             Invoking \texttt{stove.Stove} gives you \\
             an instance of the \texttt{Stove} class.
@@ -2397,21 +2399,21 @@
 
     \vskip 2em
     \begin{center}
-        \begin{minipage}[t]{0.45\textwidth}
+        \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
             \partialpath{}{\node [reference] {broil}}{\node [exported scope]{IM}}{.broil}
             \end{center}
         \end{minipage}
         \begin{uncoverenv}<2>
             \; $+$ \;
-        \begin{minipage}[t]{0.45\textwidth}
+        \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
             \partialpath{.broil}{\node [exported scope] {IM}}{\node [definition]{broil}}{}
             \end{center}
         \end{minipage}
         \end{uncoverenv}
         \vskip 2em
-        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
             If you can find what \texttt{stove.Stove} \\
             resolves to and can call it, then the \\
@@ -2422,7 +2424,7 @@
         \end{minipage}
         \begin{uncoverenv}<2>
             \; $+$ \;
-        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
             The \texttt{Stove} class has an \\
             instance member named \texttt{broil} \\
@@ -2439,17 +2441,17 @@
 
     \vskip 2em
     \begin{center}
-        \begin{minipage}[t]{0.45\textwidth}
+        \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
             \partialpath{}{\node [reference] {broil}}{\node [definition]{broil}}{}
             \end{center}
         \end{minipage}
         \phantom{\; $+$ \;}
-        \begin{minipage}[t]{0.45\textwidth}
+        \begin{minipage}[t]{0.46\textwidth}
             \strut
         \end{minipage}
         \vskip 2em
-        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
             The definition at \textsl{stove.py:5:9} \\
             is what the reference at \\
@@ -2457,7 +2459,7 @@
             \end{center}
         \end{minipage}
         \phantom{\; $+$ \;}
-        \begin{minipage}[c][2cm][c]{0.45\textwidth}
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \strut
         \end{minipage}
     \end{center}
@@ -2507,7 +2509,7 @@
     \begin{center}
     \begin{minipage}{0.75\textwidth}
     \begin{minipage}{9em}
-    \begin{minted}[autogobble,frame=single,framesep=6pt,label=stove.py]{python}
+    \begin{minted}[label=stove.py]{python}
         def bake():
             pass
 
@@ -2536,7 +2538,7 @@
     \begin{center}
     \begin{minipage}{0.75\textwidth}
     \begin{minipage}{12em}
-    \begin{minted}[autogobble,fontsize=\tiny,escapeinside=??]{text}
+    \begin{minted}[fontsize={\smaller[4]},frame=none]{text}
         (module [0, 0] - [10, 0]
           (function_definition [0, 0] - [1, 8]
             name: (identifier [0, 4] - [0, 8])
@@ -2562,14 +2564,14 @@
     \hspace{1em}
     \begin{minipage}{15em}
     \begin{uncoverenv}<2- >
-    \begin{minted}[autogobble,escapeinside=??,fontsize=\footnotesize]{text}
+    \begin{minted}[fontsize=\scriptsize,frame=none]{text}
         (function_definition
           name: (identifier) ?\tikzmark{name_capture_start}?@name?\tikzmark{name_capture_end}?) ?\tikzmark{func_capture_start}?@function?\tikzmark{func_capture_end}?
     \end{minted}
     \end{uncoverenv}
 
     \begin{uncoverenv}<5- >
-    \begin{minted}[autogobble,escapeinside=??,fontsize=\footnotesize]{text}
+    \begin{minted}[fontsize=\scriptsize,frame=none]{text}
         {
             node @function.def
             attr (@function.def) kind = "definition"
