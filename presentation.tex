@@ -15,19 +15,25 @@
 \usetikzlibrary{shadows}
 \usetikzlibrary{tikzmark}
 
-\title{Stack Graphs}
-\author{Douglas Creager}
-\institute{GitHub}
-\date{Strange Loop 2021}
+\usepackage{fontspec}
+\setsansfont{Helvetica Neue Light}
+\setmonofont{Iosevka Term}
+\newfontface\helvreg{Helvetica Neue}
+
+\title{Incremental, zero-config Code Navigation\\using Stack Graphs}
+\author{Douglas Creager\\\textsmaller[1]{\href{https://dcreager.net/}{@dcreager}}\vspace{-0.5em}}
+\institute{\includegraphics[width=2.5em]{images/github-mark.pdf}\vspace{2em}}
+\date{Strange Loop\\\textsmaller[1]{October 1, 2021 – St. Louis}}
+
+\setbeamercolor{title}{fg=black}
+\setbeamerfont{title}{series=\bfseries,size=\larger[1]}
+
+\setbeamerfont{institute}{size=\normalsize}
 
 \setbeamertemplate{navigation symbols}{}
 
 \usepackage{minted}
 \usemintedstyle{colorful}
-
-\usepackage{fontspec}
-\setsansfont{Helvetica Neue Light}
-\setmonofont{Iosevka Term}
 
 \newlength{\scopegap}
 \setlength{\scopegap}{0.9cm}
