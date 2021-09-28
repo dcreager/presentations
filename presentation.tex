@@ -2602,7 +2602,54 @@
 
 
 \begin{frame}
-    \emph{[Ed: Insert final architecture diagram here]}
+    \begin{tikzpicture}
+        \node (bar) at(0,0) [
+            rectangle, anchor=west,
+            minimum width=\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=gray!20,
+        ] {};
+
+        \node at(bar.west) [
+            rectangle, anchor=west,
+            minimum width=0.5\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=yellow!20,
+        ] {};
+        \node at(bar.east) [
+            rectangle, anchor=east,
+            minimum width=0.5\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=blue!20,
+        ] {};
+
+        \node at(bar.west) [
+            rectangle, anchor=west, inner xsep=2ex,
+            text height=1.5ex, text depth=0.25ex,
+            text=black,
+        ] {Index};
+        \node at(bar.east) [
+            rectangle, anchor=east, inner xsep=2ex,
+            text height=1.5ex, text depth=0.25ex,
+            text=black,
+        ] {Query};
+    \end{tikzpicture}
+
+    \vskip 1em
+    \begin{minipage}{0.49\columnwidth}
+    \begin{center}
+        Clone changed files \\
+        Parse using tree-sitter \\
+        Construct stack graph \\
+        Find partial paths \\
+    \end{center}
+    \end{minipage}
+    \begin{minipage}{0.49\columnwidth}
+    \begin{center}
+        Load partial paths lazily \\
+        Stitch them together \\
+    \end{center}
+    \end{minipage}
 \end{frame}
 
 
