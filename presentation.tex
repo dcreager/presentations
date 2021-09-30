@@ -2735,6 +2735,43 @@
 \end{frame}
 
 
+\begin{frame}[fragile]
+    \frametitle{The \emph{really} hard ones...}
+
+    \highlightdef{one_def}
+    \highlightref{one_ref}
+    \highlightboth{String}
+    \highlightref{length_ref}
+
+    \begin{center}
+    \begin{minipage}[t]{9em}
+    \begin{minted}[label=dataflow.py]{python}
+        def passthrough(x):
+            return x
+
+        class A:
+            ?\tikzmark{one_def_start}?one?\tikzmark{one_def_end}? = 1
+
+        passthrough(A).?\tikzmark{one_ref_start}?one?\tikzmark{one_ref_end}?
+    \end{minted}
+    \end{minipage}
+    \hspace{3em}
+    \begin{minipage}[t]{20em}
+    \begin{minted}[label=MyMap.java]{java}
+        import java.util.HashMap;
+
+        class MyMap extends HashMap<?\tikzmark{String_start}?String?\tikzmark{String_end}?, String> {
+            int firstLength() {
+                return this.entrySet().iterator()
+                    .next().getKey().?\tikzmark{length_ref_start}?length?\tikzmark{length_ref_end}?();
+            }
+        }
+    \end{minted}
+    \end{minipage}
+    \end{center}
+\end{frame}
+
+
 \begin{frame}[t]
     \frametitle{Picture credits}
     \begin{tabular}{lp{0.75\textwidth}}
