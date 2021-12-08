@@ -2844,4 +2844,48 @@
     \end{center}
 \end{frame}
 
+
+\begin{frame}[fragile]
+    \frametitle{Extras}
+
+    \highlightdef{broil1}
+    \highlightdef{broil2}
+
+    \begin{center}
+
+    \begin{minipage}{9em}
+    \begin{minted}[label={stove.rs}]{rust}
+        fn ?\tikzmark{broil1_start}?broil?\tikzmark{broil1_end}?() {}
+
+        fn ?\tikzmark{broil2_start}?broil?\tikzmark{broil2_end}?() {}
+
+        fn saute() {}
+    \end{minted}
+    \end{minipage}
+    \hspace{2em}
+    \begin{tikzpicture}[baseline={(current bounding box.center)}]
+        \node (root)       [root node]                              {};
+        \node (stove)      [definition]  [left=of root]             {stove};
+        \node (dot)        [pop]         [left=of stove]            {::};
+
+        \node (s)          [anon scope]  [above=2\scopegap of dot]  {};
+
+        \setwidestsymbol{broil}
+        \node (broil2 def) [definition]  [left=of s]                {\sized{broil}};
+        \node (saute def)  [definition]  [below=of broil2 def]      {\sized{saute}};
+        \node (broil1 def) [definition]  [above=of broil2 def]      {\sized{broil}};
+
+        \path [-Stealth]
+          (root)      edge (stove)
+          (stove)     edge (dot)
+          (dot)       edge (s)
+          (s)         edge (saute def)
+                      edge (broil2 def)
+                      edge (broil1 def)
+          ;
+    \end{tikzpicture}
+
+    \end{center}
+\end{frame}
+
 \end{document}
