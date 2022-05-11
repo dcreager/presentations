@@ -1,8 +1,10 @@
 \documentclass[aspectratio=169]{beamer}
 \mode<presentation>
 
+\usepackage{calc}
 \usepackage{relsize}
 \usepackage{graphicx}
+\usepackage[overlay,absolute]{textpos}
 
 \graphicspath{{../images}}
 
@@ -17,6 +19,24 @@
 \institute{\includegraphics[width=2.5em]{github-mark.pdf}\vspace{2em}}
 \date{Craft Conf\\\textsmaller[1]{June 2, 2022 – Budapest}}
 
+\newlength{\titlewidth}
+\newcommand{\flattitle}[3]{
+    \settowidth{\titlewidth}{\textbf{\LARGE #3}}
+    \begin{textblock*}{\titlewidth}(#1,#2)
+        \textbf{\LARGE #3}
+    \end{textblock*}
+}
+\newcommand{\shadowedtitle}[3]{
+    \settowidth{\titlewidth}{\textbf{\LARGE #3}}
+    \addtolength{\titlewidth}{0.5mm}
+    \begin{textblock*}{\titlewidth}(#1+0.4mm,#2+0.4mm)
+        \textbf{\LARGE #3}
+    \end{textblock*}
+    \begin{textblock*}{\titlewidth}(#1,#2)
+        \textbf{\textcolor{white}{\LARGE #3}}
+    \end{textblock*}
+}
+
 \setbeamercolor{title}{fg=black}
 \setbeamerfont{title}{series=\bfseries,size=\larger[1]}
 \setbeamercolor{frametitle}{fg=black}
@@ -26,10 +46,47 @@
 
 \setbeamertemplate{navigation symbols}{}
 
+% Picture credits
+
+\makeatletter
+\def\picturecredits{}
+\newcommand{\picturecredit}[4]{
+    \protected@xappto\picturecredits{
+        \textsmaller[3]{Slide \theframenumber} &
+        \textsmaller[2]{#1, “#2”} \vspace*{-0.4em} \newline
+        \textsmaller[3]{#3, \url{#4}} \\
+    }
+}
+\makeatother
+
 \begin{document}
 
 \begin{frame}
     \titlepage
+\end{frame}
+
+\begin{frame}
+    \begin{textblock*}{160mm}(0mm,-15mm)
+        \picturecredit{Matjaž Mirt}{Tern/čigra}{CC-BY-2.0}{https://flic.kr/p/2kXydKp}
+        \includegraphics[width=160mm]{images/one-tern.jpg}
+    \end{textblock*}
+    \shadowedtitle{150mm - \titlewidth}{10mm}{Isolated languages}
+\end{frame}
+
+\begin{frame}
+    \begin{textblock*}{160mm}(0mm,0mm)
+        \picturecredit{Mark Gunn}{This just tern'ed into a swarm!}{CC-BY-2.0}{https://flic.kr/p/P11JH1}
+        \includegraphics[width=160mm]{images/terns.jpg}
+    \end{textblock*}
+    \shadowedtitle{150mm - \titlewidth}{10mm}{Many languages}
+\end{frame}
+
+
+\begin{frame}[t]
+    \frametitle{Picture credits}
+    \begin{tabular}{lp{0.75\textwidth}}
+    \picturecredits
+    \end{tabular}
 \end{frame}
 
 \end{document}
