@@ -50,11 +50,12 @@
 
 \makeatletter
 \def\picturecredits{}
-\newcommand{\picturecredit}[4]{
+\newcommand{\picturecredit}[4]{\picturecreditraw{#1}{#2}{#3}{\url{#4}}}
+\newcommand{\picturecreditraw}[4]{
     \protected@xappto\picturecredits{
         \textsmaller[3]{Slide \theframenumber} &
         \textsmaller[2]{#1, “#2”} \vspace*{-0.4em} \newline
-        \textsmaller[3]{#3, \url{#4}} \\
+        \textsmaller[3]{#3, #4} \\
     }
 }
 \makeatother
@@ -66,9 +67,127 @@
 \end{frame}
 
 \begin{frame}
+    %\begin{textblock*}{160mm}(0mm,-15mm)
+    %    \only<1>{
+    %    \picturecreditraw
+    %      {Pieter Bruegel the Elder}
+    %      {The Tower of Babel (Rotterdam)}
+    %      {Public domain}
+    %      {\href{https://commons.wikimedia.org/wiki/File:Pieter_Bruegel_the_Elder_-_The_Tower_of_Babel_(Rotterdam)_-_Google_Art_Project_-_edited.jpg}{Wikimedia Commons}}
+    %    }
+    %    \includegraphics[width=160mm]{tower-of-babel-bruegel.jpg}
+    %\end{textblock*}
+    \begin{textblock*}{160mm}(5mm,5mm)
+        \only<1>{
+        \picturecredit
+          {Meister der Weltenchronik}
+          {Weltchronik in Versen, Szene: Der Turmbau zu Babel}
+          {Public domain}
+          {https://commons.wikimedia.org/wiki/File:Meister_der_Weltenchronik_001.jpg}
+        }
+        \includegraphics[height=80mm]{tower-of-babel-weltenchronik.jpg}
+    \end{textblock*}
+
+    \begin{textblock*}{15mm}( 65mm,10mm)
+        \only<2>{\includegraphics[width=10mm]{languages/fortran.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}( 80mm,10mm)
+        \only<2>{\includegraphics[width=10mm]{languages/python.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}( 95mm,10mm)
+        \only<2>{\includegraphics[width=10mm]{languages/csharp.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}(110mm,10mm)
+        \only<2>{\includegraphics[width=10mm]{languages/perl.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}(125mm,10mm)
+        \only<2>{\includegraphics[width=10mm]{languages/ruby.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}(140mm,10mm)
+        \only<2>{\includegraphics[width=10mm]{languages/haskell.png}}
+    \end{textblock*}
+
+    \begin{textblock*}{15mm}( 65mm,25mm)
+        \only<2>{\includegraphics[width=10mm]{languages/dart.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}( 80mm,25mm)
+        \only<2>{\includegraphics[width=10mm]{languages/cpp.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}( 95mm,25mm)
+        \only<2>{\includegraphics[width=10mm]{languages/java.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}(110mm,25mm)
+        \only<2>{\includegraphics[width=10mm]{languages/typescript.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}(125mm,25mm)
+        \only<2>{\includegraphics[width=10mm]{languages/swift.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}(140mm,25mm)
+        \only<2>{\includegraphics[width=10mm]{languages/clojure.png}}
+    \end{textblock*}
+
+    \begin{textblock*}{15mm}( 65mm,40mm)
+        \only<2>{\includegraphics[width=10mm]{languages/elixir.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}( 80mm,40mm)
+        \only<2>{\includegraphics[width=10mm]{languages/ocaml.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}( 95mm,40mm)
+        \only<2>{\includegraphics[width=10mm]{languages/kotlin.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}(110mm,40mm)
+        \only<2>{\includegraphics[width=10mm]{languages/rust.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}(125mm,40mm)
+        \only<2>{\includegraphics[width=10mm]{languages/go.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}(140mm,40mm)
+        \only<2>{\includegraphics[width=10mm]{languages/turbo-pascal.png}}
+    \end{textblock*}
+
+    \begin{textblock*}{15mm}( 65mm,55mm)
+        \only<2>{\includegraphics[width=10mm]{languages/julia.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}( 80mm,55mm)
+        \only<2>{\includegraphics[width=10mm]{languages/r.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}( 95mm,55mm)
+        \only<2>{\includegraphics[width=10mm]{languages/erlang.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}(110mm,55mm)
+        \only<2>{\includegraphics[width=10mm]{languages/zig.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}(125mm,55mm)
+        \only<2>{\includegraphics[width=10mm]{languages/php.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}(140mm,55mm)
+        \only<2>{\includegraphics[width=10mm]{languages/scala.png}}
+    \end{textblock*}
+
+    \begin{textblock*}{15mm}( 65mm,70mm)
+        \only<2>{\includegraphics[width=10mm]{languages/nim.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}( 80mm,70mm)
+        \only<2>{\includegraphics[width=10mm]{languages/javascript.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}( 95mm,70mm)
+        \only<2>{\includegraphics[width=10mm]{languages/c.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}(110mm,70mm)
+        \only<2>{\includegraphics[width=10mm]{languages/crystal.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}(125mm,70mm)
+        \only<2>{\includegraphics[width=10mm]{languages/swanson.png}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}(140mm,70mm)
+        \only<2>{\includegraphics[width=10mm]{languages/bash.png}}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}
     \begin{textblock*}{160mm}(0mm,-15mm)
         \picturecredit{Matjaž Mirt}{Tern/čigra}{CC-BY-2.0}{https://flic.kr/p/2kXydKp}
-        \includegraphics[width=160mm]{images/one-tern.jpg}
+        \includegraphics[width=160mm]{one-tern.jpg}
     \end{textblock*}
     \shadowedtitle{150mm - \titlewidth}{10mm}{Isolated languages}
 \end{frame}
@@ -76,7 +195,7 @@
 \begin{frame}
     \begin{textblock*}{160mm}(0mm,0mm)
         \picturecredit{Mark Gunn}{This just tern'ed into a swarm!}{CC-BY-2.0}{https://flic.kr/p/P11JH1}
-        \includegraphics[width=160mm]{images/terns.jpg}
+        \includegraphics[width=160mm]{terns.jpg}
     \end{textblock*}
     \shadowedtitle{150mm - \titlewidth}{10mm}{Many languages}
 \end{frame}
