@@ -1,0 +1,2893 @@
+\documentclass[aspectratio=169]{beamer}
+\mode<presentation>
+
+\usepackage{etoolbox}
+\usepackage{calc}
+\usepackage{relsize}
+\usepackage{graphicx}
+\usepackage[overlay,absolute]{textpos}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{fit}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes.multipart}
+\usetikzlibrary{shadows}
+\usetikzlibrary{tikzmark}
+
+\graphicspath{{../images}}
+
+\usepackage{fontspec}
+\setsansfont{Helvetica Neue Light}[BoldFont={Helvetica Neue Bold}]
+\setmonofont{Iosevka Term}
+\newfontface\helvreg{Helvetica Neue}
+
+\title{Incremental, zero-config Code Navigation\\using stack graphs}
+\author{Douglas Creager\\\textsmaller[1]{\href{https://dcreager.net/}{@dcreager}}\vspace{-0.5em}}
+\institute{\includegraphics[width=2.5em]{github-mark.pdf}\vspace{2em}}
+\date{Languages, Systems, and Data Seminar\\\textsmaller[1]{May 27, 2021 – UC Santa Cruz}}
+
+\setbeamercolor{title}{fg=black}
+\setbeamerfont{title}{series=\bfseries,size=\larger[1]}
+
+\setbeamerfont{institute}{size=\normalsize}
+
+\setbeamertemplate{navigation symbols}{}
+
+\usepackage[outputdir=.build]{minted}
+\usemintedstyle{colorful}
+
+\newlength{\scopegap}
+\setlength{\scopegap}{0.9cm}
+
+\definecolor{sgdef}  {RGB}{159,0,0}
+\definecolor{sgpop}  {RGB}{230,142,131}
+\definecolor{sgref}  {RGB}{0,112,196}
+\definecolor{sgpush} {RGB}{161,190,230}
+\definecolor{sgjump} {RGB}{161,64,140}
+
+\tikzset{root node/.style={
+    node distance=0.5cm,
+    circle, fill=black, inner sep=0pt,
+    minimum size=0.35cm
+}}
+
+\tikzset{anon scope/.style={
+    node distance=0.5cm,
+    circle, fill=white, inner sep=0pt,
+    draw=black, semithick,
+    minimum size=0.35cm
+}}
+
+\tikzset{named scope/.style={
+    node distance=0.5cm,
+    circle, fill=white,
+    draw=black, thick, node font={\smaller[2]},
+    minimum size=0.35cm
+}}
+
+\tikzset{exported scope/.style={
+    node distance=0.5cm,
+    circle, fill=white,
+    draw=sgjump, thick, text=sgjump, node font={\smaller[2]},
+    minimum size=0.35cm
+}}
+
+\tikzset{symbol text/.style={
+    fill=white,
+    text height=1.5ex, text depth=0.25ex, node font={\ttfamily \relscale{0.8}},
+    inner xsep=7pt,
+    minimum size=0.75cm,
+}}
+
+\tikzset{definition/.style={
+    node distance=0.5cm,
+    draw=sgdef, semithick, double, double distance=1pt, outer sep=1pt,
+    text=sgdef, symbol text,
+}}
+
+\tikzset{pop/.style={
+    node distance=0.5cm,
+    rectangle split,
+    rectangle split parts=2,
+    rectangle split horizontal,
+    rectangle split draw splits=false,
+    rectangle split ignore empty parts,
+    draw=sgpop, thick, dash dot,
+    text=sgpop, symbol text,
+}}
+\newcommand{\popscope}{
+    \nodepart{two}
+    \hspace{-12pt}
+    \tikz \node [circle, fill=sgjump, inner sep=0pt, minimum size=0.25cm] {};
+}
+
+\tikzset{reference/.style={
+    node distance=0.5cm,
+    draw=sgref, thick,
+    text=sgref, symbol text,
+}}
+
+\tikzset{push/.style={
+    node distance=0.5cm,
+    rectangle split,
+    rectangle split parts=2,
+    rectangle split horizontal,
+    rectangle split draw splits=false,
+    rectangle split ignore empty parts,
+    draw=sgpush, thick, densely dashed,
+    text=sgpush, symbol text,
+}}
+\newcommand{\pushscope}[1]{
+    \nodepart{two}
+    \hspace{-12pt}
+    \tikz \node [
+        circle, fill=white,
+        draw=sgjump,
+        text=sgjump, inner sep=2pt,
+        minimum size=0.25cm
+    ] {\tiny #1};
+}
+
+\newcommand{\widestsymbol}{}
+\newcommand{\setwidestsymbol}[1]{\renewcommand{\widestsymbol}{#1}}
+\newcommand{\sized}[2][\widestsymbol]{\makebox[\widthof{#1}]{#2}}
+
+\tikzset{
+  alt/.code args={<#1>#2#3}{%
+    \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}} % \pgfkeysalso doesn't change the path
+  }
+}
+
+\tikzset{
+    highlight node/.style={
+        general shadow={fill=blue, opacity=0.3},
+        shadow scale=1.2, shadow xshift=0pt, shadow yshift=0pt
+    }
+}
+\tikzset{
+    highlight node on/.code args={<#1>}{%
+        \alt<#1>{\pgfkeysalso{highlight node}}{}%
+    }
+}
+
+% Animating paths in a stack graph picture
+%   Just add [highlighted on=<slide>] to an edge's style.  The line of the edge
+%   will be blue and extra thick on <slide> AND ALL LATER SLIDES.  It will have
+%   an arrowhead on SLIDE.
+%
+%   Together, this means that you add this to all of the edges that comprise a
+%   path, with increasing <slide> values for each one, and beamer will create an
+%   overlay animation showing the edges of the path get highlighted in order
+%   each time you advance to the next slide.
+\tikzset{highlight edge/.style={line width=2pt, blue, -}}
+\tikzset{highlight edge frontier/.style={-{Triangle[length=4pt,width=4pt]}}}
+\tikzset{
+    show path on/.code args={<#1>}{%
+        \alt<#1- >{\pgfkeysalso{highlight edge}}{}%
+        \alt<#1  >{\pgfkeysalso{highlight edge frontier}}{}%
+    }
+}
+
+\tikzset{
+    highlight inner edge on/.code args={<#1>}{%
+        \alt<#1>{\pgfkeysalso{highlight edge}}{}%
+    }
+}
+\tikzset{
+    highlight end edge on/.code args={<#1>}{%
+        \alt<#1>{\pgfkeysalso{highlight edge, highlight edge frontier}}{}%
+    }
+}
+
+\tikzset{binding arrow/.style={->, red, thick, -{Triangle[]}}}
+
+\newcommand{\codeline}[3][]{%
+    \tikz[remember picture] \draw [overlay, binding arrow, #1] (#2) -- (#3);%
+}
+
+\newcommand{\curvecodeline}[4][]{%
+    \tikz[remember picture] \draw [overlay, binding arrow, #1] (#2) .. controls #3 .. (#4);%
+}
+
+\newcommand{\highlightdef}[1]{%
+    \tikz[remember picture]
+      \draw [overlay, draw=none, fill=red!25]
+        ([xshift=-1pt, yshift=8pt] pic cs:#1_start)
+        rectangle
+        ([xshift=1pt, yshift=-2pt] pic cs:#1_end)
+        ;%
+}
+
+\newcommand{\highlightboth}[1]{%
+    \tikz[remember picture]
+      \draw [overlay, draw=brown, thin, fill=yellow!25]
+        ([xshift=-1pt, yshift=8pt] pic cs:#1_start)
+        rectangle
+        ([xshift=1pt, yshift=-2pt] pic cs:#1_end)
+        ;%
+}
+
+\newcommand{\highlightref}[1]{%
+    \tikz[remember picture]
+      \draw [overlay, draw=none, fill=blue!25]
+        ([xshift=-1pt, yshift=8pt] pic cs:#1_start)
+        rectangle
+        ([xshift=1pt, yshift=-2pt] pic cs:#1_end)
+        ;
+}
+
+
+\newcommand{\highlightparse}[2]{%
+    \tikz[remember picture]
+      \draw [overlay, draw=none, fill={#1}]
+        ([xshift=-1pt, yshift=5pt] pic cs:#2_start)
+        rectangle
+        ([xshift=1pt, yshift=-2pt] pic cs:#2_end)
+        ;%
+}
+
+\newcommand{\highlightcapture}[2]{%
+    \tikz[remember picture]
+      \draw [overlay, draw=none, fill={#1}]
+        ([xshift=-1pt, yshift=8pt] pic cs:#2_capture_start)
+        rectangle
+        ([xshift=1pt, yshift=-2pt] pic cs:#2_capture_end)
+        ;
+}
+
+
+\makeatletter
+\tikzset{
+    tikzmark suffix=-\theframenumber-\the\beamer@slideinframe
+}
+\makeatother
+
+\newcommand{\symbolstack}[1]{$\langle \texttt{\relscale{0.8}#1} \rangle$}
+\newcommand{\currentsymbolstack}[1]{\textsmaller[2]{Symbol stack:} \symbolstack{#1}}
+
+\newcommand{\partialpath}[4]{
+    \symbolstack{#1}
+    \hspace{0.01em}
+    \scalebox{0.75}{\tikz[baseline={([yshift=-0.7ex] current bounding box.center)}] #2;}
+    \texttt{\relscale{0.8}\textasciitilde\textasciitilde>}  % all that just to get a ~~> ligature
+    \scalebox{0.75}{\tikz[baseline={([yshift=-0.7ex] current bounding box.center)}] #3;}
+    \hspace{0.01em}
+    \symbolstack{#4}
+}
+
+\newlength{\titlewidth}
+\newcommand{\flattitle}[3]{
+    \settowidth{\titlewidth}{\textbf{\LARGE #3}}
+    \begin{textblock*}{\titlewidth}(#1,#2)
+        \textbf{\LARGE #3}
+    \end{textblock*}
+}
+\newcommand{\shadowedtitle}[3]{
+    \settowidth{\titlewidth}{\textbf{\LARGE #3}}
+    \addtolength{\titlewidth}{0.5mm}
+    \begin{textblock*}{\titlewidth}(#1+0.4mm,#2+0.4mm)
+        \textbf{\LARGE #3}
+    \end{textblock*}
+    \begin{textblock*}{\titlewidth}(#1,#2)
+        \textbf{\textcolor{white}{\LARGE #3}}
+    \end{textblock*}
+}
+
+\setbeamercolor{frametitle}{fg=black}
+\setbeamerfont{frametitle}{series=\bfseries}
+
+\setminted{autogobble,fontsize=\relscale{0.8},frame=single,framesep=6pt,escapeinside=??}
+
+% Picture credits
+
+\makeatletter
+\def\picturecredits{}
+\newcommand{\picturecredit}[4]{
+    \protected@xappto\picturecredits{
+        \textsmaller[3]{Slide \theframenumber} &
+        \textsmaller[2]{#1, “#2”} \vspace*{-0.4em} \newline
+        \textsmaller[3]{#3, \url{#4}} \\
+    }
+}
+\makeatother
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+
+\begin{frame}
+    \begin{textblock*}{80mm}(40mm,10mm)
+        \begin{center}
+            Builds on the Scope Graphs framework \\
+            from Eelco Visser's group at TU Delft.
+        \end{center}
+    \end{textblock*}
+
+    \begin{textblock*}{120mm}(20mm,25mm)
+        \begin{center}
+            \url{https://pl.ewi.tudelft.nl/research/projects/scope-graphs/}
+            \vskip 2em
+            \only<2>{
+                \href{https://conf.researchr.org/details/curryon-2017/curryon-2017-papers/42/Scope-Graphs-A-Fresh-Look-at-Name-Binding-in-Programming-Languages}{Curry On Barcelona 2017}
+                \vskip 0.5em
+                \includegraphics[width=60mm]{eelco-curry-on.png}
+            }
+        \end{center}
+    \end{textblock*}
+\end{frame}
+
+
+\section{Code Navigation}
+
+\begin{frame}
+    \begin{textblock*}{160mm}(0mm,0mm)
+        \picturecredit{Ivan Radic}{Close-up of a compass graffiti on the ground}{CC-BY-2.0}{https://flic.kr/p/2kGKMtM}
+        \includegraphics[width=160mm]{compass.jpg}
+    \end{textblock*}
+    \shadowedtitle{10mm}{10mm}{Code Navigation}
+\end{frame}
+
+% easy
+\begin{frame}[fragile]
+    \frametitle{Code Navigation}
+    \uncover<2-3>{\highlightdef{def}}
+    \uncover<2-3>{\highlightref{ref}}
+    \begin{center}
+    \begin{minipage}{9em}
+    \begin{minted}[label=stove.py]{python}
+        def bake():
+            pass
+
+        def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?():
+            pass
+
+        def saute():
+            pass
+
+        ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
+    \end{minted}
+    \end{minipage}
+    \end{center}
+    \uncover<3>{\curvecodeline%
+      {[yshift=8pt] pic cs:ref_end}%
+      {+(25:2cm) and +(-45:1cm)}%
+      {[yshift=-4pt] pic cs:def_end}%
+    }%
+\end{frame}
+
+
+\section{Why is this hard?}
+
+\begin{frame}
+    \begin{textblock*}{160mm}(0mm,0mm)
+        \picturecredit{Mustang Joe}{I swear...}{Public domain}{https://flic.kr/p/VSLwD6}
+        \includegraphics[width=160mm]{facepalm.jpg}
+    \end{textblock*}
+    \shadowedtitle{140mm - \titlewidth}{25mm}{Why is this hard?}
+\end{frame}
+
+
+% easy_shadowed
+\begin{frame}[fragile]
+    \frametitle{Why is this hard?}
+    \uncover<2-3>{\highlightdef{def1}}
+    \uncover<2-3>{\highlightdef{def2}}
+    \uncover<2-3>{\highlightref{ref}}
+    \begin{center}
+    \begin{minipage}{9em}
+    \begin{minted}[label=stove.py]{python}
+        def ?\tikzmark{def1_start}?broil?\tikzmark{def1_end}?():
+            pass
+
+        def ?\tikzmark{def2_start}?broil?\tikzmark{def2_end}?():
+            pass
+
+        def saute():
+            pass
+
+        ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
+    \end{minted}
+    \end{minipage}
+    \end{center}
+    \uncover<3>{\curvecodeline%
+      [dotted]%
+      {[yshift=8pt] pic cs:ref_end}%
+      {+(15:3cm) and +(-35:1cm)}%
+      {[yshift=-4pt] pic cs:def1_end}%
+    }%
+    \uncover<3>{\curvecodeline%
+      {[yshift=8pt] pic cs:ref_end}%
+      {+(25:2cm) and +(-45:1cm)}%
+      {[yshift=-4pt] pic cs:def2_end}%
+    }%
+\end{frame}
+
+
+% easy_shadowed_rust
+\begin{frame}[fragile]
+    \frametitle{Why is this hard?}
+    \uncover<2-3>{\highlightdef{def1}}
+    \uncover<2-3>{\highlightdef{def2}}
+    \uncover<2-3>{\highlightref{ref}}
+    \begin{center}
+    \begin{minipage}{9em}
+    \begin{minted}[label=stove.rs]{rust}
+        fn ?\tikzmark{def1_start}?broil?\tikzmark{def1_end}?() {}
+
+        fn ?\tikzmark{def2_start}?broil?\tikzmark{def2_end}?() {}
+
+        fn saute() {}
+
+        fn main() {
+          ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?();
+        }
+    \end{minted}
+    \end{minipage}
+    \end{center}
+    \uncover<3>{%
+        \tikz[remember picture]
+          \node [overlay, text=red]
+            at ([xshift=-2ex, yshift=0.5ex] pic cs:def2_end)
+            {\textbf{\Huge X}};%
+    }%
+\end{frame}
+
+
+% separate_files
+\begin{frame}[fragile]
+    \frametitle{Why is this hard?}
+    \uncover<2-3>{\highlightdef{def}}
+    \uncover<  3>{\highlightboth{import}}
+    \uncover<2-3>{\highlightref{ref}}
+    \begin{center}
+    \begin{minipage}[t]{9em}
+    \begin{minted}[label=stove.py]{python}
+        def bake():
+            pass
+
+        def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?():
+            pass
+
+        def saute():
+            pass
+    \end{minted}
+    \end{minipage}
+    \hspace{0.5em}
+    \begin{minipage}[t]{11em}
+    \begin{minted}[label=kitchen.py]{python}
+        from stove import ?\tikzmark{import_start}?broil?\tikzmark{import_end}?
+
+        ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
+    \end{minted}
+    \end{minipage}
+    \end{center}
+    \uncover<3>{\curvecodeline%
+      [-]%
+      {[yshift=10pt] pic cs:ref_end}%
+      {+(45:1cm) and +(-155:1cm)}%
+      {[yshift=-4pt] pic cs:import_start}%
+    }
+    \uncover<3>{\curvecodeline%
+      {[xshift=12pt, yshift=10pt] pic cs:import_start}%
+      {+(90:2cm) and +(75:2cm)}%
+      {[xshift=-6pt, yshift=10pt] pic cs:def_end}%
+    }
+\end{frame}
+
+
+% three_files
+\begin{frame}[fragile]
+    \uncover<2-3>{\highlightdef{def}}
+    \uncover<  3>{\highlightboth{kitchen_import}}
+    \uncover<  3>{\highlightboth{chef_import}}
+    \uncover<2-3>{\highlightref{ref}}
+    \frametitle{Why is this hard?}
+    \begin{center}
+    \begin{minipage}[t]{22.5em}
+    \begin{center}
+        \includegraphics[height=2em]{icons/pan.png}
+    \end{center}
+    \vskip -1em
+    \begin{minipage}[t]{7em}
+    \begin{minted}[label=stove.py]{python}
+        def bake():
+            pass
+
+        def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?():
+            pass
+
+        def saute():
+            pass
+    \end{minted}
+    \end{minipage}
+    \hspace{0.5em}
+    \begin{minipage}[t]{15em}
+    \begin{minted}[label=kitchen.py]{python}
+        from stove import ?\tikzmark{kitchen_import_start}?*?\tikzmark{kitchen_import_end}?
+    \end{minted}
+    \end{minipage}
+    \end{minipage}
+    \hspace{0.5em}
+    \begin{minipage}[t]{12em}
+    \vskip 8em
+    \begin{center}
+        \includegraphics[height=2em]{icons/chef.png}
+    \end{center}
+    \begin{minted}[label=chef.py]{python}
+        from kitchen import ?\tikzmark{chef_import_start}?broil?\tikzmark{chef_import_end}?
+
+        ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
+    \end{minted}
+    \end{minipage}
+    \end{center}
+    \uncover<3>{\curvecodeline%
+      [-]%
+      {[yshift=10pt] pic cs:ref_end}%
+      {+(45:1cm) and +(-155:1cm)}%
+      {[yshift=-4pt] pic cs:chef_import_start}%
+    }
+    \uncover<3>{\curvecodeline%
+      [-]%
+      {[xshift=10pt, yshift=10pt] pic cs:chef_import_start}%
+      {+(90:5cm) and +(75:2cm)}%
+      {[xshift=4pt, yshift=10pt] pic cs:kitchen_import_start}%
+    }
+    \uncover<3>{\curvecodeline%
+      {[xshift=1pt, yshift=-4pt] pic cs:kitchen_import_start}%
+      {+(-105:1cm) and +(75:1cm)}%
+      {[xshift=-6pt, yshift=10pt] pic cs:def_end}%
+    }
+\end{frame}
+
+
+% three_files_updated
+\begin{frame}[fragile]
+    \frametitle{Why is this hard?}
+    \uncover<2-3>{\highlightdef{def1}}
+    \uncover<2-3>{\highlightdef{def2}}
+    \uncover<  3>{\highlightboth{import}}
+    \uncover<2-3>{\highlightref{ref}}
+    \begin{center}
+    \begin{minipage}[t]{22.5em}
+    \begin{center}
+        \includegraphics[height=2em]{icons/pan.png}
+    \end{center}
+    \vskip -1em
+    \begin{minipage}[t]{7em}
+    \begin{minted}[label=stove.py]{python}
+        def bake():
+            pass
+
+        def ?\tikzmark{def1_start}?broil?\tikzmark{def1_end}?():
+            pass
+
+        def saute():
+            pass
+    \end{minted}
+    \end{minipage}
+    \hspace{0.5em}
+    \begin{minipage}[t]{15em}
+    \begin{minted}[label=kitchen.py]{python}
+        from stove import *
+
+        def ?\tikzmark{def2_start}?broil?\tikzmark{def2_end}?():
+            print("We're broiling!")
+            import stove
+            return stove.broil()
+    \end{minted}
+    \end{minipage}
+    \end{minipage}
+    \hspace{0.5em}
+    \begin{minipage}[t]{12em}
+    \vskip 8em
+    \begin{center}
+        \includegraphics[height=2em]{icons/chef.png}
+    \end{center}
+    \begin{minted}[label=chef.py]{python}
+        from kitchen import ?\tikzmark{import_start}?broil?\tikzmark{import_end}?
+
+        ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
+    \end{minted}
+    \end{minipage}
+    \end{center}
+    \uncover<3>{\curvecodeline%
+      [-]%
+      {[yshift=10pt] pic cs:ref_end}%
+      {+(45:1cm) and +(-155:1cm)}%
+      {[yshift=-4pt] pic cs:import_start}%
+    }
+    \uncover<3>{\curvecodeline%
+      {[xshift=10pt, yshift=10pt] pic cs:import_start}%
+      {+(90:5cm) and +(75:2cm)}%
+      {[xshift=-6pt, yshift=10pt] pic cs:def2_end}%
+    }
+\end{frame}
+
+
+% python_class
+\begin{frame}[fragile]
+    \frametitle{Why is this hard?}
+    \begin{center}
+    \uncover<2- >{\highlightdef{def}}%
+    \uncover<2- >{\highlightref{ref}}%
+    \begin{minipage}[t]{25.5em}
+    \begin{center}
+        \includegraphics[height=2em]{icons/pan.png}
+    \end{center}
+    \vskip -1em
+    \begin{minipage}[t]{10em}
+    \begin{minted}[label=stove.py]{python}
+        class?\tikzmark{class}? Stove?\tikzmark{class_def}?(object):
+            def bake(self):
+                pass
+
+            def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?(self):
+                pass
+
+            def saute(self):
+                pass
+    \end{minted}
+    \end{minipage}
+    \hspace{0.5em}
+    \begin{minipage}[t]{15em}
+    \begin{minted}[label=kitchen.py]{python}
+        from stove import ?\tikzmark{kitchen_import}?*
+    \end{minted}
+    \end{minipage}
+    \end{minipage}
+    \hspace{-5.5em}
+    \begin{minipage}[t]{12em}
+    \vskip 6em
+    \begin{center}
+        \includegraphics[height=2em]{icons/chef.png}
+    \end{center}
+    \begin{minted}[label=chef.py]{python}
+        from kitchen import ?\tikzmark{chef_import}?Stove
+
+        stove?\tikzmark{instance_def}? = Stove?\tikzmark{class_ref}?()
+        stove?\tikzmark{instance_ref}?.?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
+    \end{minted}
+    \end{minipage}
+    \end{center}
+    \uncover<3- >{\curvecodeline%
+      [-, alt=<4>{line width=2pt, blue}{}]%
+      {[xshift=-10pt, yshift=-3pt] pic cs:ref_end}%
+      {+(-135:0.2cm) and +(-45:0.2cm)}%
+      {[xshift=-10pt, yshift=-3pt] pic cs:instance_ref}%
+    }
+    \uncover<3- >{\curvecodeline%
+      [-, alt=<5>{line width=2pt, blue}{}]%
+      {[xshift=-23pt, yshift=2pt] pic cs:instance_ref}%
+      {+(180:0.2cm) and +(180:0.2cm)}%
+      {[xshift=-23pt, yshift=2pt] pic cs:instance_def}%
+    }
+    \uncover<3- >{\curvecodeline%
+      [-, alt=<6>{line width=2pt, blue}{}]%
+      {[xshift=-10pt, yshift=8pt] pic cs:instance_def}%
+      {+(65:0.3cm) and +(115:0.3cm)}%
+      {[xshift=-10pt, yshift=8pt] pic cs:class_ref}%
+    }
+    \uncover<3- >{\curvecodeline%
+      [-, alt=<7>{line width=2pt, blue}{}]%
+      {[xshift=-4pt, yshift=-3pt] pic cs:class_ref}%
+      {+(-35:0.5cm) and +(-90:1cm)}%
+      {[xshift=10pt, yshift=-3pt] pic cs:chef_import}%
+    }
+    \uncover<3- >{\curvecodeline%
+      [-, alt=<8>{line width=2pt, blue}{}]%
+      {[xshift=10pt, yshift=10pt] pic cs:chef_import}%
+      {+(90:3cm) and +(-90:1cm)}%
+      {[xshift=2pt, yshift=-3pt] pic cs:kitchen_import}%
+    }
+    \uncover<3- >{\curvecodeline%
+      [-, alt=<9>{line width=2pt, blue}{}]%
+      {[xshift=2pt, yshift=10pt] pic cs:kitchen_import}%
+      {+(90:2cm) and +(90:2cm)}%
+      {[xshift=-10pt, yshift=8pt] pic cs:class_def}%
+    }
+    \uncover<3- >{\curvecodeline%
+      [-, alt=<10>{line width=2pt, blue}{}]%
+      {[xshift=-6pt, yshift=-2pt] pic cs:class_def}%
+      {+(-45:2cm) and +(90:2cm)}%
+      {[xshift=4pt, yshift=10pt] pic cs:class_ref}%
+    }
+    \uncover<3- >{\curvecodeline%
+      [-, alt=<11>{line width=2pt, blue}{}]%
+      {[xshift=4pt, yshift=-3pt] pic cs:class_ref}%
+      {+(-90:2.5cm) and +(-90:6.5cm)}%
+      {[xshift=-10pt, yshift=-2pt] pic cs:class}%
+    }
+    \uncover<3- >{\curvecodeline%
+      [alt=<12>{line width=2pt, blue}{}]%
+      {[xshift=-10pt, yshift=8pt] pic cs:class}%
+      {+(75:1cm) and +(115:1cm)}%
+      {[xshift=-10pt, yshift=6pt] pic cs:def_end}%
+    }
+\end{frame}
+
+
+\begin{frame}
+    \begin{textblock*}{160mm}(0mm,0mm)
+        \picturecredit{Marco Verch}{Close-up, a piece of yellow cake with red currant berries}{CC-BY-2.0}{https://flic.kr/p/2jikJsQ}
+        \includegraphics[width=160mm]{cake.jpg}
+    \end{textblock*}
+    \flattitle{10mm}{80mm}{Oh is that all?}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Zero configuration}
+    \begin{center}
+        We don't want to have to ask the package \\ owner how to collect the data
+        we need.
+    \end{center}
+    \begin{center}
+        Or ask them to configure a job to produce that data.
+    \end{center}
+    \begin{center}
+        It should \strong{Just Work}.
+    \end{center}
+\end{frame}
+
+
+\begin{frame}
+    %\begin{textblock*}{80mm}(80mm,0mm)
+    %    \picturecredit{Mark Gunn}{This just tern'ed into a swarm!}{CC-BY-2.0}{https://flic.kr/p/P11JH1}
+    %    \includegraphics[width=160mm]{terns.jpg}
+    %\end{textblock*}
+    \begin{textblock*}{80mm}(80mm,0mm)
+        \picturecredit{Joseph Gage}{Massive goose gaggle}{CC-BY-SA-2.0}{https://flic.kr/p/2kJfaCt}
+        \includegraphics[width=160mm]{geese.jpg}
+    \end{textblock*}
+
+    \frametitle{SCALE}
+    200 million repositories and counting
+    \vskip 1em
+    2 billion contributions \\
+    in the last 12 months
+    \vskip 1em
+    500 programming languages
+\end{frame}
+
+
+\begin{frame}[t]
+    \frametitle{When do we do the work?}
+    \vskip 2em
+    \begin{tikzpicture}
+        \node (bar) at(0,0) [
+            rectangle, anchor=west,
+            minimum width=\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=gray!20,
+        ] {};
+
+        \node at(bar.west) [
+            rectangle, anchor=west, inner xsep=2ex,
+            text height=1.5ex, text depth=0.25ex,
+            text=black,
+        ] {Index};
+        \node at(bar.east) [
+            rectangle, anchor=east, inner xsep=2ex,
+            text height=1.5ex, text depth=0.25ex,
+            text=black,
+        ] {Query};
+    \end{tikzpicture}
+\end{frame}
+
+
+\begin{frame}[t]
+    \frametitle{When do we do the work?}
+    \vskip 2em
+    \begin{tikzpicture}
+        \node (bar) at(0,0) [
+            rectangle, anchor=west,
+            minimum width=\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=gray!20,
+        ] {};
+
+        \node (query) at(bar.east) [
+            rectangle, anchor=east,
+            minimum width=0.8\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=blue!20,
+        ] {};
+
+        \node at (query.center) [overlay, text=red] {\scalebox{2}{\textbf{\Huge X}}};%
+
+        \node at(bar.west) [
+            rectangle, anchor=west, inner xsep=2ex,
+            text height=1.5ex, text depth=0.25ex,
+            text=black,
+        ] {Index};
+        \node at(bar.east) [
+            rectangle, anchor=east, inner xsep=2ex,
+            text height=1.5ex, text depth=0.25ex,
+            text=black,
+        ] {Query};
+    \end{tikzpicture}
+
+    \begin{center}
+        This is an interactive feature, so we can't do too much work at query
+        time.
+    \end{center}
+    \begin{center}
+        Goal: < 100ms
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[t]
+    \frametitle{When do we do the work?}
+    \vskip 2em
+    \begin{tikzpicture}
+        \node (bar) at(0,0) [
+            rectangle, anchor=west,
+            minimum width=\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=gray!20,
+        ] {};
+
+        \node (index) at(bar.west) [
+            rectangle, anchor=west,
+            minimum width=0.8\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=yellow!20,
+        ] {};
+
+        \node at (index.center) [overlay, text=red] {\scalebox{2}{\textbf{\Huge X}}};%
+
+        \node at(bar.west) [
+            rectangle, anchor=west, inner xsep=2ex,
+            text height=1.5ex, text depth=0.25ex,
+            text=black,
+        ] {Index};
+        \node at(bar.east) [
+            rectangle, anchor=east, inner xsep=2ex,
+            text height=1.5ex, text depth=0.25ex,
+            text=black,
+        ] {Query};
+    \end{tikzpicture}
+
+    \begin{center}
+        Because of our scale, we can't doo too much work at index time, either!
+
+        (Compute and storage costs are too high, work is wasted, etc.)
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[t]
+    \frametitle{When do we do the work?}
+    \vskip 2em
+    \begin{tikzpicture}
+        \node (bar) at(0,0) [
+            rectangle, anchor=west,
+            minimum width=\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=gray!20,
+        ] {};
+
+        \node at(bar.west) [
+            rectangle, anchor=west,
+            minimum width=0.5\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=yellow!20,
+        ] {};
+        \node at(bar.east) [
+            rectangle, anchor=east,
+            minimum width=0.5\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=blue!20,
+        ] {};
+
+        \node at(bar.west) [
+            rectangle, anchor=west, inner xsep=2ex,
+            text height=1.5ex, text depth=0.25ex,
+            text=black,
+        ] {Index};
+        \node at(bar.east) [
+            rectangle, anchor=east, inner xsep=2ex,
+            text height=1.5ex, text depth=0.25ex,
+            text=black,
+        ] {Query};
+    \end{tikzpicture}
+
+    \begin{center}
+        We want to strike a balance.
+    \end{center}
+
+    \begin{center}
+        Precalculate as much as we can.
+
+        Minimize the amount of \strong{duplicated} work.
+
+        Defer \strong{some} work until query time to make that happen.
+    \end{center}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Incremental processing}
+    \begin{center}
+        In a typical commit, a small fraction of files in the repo change.
+    \end{center}
+    \begin{center}
+        We want to reuse results that we've \\ already calculated for unchanged
+        files.
+    \end{center}
+    \begin{center}
+        \emph{Structural sharing} (like git itself) helps save storage.
+    \end{center}
+    \begin{center}
+        \emph{Incremental processing} also helps save compute.
+    \end{center}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Why is this hard?}
+    \begin{itemize}
+        \item Different languages have different name binding rules.
+        \item Some of those rules can be quite complex.
+        \item The result might depend on intermediate files.
+        \item We don't want to require manual per-repo configuration.
+        \item We need incremental processing to handle our scale.
+    \end{itemize}
+\end{frame}
+
+
+\section{Incremental results}
+
+\begin{frame}
+    \begin{textblock*}{160mm}(0mm,-15mm)
+        \picturecredit{Katja Schulz}{Inchworm}{CC-BY-2.0}{https://flic.kr/p/PJMP4w}
+        \includegraphics[width=160mm]{inchworm.jpg}
+    \end{textblock*}
+    \shadowedtitle{32mm}{7mm}{Incremental results}
+\end{frame}
+
+
+% incremental_separate_files
+\begin{frame}[fragile]
+    \frametitle{What would incremental results look like?}
+
+    \uncover<1,2,4>{\highlightdef{def}}
+    \uncover<1,3,4>{\highlightboth{import}}
+    \uncover<1,3,4>{\highlightref{ref}}
+
+    \begin{center}
+    \begin{minipage}{21em}
+    \begin{minipage}[t]{9em}
+    \begin{uncoverenv}<1,2,4>
+    \begin{minted}[label=stove.py]{python}
+        def bake():
+            pass
+
+        def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?():
+            pass
+
+        def saute():
+            pass
+    \end{minted}
+    \end{uncoverenv}
+    \end{minipage}
+    \hspace{0.5em}
+    \begin{minipage}[t]{11em}
+    \begin{uncoverenv}<1,3,4>
+    \begin{minted}[label=kitchen.py]{python}
+        from stove import ?\tikzmark{import_start}?broil?\tikzmark{import_end}?
+
+        ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
+    \end{minted}
+    \end{uncoverenv}
+    \end{minipage}
+    \end{minipage}
+    \hspace{-7em}
+    \begin{minipage}[t]{0.51\textwidth}
+    \vskip 1em
+    \begin{center}
+        \uncover<3,4>{
+            The reference at \textsl{kitchen.py:3:1} \\
+            refers to \texttt{stove.broil} in some other file
+        }
+        \\
+        \uncover<4>{$+$}
+        \\
+        \uncover<2,4>{\texttt{stove.broil} is defined at \textsl{stove.py:4:5}}
+        \\
+        \uncover<4>{$=$}
+        \\
+        \uncover<4>{
+            The reference at \textsl{kitchen.py:3:1} \\
+            is defined at \textsl{stove.py:4:5}
+        }
+    \end{center}
+    \end{minipage}
+    \end{center}
+    \uncover<1,3,4>{\curvecodeline%
+      [-]%
+      {[yshift=10pt] pic cs:ref_end}%
+      {+(45:1cm) and +(-155:1cm)}%
+      {[yshift=-4pt] pic cs:import_start}%
+    }
+    \uncover<1,4>{\curvecodeline%
+      {[xshift=12pt, yshift=10pt] pic cs:import_start}%
+      {+(90:2cm) and +(75:2cm)}%
+      {[xshift=-6pt, yshift=10pt] pic cs:def_end}%
+    }
+\end{frame}
+
+
+% incremental_python_class
+
+\begin{frame}[fragile]
+    \frametitle{The more complex example}
+    \begin{center}
+    \highlightdef{def}
+    \highlightref{ref}
+    \begin{minipage}[t]{25.5em}
+    \begin{center}
+        \includegraphics[height=2em]{icons/pan.png}
+    \end{center}
+    \vskip -1em
+    \begin{minipage}[t]{10em}
+    \begin{minted}[label=stove.py]{python}
+        class?\tikzmark{class}? Stove?\tikzmark{class_def}?(object):
+            def bake(self):
+                pass
+
+            def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?(self):
+                pass
+
+            def saute(self):
+                pass
+    \end{minted}
+    \end{minipage}
+    \hspace{0.5em}
+    \begin{minipage}[t]{15em}
+    \begin{minted}[label=kitchen.py]{python}
+        from stove import ?\tikzmark{kitchen_import}?*
+    \end{minted}
+    \end{minipage}
+    \end{minipage}
+    \hspace{-5.5em}
+    \begin{minipage}[t]{12em}
+    \vskip 6em
+    \begin{center}
+        \includegraphics[height=2em]{icons/chef.png}
+    \end{center}
+    \begin{minted}[label=chef.py]{python}
+        from kitchen import ?\tikzmark{chef_import}?Stove
+
+        stove?\tikzmark{instance_def}? = Stove?\tikzmark{class_ref}?()
+        stove?\tikzmark{instance_ref}?.?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
+    \end{minted}
+    \end{minipage}
+    \end{center}
+    \curvecodeline%
+      [-]%
+      {[xshift=-10pt, yshift=-3pt] pic cs:ref_end}%
+      {+(-135:0.2cm) and +(-45:0.2cm)}%
+      {[xshift=-10pt, yshift=-3pt] pic cs:instance_ref}%
+    \curvecodeline%
+      [-]%
+      {[xshift=-23pt, yshift=2pt] pic cs:instance_ref}%
+      {+(180:0.2cm) and +(180:0.2cm)}%
+      {[xshift=-23pt, yshift=2pt] pic cs:instance_def}%
+    \curvecodeline%
+      [-]%
+      {[xshift=-10pt, yshift=8pt] pic cs:instance_def}%
+      {+(65:0.3cm) and +(115:0.3cm)}%
+      {[xshift=-10pt, yshift=8pt] pic cs:class_ref}%
+    \curvecodeline%
+      [-]%
+      {[xshift=-4pt, yshift=-3pt] pic cs:class_ref}%
+      {+(-35:0.5cm) and +(-90:1cm)}%
+      {[xshift=10pt, yshift=-3pt] pic cs:chef_import}%
+    \curvecodeline%
+      [-]%
+      {[xshift=10pt, yshift=10pt] pic cs:chef_import}%
+      {+(90:3cm) and +(-90:1cm)}%
+      {[xshift=2pt, yshift=-3pt] pic cs:kitchen_import}%
+    \curvecodeline%
+      [-]%
+      {[xshift=2pt, yshift=10pt] pic cs:kitchen_import}%
+      {+(90:2cm) and +(90:2cm)}%
+      {[xshift=-10pt, yshift=8pt] pic cs:class_def}%
+    \curvecodeline%
+      [-]%
+      {[xshift=-6pt, yshift=-2pt] pic cs:class_def}%
+      {+(-45:2cm) and +(90:2cm)}%
+      {[xshift=4pt, yshift=10pt] pic cs:class_ref}%
+    \curvecodeline%
+      [-]%
+      {[xshift=4pt, yshift=-3pt] pic cs:class_ref}%
+      {+(-90:2.5cm) and +(-90:6.5cm)}%
+      {[xshift=-10pt, yshift=-2pt] pic cs:class}%
+    \curvecodeline%
+      {[xshift=-10pt, yshift=8pt] pic cs:class}%
+      {+(75:1cm) and +(115:1cm)}%
+      {[xshift=-10pt, yshift=6pt] pic cs:def_end}%
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The more complex example}
+
+    \uncover<2>  {\highlightboth{file}}
+    \uncover<2-4>{\highlightboth{Stove}}
+    \uncover<3-4>{\highlightboth{class}}
+    \uncover<5>  {\highlightboth{def}}
+    \uncover<6>  {\highlightdef{def}}
+
+    \begin{center}
+    \begin{minipage}{10em}
+    \begin{minted}[label={\tikzmark{file_start}stove.py\tikzmark{file_end}}]{python}
+        ?\tikzmark{class_start}?class?\tikzmark{class_end}? ?\tikzmark{Stove_start}?Stove?\tikzmark{Stove_end}?(object):
+            def bake(self):
+                pass
+
+            def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?(self):
+                pass
+
+            def saute(self):
+                pass
+    \end{minted}
+    \end{minipage}
+    \hspace{0.5em}
+    \begin{minipage}{20em}
+    \uncover<2- >{Invoking \texttt{stove.Stove}} \\
+    \uncover<3- >{gives you an instance of the \texttt{Stove} class.} \\
+    \par
+    \uncover<4- >{The \texttt{Stove} class} \\
+    \uncover<5- >{has an instance member named \texttt{broil}} \\
+    \uncover<6- >{defined at \textsl{stove.py:5:9}.} \\
+    \end{minipage}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The more complex example}
+
+    \uncover<2>  {\highlightboth{file}}
+    \uncover<3>  {\highlightboth{import}}
+    \uncover<2-3>{\highlightboth{star}}
+
+    \begin{center}
+    \begin{minipage}[t]{15em}
+    \begin{minted}[label={\tikzmark{file_start}kitchen.py\tikzmark{file_end}}]{python}
+        from ?\tikzmark{import_start}?stove?\tikzmark{import_end}? import ?\tikzmark{star_start}?*?\tikzmark{star_end}?
+    \end{minted}
+    \end{minipage}
+    \vskip 2em
+    \hspace{5em}
+    \begin{minipage}[t]{0.65\textwidth}
+    \uncover<2- >{If you are looking for \texttt{kitchen.[anything]}} \\
+    \uncover<3- >{then you might find it at \texttt{stove.[anything]}.} \\
+    \end{minipage}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The more complex example}
+
+    \uncover<1,5>{\highlightref{ref}}
+    \uncover<2>  {\highlightboth{mod}}
+    \uncover<2>  {\highlightboth{import}}
+    \uncover<3>  {\highlightboth{call}}
+    \uncover<4>  {\highlightboth{member}}
+
+    \begin{center}
+    \begin{minipage}[t]{12em}
+    \begin{minted}[label=chef.py]{python}
+        from ?\tikzmark{mod_start}?kitchen?\tikzmark{mod_end}? import ?\tikzmark{import_start}?Stove?\tikzmark{import_end}?
+
+        stove?\tikzmark{instance_def}? = ?\tikzmark{call_start}?Stove?\tikzmark{class_ref}?()?\tikzmark{call_end}?
+        stove?\tikzmark{member_start}?.?\tikzmark{ref_start}?broil?\tikzmark{ref_end}\tikzmark{member_end}?()
+    \end{minted}
+    \end{minipage}
+    \vskip 2em
+    \hspace{2.5em}
+    \begin{minipage}[t]{0.75\textwidth}
+    \uncover<2- >{If you can find what \texttt{kitchen.Stove} resolves to}
+    \uncover<3- >{and can call it} \\
+    \uncover<4- >{then the result should have a member named \texttt{broil}} \\
+    \uncover<5- >{which the reference at \textsl{chef.py:4:7} resolves to.} \\
+    \end{minipage}
+    \end{center}
+    \curvecodeline%
+      [-]%
+      {[xshift=-10pt, yshift=-3pt] pic cs:ref_end}%
+      {+(-135:0.2cm) and +(-45:0.2cm)}%
+      {[xshift=-10pt, yshift=-3pt] pic cs:member_start}%
+    \curvecodeline%
+      [-]%
+      {[xshift=-23pt, yshift=2pt] pic cs:member_start}%
+      {+(180:0.2cm) and +(180:0.2cm)}%
+      {[xshift=-23pt, yshift=2pt] pic cs:instance_def}%
+    \curvecodeline%
+      [-]%
+      {[xshift=-10pt, yshift=8pt] pic cs:instance_def}%
+      {+(65:0.3cm) and +(115:0.3cm)}%
+      {[xshift=-10pt, yshift=8pt] pic cs:class_ref}%
+    \curvecodeline%
+      [-]%
+      {[xshift=-4pt, yshift=-3pt] pic cs:class_ref}%
+      {+(-35:0.5cm) and +(-90:1cm)}%
+      {[xshift=10pt, yshift=-3pt] pic cs:import_start}%
+\end{frame}
+
+
+\begin{frame}[t,fragile]
+    \frametitle{The more complex example}
+
+    \vskip 5em
+    \begin{center}
+    \begin{minipage}{0.75\textwidth}
+    \begin{uncoverenv}<1- >
+        If you can find what \texttt{kitchen.Stove} resolves to and can call it \\
+        then the result should have a member named \texttt{broil} \\
+        which the reference at \textsl{chef.py:4:7} resolves to.
+    \end{uncoverenv}
+
+    \begin{uncoverenv}<2- >
+        \begin{center}
+            $+$
+        \end{center}
+        If you are looking for \texttt{kitchen.[anything]} \\
+        then you might find it at \texttt{stove.[anything]}.
+    \end{uncoverenv}
+    \end{minipage}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[t,fragile]
+    \frametitle{The more complex example}
+
+    \vskip 5em
+    \begin{center}
+    \begin{minipage}{0.75\textwidth}
+    \begin{uncoverenv}<1- >
+        If you can find what \texttt{stove.Stove} resolves to and can call it \\
+        then the result should have a member named \texttt{broil} \\
+        which the reference at \textsl{chef.py:4:7} resolves to.
+    \end{uncoverenv}
+
+    \begin{uncoverenv}<2- >
+        \begin{center}
+            $+$
+        \end{center}
+        Invoking \texttt{stove.Stove} \\
+        gives you an instance of the \texttt{Stove} class.
+    \end{uncoverenv}
+    \end{minipage}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[t,fragile]
+    \frametitle{The more complex example}
+
+    \vskip 5em
+    \begin{center}
+    \begin{minipage}{0.75\textwidth}
+    \begin{uncoverenv}<1- >
+        The \texttt{Stove} class \\
+        should have a member named \texttt{broil} \\
+        which the reference at \textsl{chef.py:4:7} resolves to.
+    \end{uncoverenv}
+
+    \begin{uncoverenv}<2- >
+        \begin{center}
+            $+$
+        \end{center}
+        The \texttt{Stove} class \\
+        has an instance member named \texttt{broil} \\
+        defined at \textsl{stove.py:5:9}.
+    \end{uncoverenv}
+    \end{minipage}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[t,fragile]
+    \frametitle{The more complex example}
+
+    \vskip 5em
+    \begin{center}
+    \begin{minipage}{0.75\textwidth}
+        \vspace*{\baselineskip}
+        The definition at \textsl{stove.py:5:9} \\
+        is what the reference at \textsl{chef.py:4:7} resolves to.
+    \end{minipage}
+    \end{center}
+\end{frame}
+
+
+\section{Stack graphs}
+
+\begin{frame}
+    \begin{textblock*}{160mm}(0mm,0mm)
+        \picturecredit{Marco Verch}{Stack of pancakes with berries on a plate}{CC-BY-2.0}{https://flic.kr/p/2jYUh8M}
+        \includegraphics[width=160mm]{pancakes.jpg}
+    \end{textblock*}
+    \flattitle{110mm}{10mm}{Stack graphs}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Stack graphs}
+    \highlightdef{def}
+    \highlightboth{import}
+    \highlightref{ref}
+    \begin{center}
+    \begin{minipage}[t]{9em}
+    \begin{minted}[label=stove.py]{python}
+        def bake():
+            pass
+
+        def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?():
+            pass
+
+        def saute():
+            pass
+    \end{minted}
+    \end{minipage}
+    \hspace{0.5em}
+    \begin{minipage}[t]{11em}
+    \begin{minted}[label=kitchen.py]{python}
+        from stove import ?\tikzmark{import_start}?broil?\tikzmark{import_end}?
+
+        ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
+    \end{minted}
+    \end{minipage}
+    \end{center}
+    \curvecodeline%
+      [-]%
+      {[yshift=10pt] pic cs:ref_end}%
+      {+(45:1cm) and +(-155:1cm)}%
+      {[yshift=-4pt] pic cs:import_start}%
+    \curvecodeline%
+      {[xshift=12pt, yshift=10pt] pic cs:import_start}%
+      {+(90:2cm) and +(75:2cm)}%
+      {[xshift=-6pt, yshift=10pt] pic cs:def_end}%
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Stack graphs}
+
+    \uncover<3>{\highlightdef{def}}
+    \uncover<5>{\highlightdef{mod}}
+
+    \begin{center}
+
+    \begin{minipage}{9em}
+    \begin{minted}[label={\tikzmark{mod_start}stove.py\tikzmark{mod_end}}]{python}
+        def bake():
+            pass
+
+        def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?():
+            pass
+
+        def saute():
+            pass
+    \end{minted}
+    \end{minipage}
+    \hspace{2em}
+    \begin{uncoverenv}<2- >
+    \begin{tikzpicture}[baseline={(current bounding box.center)}]
+        \node (root)       [highlight node on=<5>]
+                           [root node]                            {};
+        \node (stove)      [highlight node on=<5>]
+                           [definition]  [left=of root]           {stove};
+        \node (dot)        [highlight node on=<5>]
+                           [pop]         [left=of stove]          {.};
+        \node (s1)         [highlight node on=<4>]
+                           [anon scope]  [left=of dot]            {};
+
+        \setwidestsymbol{broil}
+        \node (s2)         [highlight node on=<4>]
+                           [anon scope]  [above=\scopegap of s1]  {};
+        \node (saute def)  [definition]  [left=of s2]             {\sized{saute}};
+        \node (s3)         [highlight node on=<4>]
+                           [anon scope]  [above=\scopegap of s2]  {};
+        \node (broil def)  [highlight node on=<3>]
+                           [definition]  [left=of s3]             {\sized{broil}};
+        \node (s4)         [highlight node on=<4>]
+                           [anon scope]  [above=\scopegap of s3]  {};
+        \node (bake def)   [definition]  [left=of s4]             {\sized{bake}};
+        \node (s5)         [highlight node on=<4>]
+                           [anon scope]  [above=\scopegap of s4]  {};
+
+        \path [-Stealth]
+          (root)      edge (stove)
+          (stove)     edge (dot)
+          (dot)       edge (s1)
+          (s1)        edge (s2)
+          (s2)        edge (s3)
+                      edge (saute def)
+          (s3)        edge (s4)
+                      edge (broil def)
+          (s4)        edge (s5)
+                      edge (bake def)
+          ;
+    \end{tikzpicture}
+    \end{uncoverenv}
+
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Stack graphs}
+
+    \uncover<3>{\highlightref{ref}}
+    \uncover<4>{\highlightboth{import}}
+
+    \begin{center}
+
+    \begin{minipage}{11em}
+    \begin{minted}[label=kitchen.py]{python}
+        ?\tikzmark{import_start}?from stove import broil?\tikzmark{import_end}?
+
+        ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
+    \end{minted}
+    \end{minipage}
+    \hspace{-7em}
+    \begin{uncoverenv}<2- >
+    \begin{tikzpicture}[baseline={([yshift=2em] current bounding box.center)}]
+        \node (root)       [highlight node on=<4>]
+                           [root node]                            {};
+        \node (kitchen)    [definition]  [right=of root]          {kitchen};
+        \node (dot)        [pop]         [right=of kitchen]       {.};
+        \node (k1)         [anon scope]  [right=of dot]           {};
+
+        \node (k2)         [anon scope]  [above=\scopegap of k1]  {};
+        \node (broil ref)  [highlight node on=<3>]
+                           [reference]   [right=of k2]            {broil};
+        \node (k3)         [anon scope]  [above=\scopegap of k2]  {};
+        \node (import def) [highlight node on=<4>]
+                           [pop]         [right=of k3]            {broil};
+        \node (import ref) [highlight node on=<4>]
+                           [push]        [right=of import def]    {broil};
+        \node (import dot) [highlight node on=<4>]
+                           [push]        [right=of import ref]    {.};
+        \node (import mod) [highlight node on=<4>]
+                           [push]        [right=of import dot]    {stove};
+        \node (k4)         [anon scope]  [above=\scopegap of k3]  {};
+
+        \path [-Stealth]
+          (root)      edge (kitchen)
+          (kitchen)    edge (dot)
+          (dot)        edge (k1)
+          (k1)         edge (k2)
+          (broil ref)  edge (k2)
+          (k2)         edge (k3)
+          (k3)         edge (k4)
+                       edge (import def)
+          (import def) edge (import ref)
+          (import ref) edge (import dot)
+          (import dot) edge (import mod)
+          (import mod) edge [overlay, in control=+(-60:3cm), out control=+(-90:4cm)] (root)
+          ;
+    \end{tikzpicture}
+    \end{uncoverenv}
+
+    \end{center}
+\end{frame}
+
+
+% Combined
+
+\begin{frame}[fragile]
+    \frametitle{Stack graphs}
+    \begin{center}
+    \scalebox{0.75}{
+    \begin{tikzpicture}
+        \node (root)       [highlight node on={<2,3,13>}]
+                           [root node]                            {};
+        \node (stove)      [highlight node on={<2,14>}]
+                           [definition]  [left=of root]           {stove};
+        \node (dot)        [highlight node on={<2,15>}]
+                           [pop]         [left=of stove]          {.};
+        \node (s1)         [highlight node on={<2,16>}]
+                           [anon scope]  [left=of dot]            {};
+
+        \setwidestsymbol{broil}
+        \node (s2)         [highlight node on={<2,17>}]
+                           [anon scope]  [above=\scopegap of s1]  {};
+        \node (saute def)  [highlight node on=<2>]
+                           [definition]  [left=of s2]             {\sized{saute}};
+        \node (s3)         [highlight node on={<2,18>}]
+                           [anon scope]  [above=\scopegap of s2]  {};
+        \node (broil def)  [highlight node on={<2,4,19>}]
+                           [definition]  [left=of s3]             {\sized{broil}};
+        \node (s4)         [highlight node on=<2>]
+                           [anon scope]  [above=\scopegap of s3]  {};
+        \node (bake def)   [highlight node on=<2>]
+                           [definition]  [left=of s4]             {\sized{bake}};
+        \node (s5)         [highlight node on=<2>]
+                           [anon scope]  [above=\scopegap of s4]  {};
+
+        \path [-Stealth]
+          (root)      edge [highlight inner edge on=<4>, show path on=<14>] (stove)
+          (stove)     edge [highlight inner edge on=<4>, show path on=<15>] (dot)
+          (dot)       edge [highlight inner edge on=<4>, show path on=<16>] (s1)
+          (s1)        edge [highlight inner edge on=<4>, show path on=<17>] (s2)
+          (s2)        edge [highlight inner edge on=<4>, show path on=<18>] (s3)
+                      edge (saute def)
+          (s3)        edge (s4)
+                      edge [highlight end edge on=<4>, show path on=<19>]   (broil def)
+          (s4)        edge (s5)
+                      edge (bake def)
+          ;
+
+        \node (kitchen)    [highlight node on=<3>]
+                           [definition]  [right=of root]          {kitchen};
+        \node (dot)        [highlight node on=<3>]
+                           [pop]         [right=of kitchen]       {.};
+        \node (k1)         [highlight node on=<3>]
+                           [anon scope]  [right=of dot]           {};
+
+        \node (k2)         [highlight node on={<3,7>}]
+                           [anon scope]  [above=\scopegap of k1]  {};
+        \node (broil ref)  [highlight node on={<3,4,6>}]
+                           [reference]   [right=of k2]            {broil};
+        \node (k3)         [highlight node on={<3,8>}]
+                           [anon scope]  [above=\scopegap of k2]  {};
+        \node (import def) [highlight node on={<3,9>}]
+                           [pop]         [right=of k3]            {broil};
+        \node (import ref) [highlight node on={<3,10>}]
+                           [push]        [right=of import def]    {broil};
+        \node (import dot) [highlight node on={<3,11>}]
+                           [push]        [right=of import ref]    {.};
+        \node (import mod) [highlight node on={<3,12>}]
+                           [push]        [right=of import dot]    {stove};
+        \node (k4)         [highlight node on=<3>]
+                           [anon scope]  [above=\scopegap of k3]  {};
+
+        \path [-Stealth]
+          (root)      edge (kitchen)
+          (kitchen)    edge (dot)
+          (dot)        edge (k1)
+          (k1)         edge (k2)
+          (broil ref)  edge [highlight inner edge on=<4>, show path on=<7>] (k2)
+          (k2)         edge [highlight inner edge on=<4>, show path on=<8>] (k3)
+          (k3)         edge (k4)
+                       edge [highlight inner edge on=<4>, show path on=<9>] (import def)
+          (import def) edge [highlight inner edge on=<4>, show path on=<10>] (import ref)
+          (import ref) edge [highlight inner edge on=<4>, show path on=<11>] (import dot)
+          (import dot) edge [highlight inner edge on=<4>, show path on=<12>] (import mod)
+          (import mod) edge [overlay, in control=+(-60:3cm), out control=+(-90:4cm)]
+                            [highlight inner edge on=<4>, show path on=<13>] (root)
+          ;
+    \end{tikzpicture}
+    }
+    \vskip 2em
+    \begin{minipage}{0.5\textwidth}
+    \begin{overprint}
+        \onslide<6-8,10,15-18> \currentsymbolstack{broil}
+        \onslide<5,9,19>       \currentsymbolstack{}
+        \onslide<11,14>        \currentsymbolstack{.broil}
+        \onslide<12-13>        \currentsymbolstack{stove.broil}
+    \end{overprint}
+    \end{minipage}
+    \end{center}
+\end{frame}
+
+
+% More complex
+
+\begin{frame}[fragile]
+    \frametitle{The more complex example}
+    \begin{center}
+    \highlightdef{def}
+    \highlightref{ref}
+    \begin{minipage}[t]{25.5em}
+    \begin{center}
+        \includegraphics[height=2em]{icons/pan.png}
+    \end{center}
+    \vskip -1em
+    \begin{minipage}[t]{10em}
+    \begin{minted}[label=stove.py]{python}
+        class?\tikzmark{class}? Stove?\tikzmark{class_def}?(object):
+            def bake(self):
+                pass
+
+            def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?(self):
+                pass
+
+            def saute(self):
+                pass
+    \end{minted}
+    \end{minipage}
+    \hspace{0.5em}
+    \begin{minipage}[t]{15em}
+    \begin{minted}[label=kitchen.py]{python}
+        from stove import ?\tikzmark{kitchen_import}?*
+    \end{minted}
+    \end{minipage}
+    \end{minipage}
+    \hspace{-5.5em}
+    \begin{minipage}[t]{12em}
+    \vskip 6em
+    \begin{center}
+        \includegraphics[height=2em]{icons/chef.png}
+    \end{center}
+    \begin{minted}[label=chef.py]{python}
+        from kitchen import ?\tikzmark{chef_import}?Stove
+
+        stove?\tikzmark{instance_def}? = Stove?\tikzmark{class_ref}?()
+        stove?\tikzmark{instance_ref}?.?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
+    \end{minted}
+    \end{minipage}
+    \end{center}
+    \curvecodeline%
+      [-]%
+      {[xshift=-10pt, yshift=-3pt] pic cs:ref_end}%
+      {+(-135:0.2cm) and +(-45:0.2cm)}%
+      {[xshift=-10pt, yshift=-3pt] pic cs:instance_ref}%
+    \curvecodeline%
+      [-]%
+      {[xshift=-23pt, yshift=2pt] pic cs:instance_ref}%
+      {+(180:0.2cm) and +(180:0.2cm)}%
+      {[xshift=-23pt, yshift=2pt] pic cs:instance_def}%
+    \curvecodeline%
+      [-]%
+      {[xshift=-10pt, yshift=8pt] pic cs:instance_def}%
+      {+(65:0.3cm) and +(115:0.3cm)}%
+      {[xshift=-10pt, yshift=8pt] pic cs:class_ref}%
+    \curvecodeline%
+      [-]%
+      {[xshift=-4pt, yshift=-3pt] pic cs:class_ref}%
+      {+(-35:0.5cm) and +(-90:1cm)}%
+      {[xshift=10pt, yshift=-3pt] pic cs:chef_import}%
+    \curvecodeline%
+      [-]%
+      {[xshift=10pt, yshift=10pt] pic cs:chef_import}%
+      {+(90:3cm) and +(-90:1cm)}%
+      {[xshift=2pt, yshift=-3pt] pic cs:kitchen_import}%
+    \curvecodeline%
+      [-]%
+      {[xshift=2pt, yshift=10pt] pic cs:kitchen_import}%
+      {+(90:2cm) and +(90:2cm)}%
+      {[xshift=-10pt, yshift=8pt] pic cs:class_def}%
+    \curvecodeline%
+      [-]%
+      {[xshift=-6pt, yshift=-2pt] pic cs:class_def}%
+      {+(-45:2cm) and +(90:2cm)}%
+      {[xshift=4pt, yshift=10pt] pic cs:class_ref}%
+    \curvecodeline%
+      [-]%
+      {[xshift=4pt, yshift=-3pt] pic cs:class_ref}%
+      {+(-90:2.5cm) and +(-90:6.5cm)}%
+      {[xshift=-10pt, yshift=-2pt] pic cs:class}%
+    \curvecodeline%
+      {[xshift=-10pt, yshift=8pt] pic cs:class}%
+      {+(75:1cm) and +(115:1cm)}%
+      {[xshift=-10pt, yshift=6pt] pic cs:def_end}%
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{The more complex example}
+    \begin{center}
+    \scalebox{0.6}{
+    \begin{tikzpicture}
+        \node (root)       [highlight node on={<2,3,4,20,27>}]
+                           [root node]                            {};
+
+        \node (stove)      [highlight node on={<2,28>}]
+                           [definition]  [below=4em of root] {stove};
+        \node (dot)        [highlight node on={<2,29>}]
+                           [pop]         [left=of stove]          {.};
+        \node (s1)         [highlight node on={<2,30>}]
+                           [anon scope]  [left=of dot]            {};
+
+        \node (s2)         [highlight node on={<2,31>}]
+                           [anon scope]  [above=\scopegap of s1]  {};
+        \node (Stove def)  [highlight node on={<2,32>}]
+                           [definition]  [left=of s2]             {Stove};
+        \node (s3)         [highlight node on={<2>}]
+                           [anon scope]  [above=\scopegap of s2]  {};
+
+        \node (call)       [highlight node on={<2,33>}]
+                           [pop]  [left=of Stove def]             {()};
+        \node (instance)   [highlight node on={<2,34>}]
+                           [exported scope]  [left=of call]       {IM};
+        \node (member)     [highlight node on={<2,35>}]
+                           [pop]  [left=of instance]              {.};
+        \node (m1)         [highlight node on={<2,36>}]
+                           [anon scope]  [left=of member]         {};
+
+        \setwidestsymbol{broil}
+        \node (m2)         [highlight node on={<2,37>}]
+                           [anon scope]  [above=\scopegap of m1]  {};
+        \node (saute def)  [highlight node on={<2>}]
+                           [definition]  [left=of m2]             {\sized{saute}};
+        \node (m3)         [highlight node on={<2,38>}]
+                           [anon scope]  [above=\scopegap of m2]  {};
+        \node (broil def)  [highlight node on={<2,5,39>}]
+                           [definition]  [left=of m3]             {\sized{broil}};
+        \node (m4)         [highlight node on=<2>]
+                           [anon scope]  [above=\scopegap of m3]  {};
+        \node (bake def)   [highlight node on=<2>]
+                           [definition]  [left=of m4]             {\sized{bake}};
+        \node (m5)         [highlight node on=<2>]
+                           [anon scope]  [above=\scopegap of m4]  {};
+
+        \path [-Stealth]
+          (root)      edge [highlight inner edge on=<5>, show path on=<28>] (stove)
+          (stove)     edge [highlight inner edge on=<5>, show path on=<29>] (dot)
+          (dot)       edge [highlight inner edge on=<5>, show path on=<30>] (s1)
+          (s1)        edge [highlight inner edge on=<5>, show path on=<31>] (s2)
+          (s2)        edge (s3)
+                      edge [highlight inner edge on=<5>, show path on=<32>] (Stove def)
+          (Stove def) edge [highlight inner edge on=<5>, show path on=<33>] (call)
+          (call)      edge [highlight inner edge on=<5>, show path on=<34>] (instance)
+          (instance)  edge [highlight inner edge on=<5>, show path on=<35>] (member)
+          (member)    edge [highlight inner edge on=<5>, show path on=<36>] (m1)
+          (m1)        edge [highlight inner edge on=<5>, show path on=<37>] (m2)
+          (m2)        edge [highlight inner edge on=<5>, show path on=<38>] (m3)
+                      edge (saute def)
+          (m3)        edge (m4)
+                      edge [highlight end edge on=<5>, show path on=<39>]   (broil def)
+          (m4)        edge (m5)
+                      edge (bake def)
+          ;
+
+        \node (kitchen)      [highlight node on={<3,21>}]
+                             [definition]  [above=4em of root]  {kitchen};
+        \node (dot)          [highlight node on={<3,22>}]
+                             [pop]         [left=of kitchen]        {.};
+        \node (k1)           [highlight node on={<3,23>}]
+                             [anon scope]  [left=of dot]            {};
+
+        \node (k2)           [highlight node on={<3,24>}]
+                             [anon scope]  [above=\scopegap of k1]  {};
+        \node (reimport dot) [highlight node on={<3,25>}]
+                             [push]        [left=of k2]             {.};
+        \node (reimport mod) [highlight node on={<3,26>}]
+                             [push]        [left=of reimport dot]   {stove};
+        \node (k3)           [highlight node on=<3>]
+                             [anon scope]  [above=\scopegap of k2]  {};
+
+        \path [-Stealth]
+          (root)         edge [highlight inner edge on=<5>, show path on=<21>] (kitchen)
+          (kitchen)      edge [highlight inner edge on=<5>, show path on=<22>] (dot)
+          (dot)          edge [highlight inner edge on=<5>, show path on=<23>] (k1)
+          (k1)           edge [highlight inner edge on=<5>, show path on=<24>] (k2)
+          (k2)           edge (k3)
+                         edge [highlight inner edge on=<5>, show path on=<25>] (reimport dot)
+          (reimport dot) edge [highlight inner edge on=<5>, show path on=<26>] (reimport mod)
+          (reimport mod) edge [overlay, in control=+(135:2cm), out control=+(-90:1.5cm)]
+                              [highlight inner edge on=<5>, show path on=<27>] (root)
+          ;
+
+        \node (chef)       [highlight node on=<4>]
+                           [definition]  [right=3em of root]      {chef};
+        \node (dot)        [highlight node on=<4>]
+                           [pop]         [right=of chef]          {.};
+        \node (c1)         [highlight node on=<4>]
+                           [anon scope]  [right=of dot]           {};
+
+        \node (c2)         [highlight node on={<4,10>}]
+                           [anon scope]  [above=\scopegap of c1]  {};
+        \node (stove ref)  [highlight node on={<4,9>}]
+                           [reference]   [right=of c2]            {stove};
+        \node (member dot) [highlight node on={<4,8>}]
+                           [push]        [right=of stove ref]     {.};
+        \node (broil ref)  [highlight node on={<4,5,7>}]
+                           [reference]   [right=of member dot]    {broil};
+        \node (c3)         [highlight node on={<4,11>}]
+                           [anon scope]  [above=\scopegap of c2]  {};
+        \node (stove def)  [highlight node on={<4,12>}]
+                           [definition]  [right=of c3]            {stove};
+        \node (Stove call) [highlight node on={<4,13>}]
+                           [push]        [right=of stove def]     {()};
+        \node (Stove ref)  [highlight node on={<4,14>}]
+                           [reference]   [right=of Stove call]    {Stove};
+        \node (c4)         [highlight node on={<4,15>}]
+                           [anon scope]  [above=\scopegap of c3]  {};
+        \node (import def) [highlight node on={<4,16>}]
+                           [pop]         [right=of c4]            {Stove};
+        \node (import ref) [highlight node on={<4,17>}]
+                           [push]        [right=of import def]    {Stove};
+        \node (import dot) [highlight node on={<4,18>}]
+                           [push]        [right=of import ref]    {.};
+        \node (import mod) [highlight node on={<4,19>}]
+                           [push]        [right=of import dot]    {kitchen};
+        \node (c5)         [highlight node on=<4>]
+                           [anon scope]  [above=\scopegap of c4]  {};
+
+        \path [-Stealth]
+          (root)       edge (chef)
+          (chef)       edge (dot)
+          (dot)        edge (c1)
+          (c1)         edge (c2)
+          (broil ref)  edge [highlight inner edge on=<5>, show path on=<8>] (member dot)
+          (member dot)  edge [highlight inner edge on=<5>, show path on=<9>] (stove ref)
+          (stove ref)  edge [highlight inner edge on=<5>, show path on=<10>] (c2)
+          (c2)         edge [highlight inner edge on=<5>, show path on=<11>] (c3)
+          (c3)         edge (c4)
+                       edge [highlight inner edge on=<5>, show path on=<12>] (stove def)
+          (stove def)  edge [highlight inner edge on=<5>, show path on=<13>] (Stove call)
+          (Stove call) edge [highlight inner edge on=<5>, show path on=<14>] (Stove ref)
+          (Stove ref)  edge [highlight inner edge on=<5>, show path on=<15>] 
+                            [in control=+(-65:1cm), out control=+(90:1cm)] (c4)
+          (c4)         edge (c5)
+                       edge [highlight inner edge on=<5>, show path on=<16>] (import def)
+          (import def) edge [highlight inner edge on=<5>, show path on=<17>] (import ref)
+          (import ref) edge [highlight inner edge on=<5>, show path on=<18>] (import dot)
+          (import dot) edge [highlight inner edge on=<5>, show path on=<19>] (import mod)
+          (import mod) edge [overlay, in control=+(-45:3cm), out control=+(-90:6cm)]
+                            [highlight inner edge on=<5>, show path on=<20>] (root)
+          ;
+    \end{tikzpicture}
+    }
+    \vskip 2em
+    \begin{minipage}{0.5\textwidth}
+    \begin{overprint}
+        \onslide<6,39>                  \currentsymbolstack{}
+        \onslide<7,35-38>               \currentsymbolstack{broil}
+        \onslide<8,12,33-34>            \currentsymbolstack{.broil}
+        \onslide<9-11>                  \currentsymbolstack{stove.broil}
+        \onslide<13,16,32>              \currentsymbolstack{().broil}
+        \onslide<14-15,17,22-24,29-31>  \currentsymbolstack{Stove().broil}
+        \onslide<18,21,25,28>           \currentsymbolstack{.Stove().broil}
+        \onslide<19-20>                 \currentsymbolstack{kitchen.Stove().broil}
+        \onslide<26-27>                 \currentsymbolstack{stove.Stove().broil}
+    \end{overprint}
+    \end{minipage}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[t]
+    \frametitle{Are we done?}
+    \vskip 2em
+    \begin{tikzpicture}
+        \node (bar) at(0,0) [
+            rectangle, anchor=west,
+            minimum width=\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=gray!20,
+        ] {};
+
+        \node (query) at(bar.east) [
+            rectangle, anchor=east,
+            minimum width=0.8\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=blue!20,
+        ] {};
+
+        \node at(bar.west) [
+            rectangle, anchor=west, inner xsep=2ex,
+            text height=1.5ex, text depth=0.25ex,
+            text=black,
+        ] {Index};
+        \node at(bar.east) [
+            rectangle, anchor=east, inner xsep=2ex,
+            text height=1.5ex, text depth=0.25ex,
+            text=black,
+        ] {Query};
+    \end{tikzpicture}
+
+    \begin{center}
+        We're still doing too much work at query time!
+    \end{center}
+
+    \begin{center}
+        Can we shift more of the work to index time, \\
+        while still remaining incremental?
+    \end{center}
+\end{frame}
+
+
+\section{Partial paths}
+
+\begin{frame}
+    \begin{textblock*}{160mm}(0mm,0mm)
+        \picturecredit{Seattle Municipal Archives}{West Seattle Bridge under construction, circa 1983}{CC-BY-2.0}{https://flic.kr/p/7jKWYi}
+        \includegraphics[width=160mm]{bridge.jpg}
+    \end{textblock*}
+    \shadowedtitle{150mm - \titlewidth}{10mm}{Partial paths}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Partial paths}
+
+    \begin{center}
+
+    \begin{minipage}{11em}
+    \begin{minted}[label=kitchen.py]{python}
+        ?\tikzmark{import_start}?from stove import broil?\tikzmark{import_end}?
+
+        ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
+    \end{minted}
+    \end{minipage}
+    \hspace{2em}
+    \scalebox{0.75}{
+    \begin{tikzpicture}[baseline={([yshift=-2em] current bounding box.center)}]
+        \node (root)       [root node]                            {};
+        \node (kitchen)    [definition]  [right=of root]          {kitchen};
+        \node (dot)        [pop]         [right=of kitchen]       {.};
+        \node (k1)         [anon scope]  [right=of dot]           {};
+
+        \node (k2)         [anon scope]  [above=\scopegap of k1]  {};
+        \node (broil ref)  [reference]   [right=of k2]            {broil};
+        \node (k3)         [anon scope]  [above=\scopegap of k2]  {};
+        \node (import def) [pop]         [right=of k3]            {broil};
+        \node (import ref) [push]        [right=of import def]    {broil};
+        \node (import dot) [push]        [right=of import ref]    {.};
+        \node (import mod) [push]        [right=of import dot]    {stove};
+        \node (k4)         [anon scope]  [above=\scopegap of k3]  {};
+
+        \path [-Stealth]
+          (root)      edge (kitchen)
+          (kitchen)    edge (dot)
+          (dot)        edge (k1)
+          (k1)         edge (k2)
+          (broil ref)  edge [highlight inner edge on=<2- >] (k2)
+          (k2)         edge [highlight inner edge on=<2- >] (k3)
+          (k3)         edge (k4)
+                       edge [highlight inner edge on=<2- >] (import def)
+          (import def) edge [highlight inner edge on=<2- >] (import ref)
+          (import ref) edge [highlight inner edge on=<2- >] (import dot)
+          (import dot) edge [highlight inner edge on=<2- >] (import mod)
+          (import mod) edge [highlight end edge on=<2- >]
+                            [overlay, in control=+(-60:3cm), out control=+(-90:4cm)] (root)
+          ;
+    \end{tikzpicture}
+    }
+
+    \vskip 5em
+    \uncover<3- >{\partialpath{}{\node [reference] {broil}}{\node [root node] {}}{stove.broil}}
+    \vskip 0.75em
+    \uncover<4>{The reference at \textsl{kitchen.py:3:1}  refers to \texttt{stove.broil} in some other file}
+
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Partial paths}
+
+    \begin{center}
+
+    \begin{minipage}{9em}
+    \begin{minted}[label={\tikzmark{mod_start}stove.py\tikzmark{mod_end}}]{python}
+        def bake():
+            pass
+
+        def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?():
+            pass
+
+        def saute():
+            pass
+    \end{minted}
+    \end{minipage}
+    \hspace{2em}
+    \scalebox{0.75}{
+    \begin{tikzpicture}[baseline={(current bounding box.center)}]
+        \node (root)       [root node]                            {};
+        \node (stove)      [definition]  [left=of root]           {stove};
+        \node (dot)        [pop]         [left=of stove]          {.};
+        \node (s1)         [anon scope]  [left=of dot]            {};
+
+        \setwidestsymbol{broil}
+        \node (s2)         [anon scope]  [above=\scopegap of s1]  {};
+        \node (saute def)  [definition]  [left=of s2]             {\sized{saute}};
+        \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
+        \node (broil def)  [definition]  [left=of s3]             {\sized{broil}};
+        \node (s4)         [anon scope]  [above=\scopegap of s3]  {};
+        \node (bake def)   [definition]  [left=of s4]             {\sized{bake}};
+        \node (s5)         [anon scope]  [above=\scopegap of s4]  {};
+
+        \path [-Stealth]
+          (root)      edge [highlight inner edge on=<2- >] (stove)
+          (stove)     edge [highlight inner edge on=<2- >] (dot)
+          (dot)       edge [highlight inner edge on=<2- >] (s1)
+          (s1)        edge [highlight inner edge on=<2- >] (s2)
+          (s2)        edge [highlight inner edge on=<2- >] (s3)
+                      edge (saute def)
+          (s3)        edge (s4)
+                      edge [highlight end edge on=<2- >] (broil def)
+          (s4)        edge (s5)
+                      edge (bake def)
+          ;
+    \end{tikzpicture}
+    }
+
+    \vskip 2em
+    \uncover<3- >{\partialpath{stove.broil}{\node [root node] {}}{\node [definition] {broil}}{}}
+    \vskip 0.75em
+    \uncover<4>{\texttt{stove.broil} is defined at \textsl{stove.py:4:5}.}
+
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Concatenating partial paths}
+
+    \vskip 2em
+    \begin{center}
+        \begin{minipage}[t]{0.46\textwidth}
+            \begin{center}
+            \partialpath{}{\node [reference] {broil}}{\node [root node] {}}{stove.broil}
+            \end{center}
+        \end{minipage}
+            \; $+$ \;
+        \begin{minipage}[t]{0.46\textwidth}
+            \begin{center}
+            \partialpath{stove.broil}{\node [root node] {}}{\node [definition] {broil}}{}
+            \end{center}
+        \end{minipage}
+        \vskip 2em
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \begin{center}
+            The reference at \textsl{kitchen.py:3:1} \\
+            refers to \texttt{stove.broil} in some other file
+            \end{center}
+        \end{minipage}
+            \; $+$ \;
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \begin{center}
+            \texttt{stove.broil} is defined at \textsl{stove.py:4:5}
+            \end{center}
+        \end{minipage}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Concatenating partial paths}
+
+    \vskip 2em
+    \begin{center}
+        \begin{minipage}[t]{\textwidth}
+            \begin{center}
+            \partialpath{}{\node [reference] {broil}}{\node [definition] {broil}}{}
+            \end{center}
+        \end{minipage}
+        \vskip 2em
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \begin{center}
+            The reference at \textsl{kitchen.py:3:1} \\
+            is defined at \textsl{stove.py:4:5}. \\
+            \end{center}
+        \end{minipage}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[t,fragile]
+    \frametitle{The more complex example}
+
+    \begin{center}
+
+    \begin{minipage}{10em}
+    \begin{minted}[label={\tikzmark{file_start}stove.py\tikzmark{file_end}}]{python}
+        ?\tikzmark{class_start}?class?\tikzmark{class_end}? ?\tikzmark{Stove_start}?Stove?\tikzmark{Stove_end}?(object):
+            def bake(self):
+                pass
+
+            def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?(self):
+                pass
+
+            def saute(self):
+                pass
+    \end{minted}
+    \end{minipage}
+    \hspace{2em}
+    \scalebox{0.6}{
+    \begin{tikzpicture}[baseline={(current bounding box.center)}]
+        \node (root)       [root node]                            {};
+        \node (stove)      [definition]  [below=4em of root] {stove};
+        \node (dot)        [pop]         [left=of stove]          {.};
+        \node (s1)         [anon scope]  [left=of dot]            {};
+
+        \node (s2)         [anon scope]  [above=\scopegap of s1]  {};
+        \node (Stove def)  [definition]  [left=of s2]             {Stove};
+        \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
+
+        \node (call)       [pop]  [left=of Stove def]             {()};
+        \node (instance)   [exported scope]  [left=of call]       {IM};
+        \node (member)     [pop]  [left=of instance]              {.};
+        \node (m1)         [anon scope]  [left=of member]         {};
+
+        \setwidestsymbol{broil}
+        \node (m2)         [anon scope]  [above=\scopegap of m1]  {};
+        \node (saute def)  [definition]  [left=of m2]             {\sized{saute}};
+        \node (m3)         [anon scope]  [above=\scopegap of m2]  {};
+        \node (broil def)  [definition]  [left=of m3]             {\sized{broil}};
+        \node (m4)         [anon scope]  [above=\scopegap of m3]  {};
+        \node (bake def)   [definition]  [left=of m4]             {\sized{bake}};
+        \node (m5)         [anon scope]  [above=\scopegap of m4]  {};
+
+        \path [-Stealth]
+          (root)      edge [highlight inner edge on=<2- >] (stove)
+          (stove)     edge [highlight inner edge on=<2- >] (dot)
+          (dot)       edge [highlight inner edge on=<2- >] (s1)
+          (s1)        edge [highlight inner edge on=<2- >] (s2)
+          (s2)        edge (s3)
+                      edge [highlight inner edge on=<2- >] (Stove def)
+          (Stove def) edge [highlight inner edge on=<2- >] (call)
+          (call)      edge [highlight end edge on=<2- >] (instance)
+          (instance)  edge (member)
+          (member)    edge (m1)
+          (m1)        edge (m2)
+          (m2)        edge (m3)
+                      edge (saute def)
+          (m3)        edge (m4)
+                      edge (broil def)
+          (m4)        edge (m5)
+                      edge (bake def)
+          ;
+    \end{tikzpicture}
+    }
+    \hspace{3em}
+
+    \uncover<3- >{\partialpath{stove.Stove()}{\node [root node]{}}{\node [exported scope] {IM}}{}}
+    \vskip 0.75em
+    \uncover<4>{
+        Invoking \texttt{stove.Stove} \\
+        gives you an instance of the \texttt{Stove} class. \\
+    }
+
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[t,fragile]
+    \frametitle{The more complex example}
+
+    \begin{center}
+
+    \begin{minipage}{10em}
+    \begin{minted}[label={\tikzmark{file_start}stove.py\tikzmark{file_end}}]{python}
+        ?\tikzmark{class_start}?class?\tikzmark{class_end}? ?\tikzmark{Stove_start}?Stove?\tikzmark{Stove_end}?(object):
+            def bake(self):
+                pass
+
+            def ?\tikzmark{def_start}?broil?\tikzmark{def_end}?(self):
+                pass
+
+            def saute(self):
+                pass
+    \end{minted}
+    \end{minipage}
+    \hspace{2em}
+    \scalebox{0.6}{
+    \begin{tikzpicture}[baseline={(current bounding box.center)}]
+        \node (root)       [root node]                            {};
+        \node (stove)      [definition]  [below=4em of root] {stove};
+        \node (dot)        [pop]         [left=of stove]          {.};
+        \node (s1)         [anon scope]  [left=of dot]            {};
+
+        \node (s2)         [anon scope]  [above=\scopegap of s1]  {};
+        \node (Stove def)  [definition]  [left=of s2]             {Stove};
+        \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
+
+        \node (call)       [pop]  [left=of Stove def]             {()};
+        \node (instance)   [exported scope]  [left=of call]       {IM};
+        \node (member)     [pop]  [left=of instance]              {.};
+        \node (m1)         [anon scope]  [left=of member]         {};
+
+        \setwidestsymbol{broil}
+        \node (m2)         [anon scope]  [above=\scopegap of m1]  {};
+        \node (saute def)  [definition]  [left=of m2]             {\sized{saute}};
+        \node (m3)         [anon scope]  [above=\scopegap of m2]  {};
+        \node (broil def)  [definition]  [left=of m3]             {\sized{broil}};
+        \node (m4)         [anon scope]  [above=\scopegap of m3]  {};
+        \node (bake def)   [definition]  [left=of m4]             {\sized{bake}};
+        \node (m5)         [anon scope]  [above=\scopegap of m4]  {};
+
+        \path [-Stealth]
+          (root)      edge (stove)
+          (stove)     edge (dot)
+          (dot)       edge (s1)
+          (s1)        edge (s2)
+          (s2)        edge (s3)
+                      edge (Stove def)
+          (Stove def) edge (call)
+          (call)      edge (instance)
+          (instance)  edge [highlight inner edge on=<1- >] (member)
+          (member)    edge [highlight inner edge on=<1- >] (m1)
+          (m1)        edge [highlight inner edge on=<1- >] (m2)
+          (m2)        edge [highlight inner edge on=<1- >] (m3)
+                      edge (saute def)
+          (m3)        edge (m4)
+                      edge [highlight end edge on=<1- >] (broil def)
+          (m4)        edge (m5)
+                      edge (bake def)
+          ;
+    \end{tikzpicture}
+    }
+    \hspace{3em}
+
+    \uncover<2- >{\partialpath{.broil}{\node [exported scope] {IM}}{\node [definition]{broil}}{}}
+    \vskip 0.75em
+    \uncover<3>{
+        The \texttt{Stove} class \\
+        has an instance member named \texttt{broil} \\
+        defined at \textsl{stove.py:5:9}. \\
+    }
+
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The more complex example}
+
+    \begin{center}
+
+    \begin{minipage}[t]{15em}
+    \begin{minted}[label={\tikzmark{file_start}kitchen.py\tikzmark{file_end}}]{python}
+        from ?\tikzmark{import_start}?stove?\tikzmark{import_end}? import ?\tikzmark{star_start}?*?\tikzmark{star_end}?
+    \end{minted}
+    \end{minipage}
+    \hspace{2em}
+    \scalebox{0.6}{
+        \begin{tikzpicture}[baseline={([yshift=1em] current bounding box.center)}]
+        \node (root)         [root node]                            {};
+        \node (kitchen)      [definition]  [above=4em of root]  {kitchen};
+        \node (dot)          [pop]         [left=of kitchen]        {.};
+        \node (k1)           [anon scope]  [left=of dot]            {};
+
+        \node (k2)           [anon scope]  [above=\scopegap of k1]  {};
+        \node (reimport dot) [push]        [left=of k2]             {.};
+        \node (reimport mod) [push]        [left=of reimport dot]   {stove};
+        \node (k3)           [anon scope]  [above=\scopegap of k2]  {};
+
+        \path [-Stealth]
+          (root)         edge [highlight inner edge on=<2- >] (kitchen)
+          (kitchen)      edge [highlight inner edge on=<2- >] (dot)
+          (dot)          edge [highlight inner edge on=<2- >] (k1)
+          (k1)           edge [highlight inner edge on=<2- >] (k2)
+          (k2)           edge (k3)
+                         edge [highlight inner edge on=<2- >] (reimport dot)
+          (reimport dot) edge [highlight inner edge on=<2- >] (reimport mod)
+          (reimport mod) edge [overlay, in control=+(135:2cm), out control=+(-90:1.5cm)]
+                              [highlight end edge on=<2- >] (root)
+          ;
+    \end{tikzpicture}
+    }
+
+    \vskip 3em
+    \uncover<3- >{\partialpath{kitchen.}{\node [root node] {}}{\node [root node]{}}{stove.}}
+    \vskip 0.75em
+    \uncover<4>{
+        If you are looking for \texttt{kitchen.[anything]} \\
+        then you might find it at \texttt{stove.[anything]}. \\
+    }
+
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The more complex example}
+
+    \begin{center}
+
+    \begin{minipage}{12em}
+    \begin{minted}[label=chef.py]{python}
+        from kitchen import ?\tikzmark{chef_import}?Stove
+
+        stove?\tikzmark{instance_def}? = Stove?\tikzmark{class_ref}?()
+        stove?\tikzmark{instance_ref}?.?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
+    \end{minted}
+    \end{minipage}
+    \hspace{-5em}
+    \scalebox{0.6}{
+        \begin{tikzpicture}[baseline={([yshift=1em] current bounding box.center)}]
+        \node (root)       [root node]                            {};
+        \node (chef)       [definition]  [right=3em of root]      {chef};
+        \node (dot)        [pop]         [right=of chef]          {.};
+        \node (c1)         [anon scope]  [right=of dot]           {};
+
+        \node (c2)         [anon scope]  [above=\scopegap of c1]  {};
+        \node (stove ref)  [reference]   [right=of c2]            {stove};
+        \node (member dot) [push]        [right=of stove ref]     {.};
+        \node (broil ref)  [reference]   [right=of member dot]    {broil};
+        \node (c3)         [anon scope]  [above=\scopegap of c2]  {};
+        \node (stove def)  [definition]  [right=of c3]            {stove};
+        \node (Stove call) [push]        [right=of stove def]     {()};
+        \node (Stove ref)  [reference]   [right=of Stove call]    {Stove};
+        \node (c4)         [anon scope]  [above=\scopegap of c3]  {};
+        \node (import def) [pop]         [right=of c4]            {Stove};
+        \node (import ref) [push]        [right=of import def]    {Stove};
+        \node (import dot) [push]        [right=of import ref]    {.};
+        \node (import mod) [push]        [right=of import dot]    {kitchen};
+        \node (c5)         [anon scope]  [above=\scopegap of c4]  {};
+
+        \path [-Stealth]
+          (root)       edge (chef)
+          (chef)       edge (dot)
+          (dot)        edge (c1)
+          (c1)         edge (c2)
+          (broil ref)  edge [highlight inner edge on=<2- >] (member dot)
+          (member dot)  edge [highlight inner edge on=<2- >] (stove ref)
+          (stove ref)  edge [highlight inner edge on=<2- >] (c2)
+          (c2)         edge [highlight inner edge on=<2- >] (c3)
+          (c3)         edge (c4)
+                       edge [highlight inner edge on=<2- >] (stove def)
+          (stove def)  edge [highlight inner edge on=<2- >] (Stove call)
+          (Stove call) edge [highlight inner edge on=<2- >] (Stove ref)
+          (Stove ref)  edge [highlight inner edge on=<2- >] 
+                            [in control=+(-65:1cm), out control=+(90:1cm)] (c4)
+          (c4)         edge (c5)
+                       edge [highlight inner edge on=<2- >] (import def)
+          (import def) edge [highlight inner edge on=<2- >] (import ref)
+          (import ref) edge [highlight inner edge on=<2- >] (import dot)
+          (import dot) edge [highlight inner edge on=<2- >] (import mod)
+          (import mod) edge [overlay, in control=+(-45:3cm), out control=+(-90:6cm)]
+                            [highlight end edge on=<2- >] (root)
+          ;
+    \end{tikzpicture}
+    }
+
+    \vskip 3em
+    \uncover<3- >{\partialpath{}{\node [reference] {broil}}{\node [root node]{}}{kitchen.Stove().broil}}
+    \vskip 0.75em
+    \uncover<4>{
+        If you can find what \texttt{kitchen.Stove} resolves to and can call it \\
+        then the result should have a member named \texttt{broil} \\
+        which the reference at \textsl{chef.py:4:7} resolves to. \\
+    }
+
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The more complex example}
+
+    \vskip 2em
+    \begin{center}
+        \begin{minipage}[t]{0.46\textwidth}
+            \begin{center}
+            \partialpath{}{\node [reference] {broil}}{\node [root node]{}}{kitchen.Stove().broil}
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2>
+            \; $+$ \;
+        \begin{minipage}[t]{0.46\textwidth}
+            \begin{center}
+            \partialpath{kitchen.}{\node [root node] {}}{\node [root node]{}}{stove.}
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+        \vskip 2em
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \begin{center}
+            If you can find what \texttt{kitchen.Stove} \\
+            resolves to and can call it, then the \\
+            result should have a member \\
+            named \texttt{broil} which the reference at \\
+            \textsl{chef.py:4:7} resolves to.
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2>
+            \; $+$ \;
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \begin{center}
+            If you are looking for \\
+            \texttt{kitchen.[anything]} \\
+            then you might find it at \\
+            \texttt{stove.[anything]}. \\
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The more complex example}
+
+    \vskip 2em
+    \begin{center}
+        \begin{minipage}[t]{0.46\textwidth}
+            \begin{center}
+            \partialpath{}{\node [reference] {broil}}{\node [root node]{}}{stove.Stove().broil}
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2>
+            \; $+$ \;
+        \begin{minipage}[t]{0.46\textwidth}
+            \begin{center}
+            \partialpath{stove.Stove()}{\node [root node]{}}{\node [exported scope] {IM}}{}
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+        \vskip 2em
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \begin{center}
+            If you can find what \texttt{stove.Stove} \\
+            resolves to and can call it, then the \\
+            result should have a member \\
+            named \texttt{broil} which the reference at \\
+            \textsl{chef.py:4:7} resolves to.
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2>
+            \; $+$ \;
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \begin{center}
+            Invoking \texttt{stove.Stove} gives you \\
+            an instance of the \texttt{Stove} class.
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The more complex example}
+
+    \vskip 2em
+    \begin{center}
+        \begin{minipage}[t]{0.46\textwidth}
+            \begin{center}
+            \partialpath{}{\node [reference] {broil}}{\node [exported scope]{IM}}{.broil}
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2>
+            \; $+$ \;
+        \begin{minipage}[t]{0.46\textwidth}
+            \begin{center}
+            \partialpath{.broil}{\node [exported scope] {IM}}{\node [definition]{broil}}{}
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+        \vskip 2em
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \begin{center}
+            The \texttt{Stove} class \\
+            should have a member \\
+            named \texttt{broil} which the reference at \\
+            \textsl{chef.py:4:7} resolves to.
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2>
+            \; $+$ \;
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \begin{center}
+            The \texttt{Stove} class has an \\
+            instance member named \texttt{broil} \\
+            defined at \textsl{stove.py:5:9}.
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The more complex example}
+
+    \vskip 2em
+    \begin{center}
+        \begin{minipage}[t]{0.46\textwidth}
+            \begin{center}
+            \partialpath{}{\node [reference] {broil}}{\node [definition]{broil}}{}
+            \end{center}
+        \end{minipage}
+        \phantom{\; $+$ \;}
+        \begin{minipage}[t]{0.46\textwidth}
+            \strut
+        \end{minipage}
+        \vskip 2em
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \begin{center}
+            The definition at \textsl{stove.py:5:9} \\
+            is what the reference at \\
+            \textsl{chef.py:4:7} resolves to.
+            \end{center}
+        \end{minipage}
+        \phantom{\; $+$ \;}
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \strut
+        \end{minipage}
+    \end{center}
+\end{frame}
+
+
+\section{Producing stack graphs}
+
+\begin{frame}
+    \frametitle{Are we done?}
+    \begin{itemize}
+        \item \textcolor<2,4>{lightgray}{Different languages have different name binding rules.}
+        \item \textcolor<2,4>{lightgray}{Some of those rules can be quite complex.}
+        \item \textcolor<3,4>{lightgray}{The result might depend on intermediate files.}
+        \item \textcolor<2,3>{lightgray}{We don't want to require manual per-repo configuration.}
+        \item \textcolor<3,4>{lightgray}{We need incremental processing to handle our scale.}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \begin{textblock*}{160mm}(0mm,-16mm)
+        \picturecredit{Dave Lawler}{Good Morning}{CC-BY-2.0}{https://flic.kr/p/WYowT7}
+        \includegraphics[width=160mm]{pancake-stove.jpg}
+    \end{textblock*}
+    \shadowedtitle{8mm}{80mm}{Making stack graphs}
+\end{frame}
+
+
+\begin{frame}
+    \begin{textblock*}{160mm}(0mm,-16mm)
+        \picturecredit{Tony Guyton}{Treehouse Point}{CC-BY-2.0}{https://flic.kr/p/rRrT5F}
+        \includegraphics[width=160mm]{treehouse.jpg}
+    \end{textblock*}
+    \shadowedtitle{80mm - 0.5\titlewidth}{75mm}{\href{https://tree-sitter.github.io/}{tree-sitter}}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{tree-sitter}
+    \begin{center}
+    \begin{minipage}{0.75\textwidth}
+    \begin{minipage}{9em}
+    \begin{minted}[label=stove.py]{python}
+        def bake():
+            pass
+
+        def broil():
+            pass
+
+        def saute():
+            pass
+
+        broil()
+    \end{minted}
+    \end{minipage}
+    \end{minipage}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{tree-sitter}
+
+    \uncover<3-4>{\highlightparse{blue!25}{func}}
+    \uncover<3-4>{\highlightcapture{blue!25}{func}}
+    \uncover<4>  {\highlightparse{yellow!50}{name}}
+    \uncover<4>  {\highlightcapture{yellow!50}{name}}
+
+    \begin{center}
+    \begin{minipage}{0.75\textwidth}
+    \begin{minipage}{12em}
+    \begin{minted}[fontsize={\smaller[4]},frame=none]{text}
+        (module [0, 0] - [10, 0]
+          (function_definition [0, 0] - [1, 8]
+            name: (identifier [0, 4] - [0, 8])
+            parameters: (parameters [0, 8] - [0, 10])
+            body: (block [1, 4] - [1, 8]
+              (pass_statement [1, 4] - [1, 8])))
+          ?\tikzmark{func_start}?(function_definition [3, 0] - [4, 8]
+            name: ?\tikzmark{name_start}?(identifier [3, 4] - [3, 9])?\tikzmark{name_end}?
+            parameters: (parameters [3, 9] - [3, 11])
+            body: (block [4, 4] - [4, 8]
+              (pass_statement [4, 4] - [4, 8])))     ?\tikzmark{func_end}?
+          (function_definition [6, 0] - [7, 8]
+            name: (identifier [6, 4] - [6, 9])
+            parameters: (parameters [6, 9] - [6, 11])
+            body: (block [7, 4] - [7, 8]
+              (pass_statement [7, 4] - [7, 8])))
+          (expression_statement [9, 0] - [9, 7]
+            (call [9, 0] - [9, 7]
+              function: (identifier [9, 0] - [9, 5])
+              arguments: (argument_list [9, 5] - [9, 7]))))
+    \end{minted}
+    \end{minipage}
+    \hspace{1em}
+    \begin{minipage}{15em}
+    \begin{uncoverenv}<2- >
+    \begin{minted}[fontsize=\scriptsize,frame=none]{text}
+        (function_definition
+          name: (identifier) ?\tikzmark{name_capture_start}?@name?\tikzmark{name_capture_end}?) ?\tikzmark{func_capture_start}?@function?\tikzmark{func_capture_end}?
+    \end{minted}
+    \end{uncoverenv}
+
+    \begin{uncoverenv}<5- >
+    \begin{minted}[fontsize=\scriptsize,frame=none]{text}
+        {
+            node @function.def
+            attr (@function.def) kind = "definition"
+            attr (@function.def) symbol = @name
+
+            edge @function.containing_scope -> @function.def
+        }
+    \end{minted}
+    \end{uncoverenv}
+    \begin{uncoverenv}<6>
+    \begin{center}
+    \begin{tikzpicture}
+        \node (s) [anon scope] {};
+        \node (d) [definition] [right=of s] {\textsl{@name}};
+        \path [-Stealth] (s) edge (d);
+    \end{tikzpicture}
+    \end{center}
+    \end{uncoverenv}
+    \end{minipage}
+
+    \end{minipage}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}
+    \begin{textblock*}{10mm}(10mm,13mm)
+        \includegraphics[width=8mm]{icons/graph.jpg}
+    \end{textblock*}
+    \begin{textblock*}{60mm}(20mm,10mm)
+        \href{https://github.com/github/stack-graphs}{\texttt{github/stack-graphs}} \\
+        \href{https://github.com/tree-sitter/tree-sitter}{\texttt{tree-sitter/tree-sitter}} \\
+        \href{https://github.com/tree-sitter/tree-sitter-graph}{\texttt{tree-sitter/tree-sitter-graph}} \\
+    \end{textblock*}
+
+    \begin{textblock*}{10mm}(68mm,29.5mm)
+        \only<2>{\includegraphics[width=5mm]{languages/python.png}}
+    \end{textblock*}
+    \begin{textblock*}{60mm}(75mm,30mm)
+        \only<2>{\href{https://github.com/tree-sitter/tree-sitter-python}{\texttt{tree-sitter/tree-sitter-python}}}
+    \end{textblock*}
+
+    \begin{textblock*}{10mm}(68mm,36.25mm)
+        \only<2>{\includegraphics[width=5mm]{languages/javascript.png}}
+    \end{textblock*}
+    \begin{textblock*}{60mm}(75mm,37mm)
+        \only<2>{\href{https://github.com/tree-sitter/tree-sitter-javascript}{\texttt{tree-sitter/tree-sitter-javascript}}}
+    \end{textblock*}
+
+    \begin{textblock*}{10mm}(68mm,43.5mm)
+        \only<2>{\includegraphics[width=5mm]{languages/rust.png}}
+    \end{textblock*}
+    \begin{textblock*}{60mm}(75mm,44mm)
+        \only<2>{\href{https://github.com/tree-sitter/tree-sitter-rust}{\texttt{tree-sitter/tree-sitter-rust}}}
+    \end{textblock*}
+
+    \begin{textblock*}{10mm}(68mm,50.5mm)
+        \only<2>{\includegraphics[width=5mm]{languages/ruby.png}}
+    \end{textblock*}
+    \begin{textblock*}{60mm}(75mm,51mm)
+        \only<2>{\href{https://github.com/tree-sitter/tree-sitter-ruby}{\texttt{tree-sitter/tree-sitter-ruby}}}
+    \end{textblock*}
+
+    \begin{textblock*}{10mm}(68mm,57mm)
+        \only<2>{\includegraphics[width=5mm]{languages/elixir.png}}
+    \end{textblock*}
+    \begin{textblock*}{60mm}(75mm,58mm)
+        \only<2>{\href{https://github.com/elixir-lang/tree-sitter-elixir}{\texttt{elixir-lang/tree-sitter-elixir}}}
+    \end{textblock*}
+
+    \begin{textblock*}{10mm}(68mm,64.75mm)
+        \only<2>{\includegraphics[width=5mm]{languages/r.png}}
+    \end{textblock*}
+    \begin{textblock*}{60mm}(75mm,65mm)
+        \only<2>{\href{https://github.com/r-lib/tree-sitter-r}{\texttt{r-lib/tree-sitter-r}}}
+    \end{textblock*}
+
+    \begin{textblock*}{10mm}(100mm,71mm)
+        \only<2>{\vdots}
+    \end{textblock*}
+\end{frame}
+
+
+\begin{frame}
+    \begin{tikzpicture}
+        \node (bar) at(0,0) [
+            rectangle, anchor=west,
+            minimum width=\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=gray!20,
+        ] {};
+
+        \node at(bar.west) [
+            rectangle, anchor=west,
+            minimum width=0.5\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=yellow!20,
+        ] {};
+        \node at(bar.east) [
+            rectangle, anchor=east,
+            minimum width=0.5\columnwidth, minimum height=1cm,
+            draw=black, thin,
+            fill=blue!20,
+        ] {};
+
+        \node at(bar.west) [
+            rectangle, anchor=west, inner xsep=2ex,
+            text height=1.5ex, text depth=0.25ex,
+            text=black,
+        ] {Index};
+        \node at(bar.east) [
+            rectangle, anchor=east, inner xsep=2ex,
+            text height=1.5ex, text depth=0.25ex,
+            text=black,
+        ] {Query};
+    \end{tikzpicture}
+
+    \vskip 1em
+    \begin{minipage}{0.49\columnwidth}
+    \begin{center}
+        Clone changed files \\
+        Parse using tree-sitter \\
+        Construct stack graph \\
+        Find partial paths \\
+    \end{center}
+    \end{minipage}
+    \begin{minipage}{0.49\columnwidth}
+    \begin{center}
+        Load partial paths lazily \\
+        Stitch them together \\
+    \end{center}
+    \end{minipage}
+
+    \vskip 4em
+    \begin{uncoverenv}<2>
+    \begin{minipage}{0.49\columnwidth}
+    \begin{center}
+        p50: 5 sec \\
+        p99: 1-2 min \\
+    \end{center}
+    \end{minipage}
+    \begin{minipage}{0.49\columnwidth}
+    \begin{center}
+        p50: 50ms \\
+        p99: 100ms \\
+    \end{center}
+    \end{minipage}
+    \end{uncoverenv}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The \emph{really} hard ones...}
+
+    \highlightdef{one_def}
+    \highlightref{one_ref}
+    \highlightboth{String}
+    \highlightref{length_ref}
+
+    \begin{center}
+    \begin{minipage}[t]{9em}
+    \begin{minted}[label=dataflow.py]{python}
+        def passthrough(x):
+            return x
+
+        class A:
+            ?\tikzmark{one_def_start}?one?\tikzmark{one_def_end}? = 1
+
+        passthrough(A).?\tikzmark{one_ref_start}?one?\tikzmark{one_ref_end}?
+    \end{minted}
+    \end{minipage}
+    \hspace{3em}
+    \begin{minipage}[t]{20em}
+    \begin{minted}[label=MyMap.java]{java}
+        import java.util.HashMap;
+
+        class MyMap extends HashMap<?\tikzmark{String_start}?String?\tikzmark{String_end}?, String> {
+            int firstLength() {
+                return this.entrySet().iterator()
+                    .next().getKey().?\tikzmark{length_ref_start}?length?\tikzmark{length_ref_end}?();
+            }
+        }
+    \end{minted}
+    \end{minipage}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[t]
+    \frametitle{Picture credits}
+    \begin{tabular}{lp{0.75\textwidth}}
+    \picturecredits
+    \end{tabular}
+
+    \begin{textblock*}{10mm}(82.5mm,73.5mm)
+        \only<2>{\includegraphics[width=5mm]{repos.png}}
+    \end{textblock*}
+    \begin{textblock*}{60mm}(90mm,72mm)
+        \only<2>{
+            \href{https://github.com/github/stack-graphs}{\texttt{github/stack-graphs}} \\
+            \href{https://github.com/tree-sitter/tree-sitter-graph}{\texttt{tree-sitter/tree-sitter-graph}}
+        }
+    \end{textblock*}
+\end{frame}
+
+
+\begin{frame}
+    \begin{center}
+        \begin{tikzpicture}
+            \draw [help lines] (0,0) grid (10,8);
+
+            \node (root)   [root node]       at(1,1)  {};
+            \node (s0)     [anon scope]      at(2,1)  {};
+            \node (sB)     [named scope]     at(3,1)  {B};
+            \node (s7)     [exported scope]  at(4,1)  {7};
+            \node (A)      [definition]      at(1,2)  {A};
+
+            \node (a)      [definition]  [right=of A] {a};
+            \node (A2)     [pop]         [above=of A] {A\textsubscript{2}};
+            \node (main2)  [pop]         [right=of A2] {\_\_main\_\_\textsubscript{2}};
+            \node (bar)    [pop]         [right=of main2] {A\textsubscript{3} \popscope};
+
+            \node (A3)     [reference]  [above=of A2] {A};
+            \node (a3)     [reference]  [right=of A3] {a};
+            \node (A4)     [push]       [above=of A3] {A\textsubscript{4}};
+            \node (main4)  [push]       [right=of A4] {\_\_main\_\_\textsubscript{4}};
+            \node (foo)    [push]       [right=of main4] {A\textsubscript{3} \pushscope{7}};
+
+            % edges
+            \path [-Stealth]
+              (root) edge (A)
+              (A) edge (a)
+                  edge (A2)
+              (a) edge (main2)
+              ;
+        \end{tikzpicture}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Extras}
+
+    \highlightdef{broil1}
+    \highlightdef{broil2}
+
+    \begin{center}
+
+    \begin{minipage}{9em}
+    \begin{minted}[label={stove.rs}]{rust}
+        fn ?\tikzmark{broil1_start}?broil?\tikzmark{broil1_end}?() {}
+
+        fn ?\tikzmark{broil2_start}?broil?\tikzmark{broil2_end}?() {}
+
+        fn saute() {}
+    \end{minted}
+    \end{minipage}
+    \hspace{2em}
+    \begin{tikzpicture}[baseline={(current bounding box.center)}]
+        \node (root)       [root node]                              {};
+        \node (stove)      [definition]  [left=of root]             {stove};
+        \node (dot)        [pop]         [left=of stove]            {::};
+
+        \node (s)          [anon scope]  [above=2\scopegap of dot]  {};
+
+        \setwidestsymbol{broil}
+        \node (broil2 def) [definition]  [left=of s]                {\sized{broil}};
+        \node (saute def)  [definition]  [below=of broil2 def]      {\sized{saute}};
+        \node (broil1 def) [definition]  [above=of broil2 def]      {\sized{broil}};
+
+        \path [-Stealth]
+          (root)      edge (stove)
+          (stove)     edge (dot)
+          (dot)       edge (s)
+          (s)         edge (saute def)
+                      edge (broil2 def)
+                      edge (broil1 def)
+          ;
+    \end{tikzpicture}
+
+    \end{center}
+\end{frame}
+
+\end{document}
