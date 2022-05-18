@@ -15,6 +15,8 @@
 \usetikzlibrary{shadows}
 \usetikzlibrary{tikzmark}
 
+\graphicspath{{../images}}
+
 \usepackage{fontspec}
 \setsansfont{Helvetica Neue Light}
 \setmonofont{Iosevka Term}
@@ -22,7 +24,7 @@
 
 \title{Incremental, zero-config Code Navigation\\using stack graphs}
 \author{Douglas Creager\\\textsmaller[1]{\href{https://dcreager.net/}{@dcreager}}\vspace{-0.5em}}
-\institute{\includegraphics[width=2.5em]{images/github-mark.pdf}\vspace{2em}}
+\institute{\includegraphics[width=2.5em]{github-mark.pdf}\vspace{2em}}
 \date{Strange Loop\\\textsmaller[1]{October 1, 2021 – St. Louis}}
 
 \setbeamercolor{title}{fg=black}
@@ -312,7 +314,7 @@
             \only<2>{
                 \href{https://conf.researchr.org/details/curryon-2017/curryon-2017-papers/42/Scope-Graphs-A-Fresh-Look-at-Name-Binding-in-Programming-Languages}{Curry On Barcelona 2017}
                 \vskip 0.5em
-                \includegraphics[width=60mm]{images/eelco-curry-on.png}
+                \includegraphics[width=60mm]{eelco-curry-on.png}
             }
         \end{center}
     \end{textblock*}
@@ -324,7 +326,7 @@
 \begin{frame}
     \begin{textblock*}{160mm}(0mm,0mm)
         \picturecredit{Ivan Radic}{Close-up of a compass graffiti on the ground}{CC-BY-2.0}{https://flic.kr/p/2kGKMtM}
-        \includegraphics[width=160mm]{images/compass.jpg}
+        \includegraphics[width=160mm]{compass.jpg}
     \end{textblock*}
     \shadowedtitle{10mm}{10mm}{Code Navigation}
 \end{frame}
@@ -363,7 +365,7 @@
 \begin{frame}
     \begin{textblock*}{160mm}(0mm,0mm)
         \picturecredit{Mustang Joe}{I swear...}{Public domain}{https://flic.kr/p/VSLwD6}
-        \includegraphics[width=160mm]{images/facepalm.jpg}
+        \includegraphics[width=160mm]{facepalm.jpg}
     \end{textblock*}
     \shadowedtitle{140mm - \titlewidth}{25mm}{Why is this hard?}
 \end{frame}
@@ -487,7 +489,7 @@
     \begin{center}
     \begin{minipage}[t]{22.5em}
     \begin{center}
-        \includegraphics[height=2em]{images/pan.png}
+        \includegraphics[height=2em]{icons/pan.png}
     \end{center}
     \vskip -1em
     \begin{minipage}[t]{7em}
@@ -513,7 +515,7 @@
     \begin{minipage}[t]{12em}
     \vskip 8em
     \begin{center}
-        \includegraphics[height=2em]{images/chef.png}
+        \includegraphics[height=2em]{icons/chef.png}
     \end{center}
     \begin{minted}[label=chef.py]{python}
         from kitchen import ?\tikzmark{chef_import_start}?broil?\tikzmark{chef_import_end}?
@@ -552,7 +554,7 @@
     \begin{center}
     \begin{minipage}[t]{22.5em}
     \begin{center}
-        \includegraphics[height=2em]{images/pan.png}
+        \includegraphics[height=2em]{icons/pan.png}
     \end{center}
     \vskip -1em
     \begin{minipage}[t]{7em}
@@ -583,7 +585,7 @@
     \begin{minipage}[t]{12em}
     \vskip 8em
     \begin{center}
-        \includegraphics[height=2em]{images/chef.png}
+        \includegraphics[height=2em]{icons/chef.png}
     \end{center}
     \begin{minted}[label=chef.py]{python}
         from kitchen import ?\tikzmark{import_start}?broil?\tikzmark{import_end}?
@@ -614,7 +616,7 @@
     \uncover<2- >{\highlightref{ref}}%
     \begin{minipage}[t]{25.5em}
     \begin{center}
-        \includegraphics[height=2em]{images/pan.png}
+        \includegraphics[height=2em]{icons/pan.png}
     \end{center}
     \vskip -1em
     \begin{minipage}[t]{10em}
@@ -641,7 +643,7 @@
     \begin{minipage}[t]{12em}
     \vskip 6em
     \begin{center}
-        \includegraphics[height=2em]{images/chef.png}
+        \includegraphics[height=2em]{icons/chef.png}
     \end{center}
     \begin{minted}[label=chef.py]{python}
         from kitchen import ?\tikzmark{chef_import}?Stove
@@ -711,7 +713,7 @@
 \begin{frame}
     \begin{textblock*}{160mm}(0mm,0mm)
         \picturecredit{Marco Verch}{Close-up, a piece of yellow cake with red currant berries}{CC-BY-2.0}{https://flic.kr/p/2jikJsQ}
-        \includegraphics[width=160mm]{images/cake.jpg}
+        \includegraphics[width=160mm]{cake.jpg}
     \end{textblock*}
     \flattitle{10mm}{80mm}{Oh is that all?}
 \end{frame}
@@ -735,11 +737,11 @@
 \begin{frame}
     %\begin{textblock*}{80mm}(80mm,0mm)
     %    \picturecredit{Mark Gunn}{This just tern'ed into a swarm!}{CC-BY-2.0}{https://flic.kr/p/P11JH1}
-    %    \includegraphics[width=160mm]{images/terns.jpg}
+    %    \includegraphics[width=160mm]{terns.jpg}
     %\end{textblock*}
     \begin{textblock*}{80mm}(80mm,0mm)
         \picturecredit{Joseph Gage}{Massive goose gaggle}{CC-BY-SA-2.0}{https://flic.kr/p/2kJfaCt}
-        \includegraphics[width=160mm]{images/geese.jpg}
+        \includegraphics[width=160mm]{geese.jpg}
     \end{textblock*}
 
     \frametitle{SCALE}
@@ -944,7 +946,7 @@
 \begin{frame}
     \begin{textblock*}{160mm}(0mm,-15mm)
         \picturecredit{Katja Schulz}{Inchworm}{CC-BY-2.0}{https://flic.kr/p/PJMP4w}
-        \includegraphics[width=160mm]{images/inchworm.jpg}
+        \includegraphics[width=160mm]{inchworm.jpg}
     \end{textblock*}
     \shadowedtitle{32mm}{7mm}{Incremental results}
 \end{frame}
@@ -1030,7 +1032,7 @@
     \highlightref{ref}
     \begin{minipage}[t]{25.5em}
     \begin{center}
-        \includegraphics[height=2em]{images/pan.png}
+        \includegraphics[height=2em]{icons/pan.png}
     \end{center}
     \vskip -1em
     \begin{minipage}[t]{10em}
@@ -1057,7 +1059,7 @@
     \begin{minipage}[t]{12em}
     \vskip 6em
     \begin{center}
-        \includegraphics[height=2em]{images/chef.png}
+        \includegraphics[height=2em]{icons/chef.png}
     \end{center}
     \begin{minted}[label=chef.py]{python}
         from kitchen import ?\tikzmark{chef_import}?Stove
@@ -1315,7 +1317,7 @@
 \begin{frame}
     \begin{textblock*}{160mm}(0mm,0mm)
         \picturecredit{Marco Verch}{Stack of pancakes with berries on a plate}{CC-BY-2.0}{https://flic.kr/p/2jYUh8M}
-        \includegraphics[width=160mm]{images/pancakes.jpg}
+        \includegraphics[width=160mm]{pancakes.jpg}
     \end{textblock*}
     \flattitle{110mm}{10mm}{Stack graphs}
 \end{frame}
@@ -1592,7 +1594,7 @@
     \highlightref{ref}
     \begin{minipage}[t]{25.5em}
     \begin{center}
-        \includegraphics[height=2em]{images/pan.png}
+        \includegraphics[height=2em]{icons/pan.png}
     \end{center}
     \vskip -1em
     \begin{minipage}[t]{10em}
@@ -1619,7 +1621,7 @@
     \begin{minipage}[t]{12em}
     \vskip 6em
     \begin{center}
-        \includegraphics[height=2em]{images/chef.png}
+        \includegraphics[height=2em]{icons/chef.png}
     \end{center}
     \begin{minted}[label=chef.py]{python}
         from kitchen import ?\tikzmark{chef_import}?Stove
@@ -1895,7 +1897,7 @@
 \begin{frame}
     \begin{textblock*}{160mm}(0mm,0mm)
         \picturecredit{Seattle Municipal Archives}{West Seattle Bridge under construction, circa 1983}{CC-BY-2.0}{https://flic.kr/p/7jKWYi}
-        \includegraphics[width=160mm]{images/bridge.jpg}
+        \includegraphics[width=160mm]{bridge.jpg}
     \end{textblock*}
     \shadowedtitle{150mm - \titlewidth}{10mm}{Partial paths}
 \end{frame}
@@ -2522,7 +2524,7 @@
 \begin{frame}
     \begin{textblock*}{160mm}(0mm,-16mm)
         \picturecredit{Dave Lawler}{Good Morning}{CC-BY-2.0}{https://flic.kr/p/WYowT7}
-        \includegraphics[width=160mm]{images/pancake-stove.jpg}
+        \includegraphics[width=160mm]{pancake-stove.jpg}
     \end{textblock*}
     \shadowedtitle{8mm}{80mm}{Making stack graphs}
 \end{frame}
@@ -2531,7 +2533,7 @@
 \begin{frame}
     \begin{textblock*}{160mm}(0mm,-16mm)
         \picturecredit{Tony Guyton}{Treehouse Point}{CC-BY-2.0}{https://flic.kr/p/rRrT5F}
-        \includegraphics[width=160mm]{images/treehouse.jpg}
+        \includegraphics[width=160mm]{treehouse.jpg}
     \end{textblock*}
     \shadowedtitle{80mm - 0.5\titlewidth}{75mm}{\href{https://tree-sitter.github.io/}{tree-sitter}}
 \end{frame}
@@ -2632,7 +2634,7 @@
 
 \begin{frame}
     \begin{textblock*}{10mm}(10mm,13mm)
-        \includegraphics[width=8mm]{images/graph.jpg}
+        \includegraphics[width=8mm]{icons/graph.jpg}
     \end{textblock*}
     \begin{textblock*}{60mm}(20mm,10mm)
         \href{https://github.com/github/stack-graphs}{\texttt{github/stack-graphs}} \\
@@ -2641,42 +2643,42 @@
     \end{textblock*}
 
     \begin{textblock*}{10mm}(68mm,29.5mm)
-        \only<2>{\includegraphics[width=5mm]{images/python-logo.png}}
+        \only<2>{\includegraphics[width=5mm]{languages/python.png}}
     \end{textblock*}
     \begin{textblock*}{60mm}(75mm,30mm)
         \only<2>{\href{https://github.com/tree-sitter/tree-sitter-python}{\texttt{tree-sitter/tree-sitter-python}}}
     \end{textblock*}
 
     \begin{textblock*}{10mm}(68mm,36.25mm)
-        \only<2>{\includegraphics[width=5mm]{images/javascript-logo.png}}
+        \only<2>{\includegraphics[width=5mm]{languages/javascript.png}}
     \end{textblock*}
     \begin{textblock*}{60mm}(75mm,37mm)
         \only<2>{\href{https://github.com/tree-sitter/tree-sitter-javascript}{\texttt{tree-sitter/tree-sitter-javascript}}}
     \end{textblock*}
 
     \begin{textblock*}{10mm}(68mm,43.5mm)
-        \only<2>{\includegraphics[width=5mm]{images/rust-logo.png}}
+        \only<2>{\includegraphics[width=5mm]{languages/rust.png}}
     \end{textblock*}
     \begin{textblock*}{60mm}(75mm,44mm)
         \only<2>{\href{https://github.com/tree-sitter/tree-sitter-rust}{\texttt{tree-sitter/tree-sitter-rust}}}
     \end{textblock*}
 
     \begin{textblock*}{10mm}(68mm,50.5mm)
-        \only<2>{\includegraphics[width=5mm]{images/ruby-logo.png}}
+        \only<2>{\includegraphics[width=5mm]{languages/ruby.png}}
     \end{textblock*}
     \begin{textblock*}{60mm}(75mm,51mm)
         \only<2>{\href{https://github.com/tree-sitter/tree-sitter-ruby}{\texttt{tree-sitter/tree-sitter-ruby}}}
     \end{textblock*}
 
     \begin{textblock*}{10mm}(68mm,57mm)
-        \only<2>{\includegraphics[width=5mm]{images/elixir-logo.png}}
+        \only<2>{\includegraphics[width=5mm]{languages/elixir.png}}
     \end{textblock*}
     \begin{textblock*}{60mm}(75mm,58mm)
         \only<2>{\href{https://github.com/elixir-lang/tree-sitter-elixir}{\texttt{elixir-lang/tree-sitter-elixir}}}
     \end{textblock*}
 
     \begin{textblock*}{10mm}(68mm,64.75mm)
-        \only<2>{\includegraphics[width=5mm]{images/r-logo.png}}
+        \only<2>{\includegraphics[width=5mm]{languages/r.png}}
     \end{textblock*}
     \begin{textblock*}{60mm}(75mm,65mm)
         \only<2>{\href{https://github.com/r-lib/tree-sitter-r}{\texttt{r-lib/tree-sitter-r}}}
@@ -2800,7 +2802,7 @@
     \end{tabular}
 
     \begin{textblock*}{10mm}(82.5mm,73.5mm)
-        \only<2>{\includegraphics[width=5mm]{images/repos.png}}
+        \only<2>{\includegraphics[width=5mm]{repos.png}}
     \end{textblock*}
     \begin{textblock*}{60mm}(90mm,72mm)
         \only<2>{
