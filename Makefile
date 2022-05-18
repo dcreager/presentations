@@ -1,8 +1,8 @@
 MAKEFLAGS += --no-print-directory
 
 SUBDIRS = \
-    2021-10-strange-loop \
-    2022-06-craft-conf
+    2021-10-strange-loop-stack-graphs \
+    2022-06-craft-conf-languages
 
 default: all
 
