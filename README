@@ -1,0 +1,16 @@
+Presentations
+=============
+
+This repo contains the slide decks for presentations that I've given over my
+career.
+
+For more recent presentations, I've been using LaTeX and Beamer to generate PDF
+slide decks.  For older presentations, I've lost the original source, and have
+just whatever PDFs I can find.
+
+Most directories have a *.pdf file in them which is a “tagged” copy of the slide
+deck.  There are also Makefiles that let you generate a “live” copy from each
+one from the source.  You'll want to have a copy of TeX Live installed (package
+group ‘texlive-most’ on Arch Linux).  Then just run ‘make’ in a particular
+subdirectory to build just that slide deck, or ‘make’ in the top-level repo to
+build everything.
