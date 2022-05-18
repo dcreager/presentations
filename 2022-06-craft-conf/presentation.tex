@@ -60,6 +60,18 @@
 }
 \makeatother
 
+% Program listings
+
+\usepackage[outputdir=.build]{minted}
+\usemintedstyle{tango}
+\setminted{autogobble,fontsize=\relscale{0.8},frame=single,framesep=6pt,escapeinside=??}
+
+\newcommand{\languageicon}[1]{%
+    \begin{textblock*}{10mm}(145mm,5mm)
+        \includegraphics[width=10mm]{languages/#1.png}
+    \end{textblock*}%
+}
+
 \begin{document}
 
 \begin{frame}
@@ -228,6 +240,38 @@
         \includegraphics[width=160mm]{terns.jpg}
     \end{textblock*}
     \shadowedtitle{150mm - \titlewidth}{10mm}{Many languages}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Fibonacci}
+    \languageicon{python}
+    \inputminted[lastline=7]{python}{examples/fibonacci.py}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Fibonacci}
+    \languageicon{rust}
+    \inputminted[lastline=7]{rust}{examples/fibonacci.rs}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Fibonacci}
+    \languageicon{haskell}
+    \inputminted[lastline=3]{haskell}{examples/fibonacci.hs}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{Downloading a file}
+    \languageicon{python}
+    \inputminted{python}{examples/download.py}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Downloading a file}
+    \languageicon{javascript}
+    \inputminted{javascript}{examples/download.js}
 \end{frame}
 
 
