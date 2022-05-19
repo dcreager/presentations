@@ -912,7 +912,30 @@
 
 
 \begin{frame}
-    \frametitle{Incremental processing}
+    \frametitle{Why is this hard?}
+    \begin{itemize}
+        \item Different languages have different name binding rules.
+        \item Some of those rules can be quite complex.
+        \item The result might depend on intermediate files.
+        \item We don't want to require manual per-repo configuration.
+        \item We need to balance work between index time vs query time.
+    \end{itemize}
+\end{frame}
+
+
+\section{Incremental results}
+
+\begin{frame}
+    \begin{textblock*}{160mm}(0mm,-15mm)
+        \picturecredit{Katja Schulz}{Inchworm}{CC-BY-2.0}{https://flic.kr/p/PJMP4w}
+        \includegraphics[width=160mm]{inchworm.jpg}
+    \end{textblock*}
+    \shadowedtitle{32mm}{7mm}{Incremental results}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Incremental results}
     \begin{center}
         In a typical commit, a small fraction of files in the repo change.
     \end{center}
@@ -926,29 +949,6 @@
     \begin{center}
         \emph{Incremental processing} also helps save compute.
     \end{center}
-\end{frame}
-
-
-\begin{frame}
-    \frametitle{Why is this hard?}
-    \begin{itemize}
-        \item Different languages have different name binding rules.
-        \item Some of those rules can be quite complex.
-        \item The result might depend on intermediate files.
-        \item We don't want to require manual per-repo configuration.
-        \item We need incremental processing to handle our scale.
-    \end{itemize}
-\end{frame}
-
-
-\section{Incremental results}
-
-\begin{frame}
-    \begin{textblock*}{160mm}(0mm,-15mm)
-        \picturecredit{Katja Schulz}{Inchworm}{CC-BY-2.0}{https://flic.kr/p/PJMP4w}
-        \includegraphics[width=160mm]{inchworm.jpg}
-    \end{textblock*}
-    \shadowedtitle{32mm}{7mm}{Incremental results}
 \end{frame}
 
 
