@@ -709,6 +709,68 @@
 \end{frame}
 
 
+% dataflow
+\begin{frame}[fragile]
+    \frametitle{Why is this hard?}
+    \uncover<2-3>{\highlightdef{def}}
+    \uncover<2-3>{\highlightref{ref}}
+    \begin{center}
+    \begin{minipage}[t]{9em}
+    \begin{minted}[label=dataflow.py]{python}
+        def ?\tikzmark{passthrough_def_start}?passthrough(?\tikzmark{x_def_start}?x?\tikzmark{x_def_end}?):
+            return ?\tikzmark{x_ref_start}?x?\tikzmark{x_ref_end}?
+
+        class ?\tikzmark{A_def_start}?A?\tikzmark{A_def_end}?:
+            ?\tikzmark{def_start}?one?\tikzmark{def_end}? = 1
+
+        ?\tikzmark{passthrough_ref_start}?passthrough?\tikzmark{passthrough_ref_end}?(?\tikzmark{A_ref_start}?A?\tikzmark{A_ref_end}?).?\tikzmark{ref_start}?one?\tikzmark{ref_end}?
+    \end{minted}
+    \end{minipage}
+    \end{center}
+    \uncover<3>{\curvecodeline%
+      [-]%
+      {[yshift=-4pt] pic cs:ref_start}%
+      {+(-135:0.5cm) and +(-45:0.5cm)}%
+      {[xshift=15pt, yshift=-4pt] pic cs:passthrough_ref_start}%
+    }%
+    \uncover<3>{\curvecodeline%
+      [-]%
+      {[yshift=8pt] pic cs:passthrough_ref_start}%
+      {+(135:2cm) and +(135:1cm)}%
+      {[xshift=9pt, yshift=8pt] pic cs:passthrough_def_start}%
+    }%
+    \uncover<3>{\curvecodeline%
+      [-]%
+      {[xshift=15pt, yshift=-2pt] pic cs:passthrough_def_start}%
+      {+(-45:0.25cm) and +(180:0.25cm)}%
+      {[xshift=-2pt, yshift=3pt] pic cs:x_ref_start}%
+    }%
+    \uncover<3>{\curvecodeline%
+      [-]%
+      {[xshift=2pt, yshift=3pt] pic cs:x_ref_end}%
+      {+(0:0.25cm) and +(180:0.25cm)}%
+      {[xshift=-2pt, yshift=2pt] pic cs:x_def_start}%
+    }%
+    \uncover<3>{\curvecodeline%
+      [-]%
+      {[xshift=2pt, yshift=2pt] pic cs:x_def_end}%
+      {+(0:1cm) and +(0:1cm)}%
+      {[xshift=2pt, yshift=4pt] pic cs:A_ref_end}%
+    }%
+    \uncover<3>{\curvecodeline%
+      [-]%
+      {[xshift=-2pt, yshift=4pt] pic cs:A_ref_start}%
+      {+(175:0.5cm) and +(-85:0.5cm)}%
+      {[xshift=-1pt, yshift=-4pt] pic cs:A_def_end}%
+    }%
+    \uncover<3>{\curvecodeline%
+      {[xshift=1pt, yshift=8pt] pic cs:A_def_start}%
+      {+(105:0.5cm) and +(90:0.5cm)}%
+      {[xshift=4pt, yshift=8pt] pic cs:def_start}%
+    }%
+\end{frame}
+
+
 \begin{frame}
     \begin{textblock*}{160mm}(0mm,0mm)
         \picturecredit{Marco Verch}{Close-up, a piece of yellow cake with red currant berries}{CC-BY-2.0}{https://flic.kr/p/2jikJsQ}
