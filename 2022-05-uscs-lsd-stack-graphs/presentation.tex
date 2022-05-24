@@ -2507,189 +2507,6 @@
 \end{frame}
 
 
-\section{Producing stack graphs}
-
-\begin{frame}
-    \frametitle{Are we done?}
-    \begin{itemize}
-        \item \textcolor<2,4>{lightgray}{Different languages have different name binding rules.}
-        \item \textcolor<2,4>{lightgray}{Some of those rules can be quite complex.}
-        \item \textcolor<3,4>{lightgray}{The result might depend on intermediate files.}
-        \item \textcolor<2,3>{lightgray}{We don't want to require manual per-repo configuration.}
-        \item \textcolor<3,4>{lightgray}{We need incremental processing to handle our scale.}
-    \end{itemize}
-\end{frame}
-
-
-\begin{frame}
-    \begin{textblock*}{160mm}(0mm,-16mm)
-        \picturecredit{Dave Lawler}{Good Morning}{CC-BY-2.0}{https://flic.kr/p/WYowT7}
-        \includegraphics[width=160mm]{pancake-stove.jpg}
-    \end{textblock*}
-    \shadowedtitle{8mm}{80mm}{Making stack graphs}
-\end{frame}
-
-
-\begin{frame}
-    \begin{textblock*}{160mm}(0mm,-16mm)
-        \picturecredit{Tony Guyton}{Treehouse Point}{CC-BY-2.0}{https://flic.kr/p/rRrT5F}
-        \includegraphics[width=160mm]{treehouse.jpg}
-    \end{textblock*}
-    \shadowedtitle{80mm - 0.5\titlewidth}{75mm}{\href{https://tree-sitter.github.io/}{tree-sitter}}
-\end{frame}
-
-
-\begin{frame}[fragile]
-    \frametitle{tree-sitter}
-    \begin{center}
-    \begin{minipage}{0.75\textwidth}
-    \begin{minipage}{9em}
-    \begin{minted}[label=stove.py]{python}
-        def bake():
-            pass
-
-        def broil():
-            pass
-
-        def saute():
-            pass
-
-        broil()
-    \end{minted}
-    \end{minipage}
-    \end{minipage}
-    \end{center}
-\end{frame}
-
-
-\begin{frame}[fragile]
-    \frametitle{tree-sitter}
-
-    \uncover<3-4>{\highlightparse{blue!25}{func}}
-    \uncover<3-4>{\highlightcapture{blue!25}{func}}
-    \uncover<4>  {\highlightparse{yellow!50}{name}}
-    \uncover<4>  {\highlightcapture{yellow!50}{name}}
-
-    \begin{center}
-    \begin{minipage}{0.75\textwidth}
-    \begin{minipage}{12em}
-    \begin{minted}[fontsize={\smaller[4]},frame=none]{text}
-        (module [0, 0] - [10, 0]
-          (function_definition [0, 0] - [1, 8]
-            name: (identifier [0, 4] - [0, 8])
-            parameters: (parameters [0, 8] - [0, 10])
-            body: (block [1, 4] - [1, 8]
-              (pass_statement [1, 4] - [1, 8])))
-          ?\tikzmark{func_start}?(function_definition [3, 0] - [4, 8]
-            name: ?\tikzmark{name_start}?(identifier [3, 4] - [3, 9])?\tikzmark{name_end}?
-            parameters: (parameters [3, 9] - [3, 11])
-            body: (block [4, 4] - [4, 8]
-              (pass_statement [4, 4] - [4, 8])))     ?\tikzmark{func_end}?
-          (function_definition [6, 0] - [7, 8]
-            name: (identifier [6, 4] - [6, 9])
-            parameters: (parameters [6, 9] - [6, 11])
-            body: (block [7, 4] - [7, 8]
-              (pass_statement [7, 4] - [7, 8])))
-          (expression_statement [9, 0] - [9, 7]
-            (call [9, 0] - [9, 7]
-              function: (identifier [9, 0] - [9, 5])
-              arguments: (argument_list [9, 5] - [9, 7]))))
-    \end{minted}
-    \end{minipage}
-    \hspace{1em}
-    \begin{minipage}{15em}
-    \begin{uncoverenv}<2- >
-    \begin{minted}[fontsize=\scriptsize,frame=none]{text}
-        (function_definition
-          name: (identifier) ?\tikzmark{name_capture_start}?@name?\tikzmark{name_capture_end}?) ?\tikzmark{func_capture_start}?@function?\tikzmark{func_capture_end}?
-    \end{minted}
-    \end{uncoverenv}
-
-    \begin{uncoverenv}<5- >
-    \begin{minted}[fontsize=\scriptsize,frame=none]{text}
-        {
-            node @function.def
-            attr (@function.def) kind = "definition"
-            attr (@function.def) symbol = @name
-
-            edge @function.containing_scope -> @function.def
-        }
-    \end{minted}
-    \end{uncoverenv}
-    \begin{uncoverenv}<6>
-    \begin{center}
-    \begin{tikzpicture}
-        \node (s) [anon scope] {};
-        \node (d) [definition] [right=of s] {\textsl{@name}};
-        \path [-Stealth] (s) edge (d);
-    \end{tikzpicture}
-    \end{center}
-    \end{uncoverenv}
-    \end{minipage}
-
-    \end{minipage}
-    \end{center}
-\end{frame}
-
-
-\begin{frame}
-    \begin{textblock*}{10mm}(10mm,13mm)
-        \includegraphics[width=8mm]{icons/graph.jpg}
-    \end{textblock*}
-    \begin{textblock*}{60mm}(20mm,10mm)
-        \href{https://github.com/github/stack-graphs}{\texttt{github/stack-graphs}} \\
-        \href{https://github.com/tree-sitter/tree-sitter}{\texttt{tree-sitter/tree-sitter}} \\
-        \href{https://github.com/tree-sitter/tree-sitter-graph}{\texttt{tree-sitter/tree-sitter-graph}} \\
-    \end{textblock*}
-
-    \begin{textblock*}{10mm}(68mm,29.5mm)
-        \only<2>{\includegraphics[width=5mm]{languages/python.png}}
-    \end{textblock*}
-    \begin{textblock*}{60mm}(75mm,30mm)
-        \only<2>{\href{https://github.com/tree-sitter/tree-sitter-python}{\texttt{tree-sitter/tree-sitter-python}}}
-    \end{textblock*}
-
-    \begin{textblock*}{10mm}(68mm,36.25mm)
-        \only<2>{\includegraphics[width=5mm]{languages/javascript.png}}
-    \end{textblock*}
-    \begin{textblock*}{60mm}(75mm,37mm)
-        \only<2>{\href{https://github.com/tree-sitter/tree-sitter-javascript}{\texttt{tree-sitter/tree-sitter-javascript}}}
-    \end{textblock*}
-
-    \begin{textblock*}{10mm}(68mm,43.5mm)
-        \only<2>{\includegraphics[width=5mm]{languages/rust.png}}
-    \end{textblock*}
-    \begin{textblock*}{60mm}(75mm,44mm)
-        \only<2>{\href{https://github.com/tree-sitter/tree-sitter-rust}{\texttt{tree-sitter/tree-sitter-rust}}}
-    \end{textblock*}
-
-    \begin{textblock*}{10mm}(68mm,50.5mm)
-        \only<2>{\includegraphics[width=5mm]{languages/ruby.png}}
-    \end{textblock*}
-    \begin{textblock*}{60mm}(75mm,51mm)
-        \only<2>{\href{https://github.com/tree-sitter/tree-sitter-ruby}{\texttt{tree-sitter/tree-sitter-ruby}}}
-    \end{textblock*}
-
-    \begin{textblock*}{10mm}(68mm,57mm)
-        \only<2>{\includegraphics[width=5mm]{languages/elixir.png}}
-    \end{textblock*}
-    \begin{textblock*}{60mm}(75mm,58mm)
-        \only<2>{\href{https://github.com/elixir-lang/tree-sitter-elixir}{\texttt{elixir-lang/tree-sitter-elixir}}}
-    \end{textblock*}
-
-    \begin{textblock*}{10mm}(68mm,64.75mm)
-        \only<2>{\includegraphics[width=5mm]{languages/r.png}}
-    \end{textblock*}
-    \begin{textblock*}{60mm}(75mm,65mm)
-        \only<2>{\href{https://github.com/r-lib/tree-sitter-r}{\texttt{r-lib/tree-sitter-r}}}
-    \end{textblock*}
-
-    \begin{textblock*}{10mm}(100mm,71mm)
-        \only<2>{\vdots}
-    \end{textblock*}
-\end{frame}
-
-
 \begin{frame}
     \begin{tikzpicture}
         \node (bar) at(0,0) [
@@ -2844,6 +2661,188 @@
               ;
         \end{tikzpicture}
     \end{center}
+\end{frame}
+
+
+\section{Producing stack graphs}
+
+\begin{frame}
+    \frametitle{Are we done?}
+    \begin{itemize}
+        \item \textcolor<2,4>{lightgray}{Different languages have different name binding rules.}
+        \item \textcolor<2,4>{lightgray}{Some of those rules can be quite complex.}
+        \item \textcolor<3,4>{lightgray}{The result might depend on intermediate files.}
+        \item \textcolor<2,3>{lightgray}{We don't want to require manual per-repo configuration.}
+        \item \textcolor<3,4>{lightgray}{We need incremental processing to handle our scale.}
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \begin{textblock*}{160mm}(0mm,-16mm)
+        \picturecredit{Dave Lawler}{Good Morning}{CC-BY-2.0}{https://flic.kr/p/WYowT7}
+        \includegraphics[width=160mm]{pancake-stove.jpg}
+    \end{textblock*}
+    \shadowedtitle{8mm}{80mm}{Making stack graphs}
+\end{frame}
+
+
+\begin{frame}
+    \begin{textblock*}{160mm}(0mm,-16mm)
+        \picturecredit{Tony Guyton}{Treehouse Point}{CC-BY-2.0}{https://flic.kr/p/rRrT5F}
+        \includegraphics[width=160mm]{treehouse.jpg}
+    \end{textblock*}
+    \shadowedtitle{80mm - 0.5\titlewidth}{75mm}{\href{https://tree-sitter.github.io/}{tree-sitter}}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{tree-sitter}
+    \begin{center}
+    \begin{minipage}{0.75\textwidth}
+    \begin{minipage}{9em}
+    \begin{minted}[label=stove.py]{python}
+        def bake():
+            pass
+
+        def broil():
+            pass
+
+        def saute():
+            pass
+
+        broil()
+    \end{minted}
+    \end{minipage}
+    \end{minipage}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{tree-sitter}
+
+    \uncover<3-4>{\highlightparse{blue!25}{func}}
+    \uncover<3-4>{\highlightcapture{blue!25}{func}}
+    \uncover<4>  {\highlightparse{yellow!50}{name}}
+    \uncover<4>  {\highlightcapture{yellow!50}{name}}
+
+    \begin{center}
+    \begin{minipage}{0.75\textwidth}
+    \begin{minipage}{12em}
+    \begin{minted}[fontsize={\smaller[4]},frame=none]{text}
+        (module [0, 0] - [10, 0]
+          (function_definition [0, 0] - [1, 8]
+            name: (identifier [0, 4] - [0, 8])
+            parameters: (parameters [0, 8] - [0, 10])
+            body: (block [1, 4] - [1, 8]
+              (pass_statement [1, 4] - [1, 8])))
+          ?\tikzmark{func_start}?(function_definition [3, 0] - [4, 8]
+            name: ?\tikzmark{name_start}?(identifier [3, 4] - [3, 9])?\tikzmark{name_end}?
+            parameters: (parameters [3, 9] - [3, 11])
+            body: (block [4, 4] - [4, 8]
+              (pass_statement [4, 4] - [4, 8])))     ?\tikzmark{func_end}?
+          (function_definition [6, 0] - [7, 8]
+            name: (identifier [6, 4] - [6, 9])
+            parameters: (parameters [6, 9] - [6, 11])
+            body: (block [7, 4] - [7, 8]
+              (pass_statement [7, 4] - [7, 8])))
+          (expression_statement [9, 0] - [9, 7]
+            (call [9, 0] - [9, 7]
+              function: (identifier [9, 0] - [9, 5])
+              arguments: (argument_list [9, 5] - [9, 7]))))
+    \end{minted}
+    \end{minipage}
+    \hspace{1em}
+    \begin{minipage}{15em}
+    \begin{uncoverenv}<2- >
+    \begin{minted}[fontsize=\scriptsize,frame=none]{text}
+        (function_definition
+          name: (identifier) ?\tikzmark{name_capture_start}?@name?\tikzmark{name_capture_end}?) ?\tikzmark{func_capture_start}?@function?\tikzmark{func_capture_end}?
+    \end{minted}
+    \end{uncoverenv}
+
+    \begin{uncoverenv}<5- >
+    \begin{minted}[fontsize=\scriptsize,frame=none]{text}
+        {
+            node @function.def
+            attr (@function.def) kind = "definition"
+            attr (@function.def) symbol = @name
+
+            edge @function.containing_scope -> @function.def
+        }
+    \end{minted}
+    \end{uncoverenv}
+    \begin{uncoverenv}<6>
+    \begin{center}
+    \begin{tikzpicture}
+        \node (s) [anon scope] {};
+        \node (d) [definition] [right=of s] {\textsl{@name}};
+        \path [-Stealth] (s) edge (d);
+    \end{tikzpicture}
+    \end{center}
+    \end{uncoverenv}
+    \end{minipage}
+
+    \end{minipage}
+    \end{center}
+\end{frame}
+
+\begin{frame}
+    \begin{textblock*}{10mm}(10mm,13mm)
+        \includegraphics[width=8mm]{icons/graph.jpg}
+    \end{textblock*}
+    \begin{textblock*}{60mm}(20mm,10mm)
+        \href{https://github.com/github/stack-graphs}{\texttt{github/stack-graphs}} \\
+        \href{https://github.com/tree-sitter/tree-sitter}{\texttt{tree-sitter/tree-sitter}} \\
+        \href{https://github.com/tree-sitter/tree-sitter-graph}{\texttt{tree-sitter/tree-sitter-graph}} \\
+    \end{textblock*}
+
+    \begin{textblock*}{10mm}(68mm,29.5mm)
+        \only<2>{\includegraphics[width=5mm]{languages/python.png}}
+    \end{textblock*}
+    \begin{textblock*}{60mm}(75mm,30mm)
+        \only<2>{\href{https://github.com/tree-sitter/tree-sitter-python}{\texttt{tree-sitter/tree-sitter-python}}}
+    \end{textblock*}
+
+    \begin{textblock*}{10mm}(68mm,36.25mm)
+        \only<2>{\includegraphics[width=5mm]{languages/javascript.png}}
+    \end{textblock*}
+    \begin{textblock*}{70mm}(75mm,37mm)
+        \only<2>{\href{https://github.com/tree-sitter/tree-sitter-javascript}{\texttt{tree-sitter/tree-sitter-javascript}}}
+    \end{textblock*}
+
+    \begin{textblock*}{10mm}(68mm,43.5mm)
+        \only<2>{\includegraphics[width=5mm]{languages/rust.png}}
+    \end{textblock*}
+    \begin{textblock*}{60mm}(75mm,44mm)
+        \only<2>{\href{https://github.com/tree-sitter/tree-sitter-rust}{\texttt{tree-sitter/tree-sitter-rust}}}
+    \end{textblock*}
+
+    \begin{textblock*}{10mm}(68mm,50.5mm)
+        \only<2>{\includegraphics[width=5mm]{languages/ruby.png}}
+    \end{textblock*}
+    \begin{textblock*}{60mm}(75mm,51mm)
+        \only<2>{\href{https://github.com/tree-sitter/tree-sitter-ruby}{\texttt{tree-sitter/tree-sitter-ruby}}}
+    \end{textblock*}
+
+    \begin{textblock*}{10mm}(68mm,57mm)
+        \only<2>{\includegraphics[width=5mm]{languages/elixir.png}}
+    \end{textblock*}
+    \begin{textblock*}{60mm}(75mm,58mm)
+        \only<2>{\href{https://github.com/elixir-lang/tree-sitter-elixir}{\texttt{elixir-lang/tree-sitter-elixir}}}
+    \end{textblock*}
+
+    \begin{textblock*}{10mm}(68mm,64.75mm)
+        \only<2>{\includegraphics[width=5mm]{languages/r.png}}
+    \end{textblock*}
+    \begin{textblock*}{60mm}(75mm,65mm)
+        \only<2>{\href{https://github.com/r-lib/tree-sitter-r}{\texttt{r-lib/tree-sitter-r}}}
+    \end{textblock*}
+
+    \begin{textblock*}{10mm}(100mm,71mm)
+        \only<2>{\vdots}
+    \end{textblock*}
 \end{frame}
 
 
