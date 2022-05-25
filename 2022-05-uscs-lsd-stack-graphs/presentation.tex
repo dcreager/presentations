@@ -719,6 +719,12 @@
     \begin{minted}[label=dataflow.py]{python}
         def ?\tikzmark{passthrough_def_start}?passthrough(?\tikzmark{x_def_start}?x?\tikzmark{x_def_end}?):
             return ?\tikzmark{x_ref_start}?x?\tikzmark{x_ref_end}?
+    \end{minted}
+    \end{minipage}
+    \hspace{0.5em}
+    \begin{minipage}[t]{15em}
+    \begin{minted}[label=a.py]{python}
+        from dataflow import ?\tikzmark{passthrough_import_start}?passthrough?\tikzmark{passthrough_import_end}?
 
         class ?\tikzmark{A_def_start}?A?\tikzmark{A_def_end}?:
             ?\tikzmark{def_start}?one?\tikzmark{def_end}? = 1
@@ -730,14 +736,20 @@
     \uncover<3>{\curvecodeline%
       [-]%
       {[yshift=-4pt] pic cs:ref_start}%
-      {+(-135:0.5cm) and +(-45:0.5cm)}%
+      {+(-135:0.5cm) and +(-75:0.5cm)}%
       {[xshift=15pt, yshift=-4pt] pic cs:passthrough_ref_start}%
     }%
     \uncover<3>{\curvecodeline%
       [-]%
-      {[yshift=8pt] pic cs:passthrough_ref_start}%
-      {+(135:2cm) and +(135:1cm)}%
-      {[xshift=9pt, yshift=8pt] pic cs:passthrough_def_start}%
+      {[xshift=15pt, yshift=8pt] pic cs:passthrough_ref_start}%
+      {+(75:1cm) and +(-90:1cm)}%
+      {[xshift=15pt, yshift=-4pt] pic cs:passthrough_import_start}%
+    }%
+    \uncover<3>{\curvecodeline%
+      [-]%
+      {[xshift=15pt, yshift=8pt] pic cs:passthrough_import_start}%
+      {+(90:1cm) and +(90:1cm)}%
+      {[xshift=13pt, yshift=8pt] pic cs:passthrough_def_start}%
     }%
     \uncover<3>{\curvecodeline%
       [-]%
@@ -754,7 +766,7 @@
     \uncover<3>{\curvecodeline%
       [-]%
       {[xshift=2pt, yshift=2pt] pic cs:x_def_end}%
-      {+(0:1cm) and +(0:1cm)}%
+      {+(0:4cm) and +(0:1cm)}%
       {[xshift=2pt, yshift=4pt] pic cs:A_ref_end}%
     }%
     \uncover<3>{\curvecodeline%
