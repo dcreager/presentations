@@ -40,6 +40,15 @@
 \newlength{\scopegap}
 \setlength{\scopegap}{0.9cm}
 
+\newcommand\scoped[2]{#1 \lfloor #2 \rfloor}
+\newcommand\nilsymbolstack{\mathit{\diamond}}
+\newcommand\nilscopestack{\mathit{\circ}}
+
+\newcommand\PushSymbol[1]{$\mathit{\textrm{\raisebox{0.05em}{\scriptsize $\downarrow$}} \; \texttt{#1}}$}
+\newcommand\PushScopedSymbol[2]{$\mathit{\textrm{\raisebox{0.05em}{\scriptsize $\downarrow$}} \; \scoped{#1}{#2}}$}
+\newcommand\PopSymbol[1]{$\mathit{\textrm{\raisebox{0.05em}{\scriptsize $\uparrow$}} \; \texttt{#1}}$}
+\newcommand\PopScopedSymbol[1]{$\mathit{\textrm{\raisebox{0.05em}{\scriptsize $\uparrow$}} \; \scoped{#1}{\bullet}}$}
+
 \definecolor{sgdef}  {RGB}{159,0,0}
 \definecolor{sgpop}  {RGB}{230,142,131}
 \definecolor{sgref}  {RGB}{0,112,196}
@@ -82,7 +91,7 @@
 
 \tikzset{definition/.style={
     node distance=0.5cm,
-    draw=sgdef, semithick, double, double distance=1pt, outer sep=1pt,
+    draw=sgdef, thick,
     text=sgdef, symbol text,
 }}
 
@@ -93,7 +102,7 @@
     rectangle split horizontal,
     rectangle split draw splits=false,
     rectangle split ignore empty parts,
-    draw=sgpop, thick, dash dot,
+    draw=sgpop, thick, densely dashed,
     text=sgpop, symbol text,
 }}
 \newcommand{\popscope}{
@@ -1461,23 +1470,23 @@
         \node (root)       [highlight node on=<5>]
                            [root node]                            {};
         \node (stove)      [highlight node on=<5>]
-                           [definition]  [left=of root]           {stove};
+                           [definition]  [left=of root]           {\PopSymbol{stove}};
         \node (dot)        [highlight node on=<5>]
-                           [pop]         [left=of stove]          {.};
+                           [pop]         [left=of stove]          {\PopSymbol{.}};
         \node (s1)         [highlight node on=<4>]
                            [anon scope]  [left=of dot]            {};
 
-        \setwidestsymbol{broil}
+        \setwidestsymbol{\PopSymbol{broil}}
         \node (s2)         [highlight node on=<4>]
                            [anon scope]  [above=\scopegap of s1]  {};
-        \node (saute def)  [definition]  [left=of s2]             {\sized{saute}};
+        \node (saute def)  [definition]  [left=of s2]             {\sized{\PopSymbol{saute}}};
         \node (s3)         [highlight node on=<4>]
                            [anon scope]  [above=\scopegap of s2]  {};
         \node (broil def)  [highlight node on=<3>]
-                           [definition]  [left=of s3]             {\sized{broil}};
+                           [definition]  [left=of s3]             {\sized{\PopSymbol{broil}}};
         \node (s4)         [highlight node on=<4>]
                            [anon scope]  [above=\scopegap of s3]  {};
-        \node (bake def)   [definition]  [left=of s4]             {\sized{bake}};
+        \node (bake def)   [definition]  [left=of s4]             {\sized{\PopSymbol{bake}}};
         \node (s5)         [highlight node on=<4>]
                            [anon scope]  [above=\scopegap of s4]  {};
 
@@ -1515,27 +1524,27 @@
         ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
     \end{minted}
     \end{minipage}
-    \hspace{-7em}
+    \hspace{-10em}
     \begin{uncoverenv}<2- >
     \begin{tikzpicture}[baseline={([yshift=2em] current bounding box.center)}]
         \node (root)       [highlight node on=<4>]
                            [root node]                            {};
-        \node (kitchen)    [definition]  [right=of root]          {kitchen};
-        \node (dot)        [pop]         [right=of kitchen]       {.};
+        \node (kitchen)    [definition]  [right=of root]          {\PopSymbol{kitchen}};
+        \node (dot)        [pop]         [right=of kitchen]       {\PopSymbol{.}};
         \node (k1)         [anon scope]  [right=of dot]           {};
 
         \node (k2)         [anon scope]  [above=\scopegap of k1]  {};
         \node (broil ref)  [highlight node on=<3>]
-                           [reference]   [right=of k2]            {broil};
+                           [reference]   [right=of k2]            {\PushSymbol{broil}};
         \node (k3)         [anon scope]  [above=\scopegap of k2]  {};
         \node (import def) [highlight node on=<4>]
-                           [pop]         [right=of k3]            {broil};
+                           [pop]         [right=of k3]            {\PopSymbol{broil}};
         \node (import ref) [highlight node on=<4>]
-                           [push]        [right=of import def]    {broil};
+                           [push]        [right=of import def]    {\PushSymbol{broil}};
         \node (import dot) [highlight node on=<4>]
-                           [push]        [right=of import ref]    {.};
+                           [push]        [right=of import ref]    {\PushSymbol{.}};
         \node (import mod) [highlight node on=<4>]
-                           [push]        [right=of import dot]    {stove};
+                           [push]        [right=of import dot]    {\PushSymbol{stove}};
         \node (k4)         [anon scope]  [above=\scopegap of k3]  {};
 
         \path [-Stealth]
@@ -1569,25 +1578,25 @@
         \node (root)       [highlight node on={<2,3,13>}]
                            [root node]                            {};
         \node (stove)      [highlight node on={<2,14>}]
-                           [definition]  [left=of root]           {stove};
+                           [definition]  [left=of root]           {\PopSymbol{stove}};
         \node (dot)        [highlight node on={<2,15>}]
-                           [pop]         [left=of stove]          {.};
+                           [pop]         [left=of stove]          {\PopSymbol{.}};
         \node (s1)         [highlight node on={<2,16>}]
                            [anon scope]  [left=of dot]            {};
 
-        \setwidestsymbol{broil}
+        \setwidestsymbol{\PopSymbol{broil}}
         \node (s2)         [highlight node on={<2,17>}]
                            [anon scope]  [above=\scopegap of s1]  {};
         \node (saute def)  [highlight node on=<2>]
-                           [definition]  [left=of s2]             {\sized{saute}};
+                           [definition]  [left=of s2]             {\sized{\PopSymbol{saute}}};
         \node (s3)         [highlight node on={<2,18>}]
                            [anon scope]  [above=\scopegap of s2]  {};
         \node (broil def)  [highlight node on={<2,4,19>}]
-                           [definition]  [left=of s3]             {\sized{broil}};
+                           [definition]  [left=of s3]             {\sized{\PopSymbol{broil}}};
         \node (s4)         [highlight node on=<2>]
                            [anon scope]  [above=\scopegap of s3]  {};
         \node (bake def)   [highlight node on=<2>]
-                           [definition]  [left=of s4]             {\sized{bake}};
+                           [definition]  [left=of s4]             {\sized{\PopSymbol{bake}}};
         \node (s5)         [highlight node on=<2>]
                            [anon scope]  [above=\scopegap of s4]  {};
 
@@ -1605,26 +1614,26 @@
           ;
 
         \node (kitchen)    [highlight node on=<3>]
-                           [definition]  [right=of root]          {kitchen};
+                           [definition]  [right=of root]          {\PopSymbol{kitchen}};
         \node (dot)        [highlight node on=<3>]
-                           [pop]         [right=of kitchen]       {.};
+                           [pop]         [right=of kitchen]       {\PopSymbol{.}};
         \node (k1)         [highlight node on=<3>]
                            [anon scope]  [right=of dot]           {};
 
         \node (k2)         [highlight node on={<3,7>}]
                            [anon scope]  [above=\scopegap of k1]  {};
         \node (broil ref)  [highlight node on={<3,4,6>}]
-                           [reference]   [right=of k2]            {broil};
+                           [reference]   [right=of k2]            {\PushSymbol{broil}};
         \node (k3)         [highlight node on={<3,8>}]
                            [anon scope]  [above=\scopegap of k2]  {};
         \node (import def) [highlight node on={<3,9>}]
-                           [pop]         [right=of k3]            {broil};
+                           [pop]         [right=of k3]            {\PopSymbol{broil}};
         \node (import ref) [highlight node on={<3,10>}]
-                           [push]        [right=of import def]    {broil};
+                           [push]        [right=of import def]    {\PushSymbol{broil}};
         \node (import dot) [highlight node on={<3,11>}]
-                           [push]        [right=of import ref]    {.};
+                           [push]        [right=of import ref]    {\PushSymbol{.}};
         \node (import mod) [highlight node on={<3,12>}]
-                           [push]        [right=of import dot]    {stove};
+                           [push]        [right=of import dot]    {\PushSymbol{stove}};
         \node (k4)         [highlight node on=<3>]
                            [anon scope]  [above=\scopegap of k3]  {};
 
@@ -1759,41 +1768,41 @@
                            [root node]                            {};
 
         \node (stove)      [highlight node on={<2,28>}]
-                           [definition]  [below=4em of root] {stove};
+                           [definition]  [below=4em of root] {\PopSymbol{stove}};
         \node (dot)        [highlight node on={<2,29>}]
-                           [pop]         [left=of stove]          {.};
+                           [pop]         [left=of stove]          {\PopSymbol{.}};
         \node (s1)         [highlight node on={<2,30>}]
                            [anon scope]  [left=of dot]            {};
 
         \node (s2)         [highlight node on={<2,31>}]
                            [anon scope]  [above=\scopegap of s1]  {};
         \node (Stove def)  [highlight node on={<2,32>}]
-                           [definition]  [left=of s2]             {Stove};
+                           [definition]  [left=of s2]             {\PopSymbol{Stove}};
         \node (s3)         [highlight node on={<2>}]
                            [anon scope]  [above=\scopegap of s2]  {};
 
         \node (call)       [highlight node on={<2,33>}]
-                           [pop]  [left=of Stove def]             {()};
+                           [pop]  [left=of Stove def]             {\PopSymbol{()}};
         \node (instance)   [highlight node on={<2,34>}]
                            [exported scope]  [left=of call]       {IM};
         \node (member)     [highlight node on={<2,35>}]
-                           [pop]  [left=of instance]              {.};
+                           [pop]  [above=of instance]             {\PopSymbol{.}};
         \node (m1)         [highlight node on={<2,36>}]
-                           [anon scope]  [left=of member]         {};
+                           [anon scope]  [above=of member]        {};
 
-        \setwidestsymbol{broil}
+        \setwidestsymbol{\PopSymbol{broil}}
         \node (m2)         [highlight node on={<2,37>}]
                            [anon scope]  [above=\scopegap of m1]  {};
         \node (saute def)  [highlight node on={<2>}]
-                           [definition]  [left=of m2]             {\sized{saute}};
+                           [definition]  [left=of m2]             {\sized{\PopSymbol{saute}}};
         \node (m3)         [highlight node on={<2,38>}]
                            [anon scope]  [above=\scopegap of m2]  {};
         \node (broil def)  [highlight node on={<2,5,39>}]
-                           [definition]  [left=of m3]             {\sized{broil}};
+                           [definition]  [left=of m3]             {\sized{\PopSymbol{broil}}};
         \node (m4)         [highlight node on=<2>]
                            [anon scope]  [above=\scopegap of m3]  {};
         \node (bake def)   [highlight node on=<2>]
-                           [definition]  [left=of m4]             {\sized{bake}};
+                           [definition]  [left=of m4]             {\sized{\PopSymbol{bake}}};
         \node (m5)         [highlight node on=<2>]
                            [anon scope]  [above=\scopegap of m4]  {};
 
@@ -1818,18 +1827,18 @@
           ;
 
         \node (kitchen)      [highlight node on={<3,21>}]
-                             [definition]  [above=4em of root]  {kitchen};
+                             [definition]  [above=4em of root]  {\PopSymbol{kitchen}};
         \node (dot)          [highlight node on={<3,22>}]
-                             [pop]         [left=of kitchen]        {.};
+                             [pop]         [above=of kitchen]       {\PopSymbol{.}};
         \node (k1)           [highlight node on={<3,23>}]
                              [anon scope]  [left=of dot]            {};
 
         \node (k2)           [highlight node on={<3,24>}]
                              [anon scope]  [above=\scopegap of k1]  {};
         \node (reimport dot) [highlight node on={<3,25>}]
-                             [push]        [left=of k2]             {.};
+                             [push]        [left=of k2]             {\PushSymbol{.}};
         \node (reimport mod) [highlight node on={<3,26>}]
-                             [push]        [left=of reimport dot]   {stove};
+                             [push]        [left=of reimport dot]   {\PushSymbol{stove}};
         \node (k3)           [highlight node on=<3>]
                              [anon scope]  [above=\scopegap of k2]  {};
 
@@ -1846,38 +1855,38 @@
           ;
 
         \node (chef)       [highlight node on=<4>]
-                           [definition]  [right=3em of root]      {chef};
+                           [definition]  [right=3em of root]      {\PopSymbol{chef}};
         \node (dot)        [highlight node on=<4>]
-                           [pop]         [right=of chef]          {.};
+                           [pop]         [right=of chef]          {\PopSymbol{.}};
         \node (c1)         [highlight node on=<4>]
                            [anon scope]  [right=of dot]           {};
 
         \node (c2)         [highlight node on={<4,10>}]
                            [anon scope]  [above=\scopegap of c1]  {};
         \node (stove ref)  [highlight node on={<4,9>}]
-                           [reference]   [right=of c2]            {stove};
+                           [reference]   [right=of c2]            {\PushSymbol{stove}};
         \node (member dot) [highlight node on={<4,8>}]
-                           [push]        [right=of stove ref]     {.};
+                           [push]        [right=of stove ref]     {\PushSymbol{.}};
         \node (broil ref)  [highlight node on={<4,5,7>}]
-                           [reference]   [right=of member dot]    {broil};
+                           [reference]   [right=of member dot]    {\PushSymbol{broil}};
         \node (c3)         [highlight node on={<4,11>}]
                            [anon scope]  [above=\scopegap of c2]  {};
         \node (stove def)  [highlight node on={<4,12>}]
-                           [definition]  [right=of c3]            {stove};
+                           [definition]  [right=of c3]            {\PopSymbol{stove}};
         \node (Stove call) [highlight node on={<4,13>}]
-                           [push]        [right=of stove def]     {()};
+                           [push]        [right=of stove def]     {\PushSymbol{()}};
         \node (Stove ref)  [highlight node on={<4,14>}]
-                           [reference]   [right=of Stove call]    {Stove};
+                           [reference]   [right=of Stove call]    {\PushSymbol{Stove}};
         \node (c4)         [highlight node on={<4,15>}]
                            [anon scope]  [above=\scopegap of c3]  {};
         \node (import def) [highlight node on={<4,16>}]
-                           [pop]         [right=of c4]            {Stove};
+                           [pop]         [right=of c4]            {\PopSymbol{Stove}};
         \node (import ref) [highlight node on={<4,17>}]
-                           [push]        [right=of import def]    {Stove};
+                           [push]        [right=of import def]    {\PushSymbol{Stove}};
         \node (import dot) [highlight node on={<4,18>}]
-                           [push]        [right=of import ref]    {.};
+                           [push]        [right=of import ref]    {\PushSymbol{.}};
         \node (import mod) [highlight node on={<4,19>}]
-                           [push]        [right=of import dot]    {kitchen};
+                           [push]        [right=of import dot]    {\PushSymbol{kitchen}};
         \node (c5)         [highlight node on=<4>]
                            [anon scope]  [above=\scopegap of c4]  {};
 
@@ -1988,21 +1997,21 @@
         ?\tikzmark{ref_start}?broil?\tikzmark{ref_end}?()
     \end{minted}
     \end{minipage}
-    \hspace{2em}
+    \hspace{-2em}
     \scalebox{0.75}{
-    \begin{tikzpicture}[baseline={([yshift=-2em] current bounding box.center)}]
+    \begin{tikzpicture}[baseline={([yshift=1em] current bounding box.center)}]
         \node (root)       [root node]                            {};
-        \node (kitchen)    [definition]  [right=of root]          {kitchen};
-        \node (dot)        [pop]         [right=of kitchen]       {.};
+        \node (kitchen)    [definition]  [right=of root]          {\PopSymbol{kitchen}};
+        \node (dot)        [pop]         [right=of kitchen]       {\PopSymbol{.}};
         \node (k1)         [anon scope]  [right=of dot]           {};
 
         \node (k2)         [anon scope]  [above=\scopegap of k1]  {};
-        \node (broil ref)  [reference]   [right=of k2]            {broil};
+        \node (broil ref)  [reference]   [right=of k2]            {\PushSymbol{broil}};
         \node (k3)         [anon scope]  [above=\scopegap of k2]  {};
-        \node (import def) [pop]         [right=of k3]            {broil};
-        \node (import ref) [push]        [right=of import def]    {broil};
-        \node (import dot) [push]        [right=of import ref]    {.};
-        \node (import mod) [push]        [right=of import dot]    {stove};
+        \node (import def) [pop]         [right=of k3]            {\PopSymbol{broil}};
+        \node (import ref) [push]        [right=of import def]    {\PushSymbol{broil}};
+        \node (import dot) [push]        [right=of import ref]    {\PushSymbol{.}};
+        \node (import mod) [push]        [right=of import dot]    {\PushSymbol{stove}};
         \node (k4)         [anon scope]  [above=\scopegap of k3]  {};
 
         \path [-Stealth]
@@ -2024,7 +2033,7 @@
     }
 
     \vskip 5em
-    \uncover<3- >{\partialpath{}{\node [reference] {broil}}{\node [root node] {}}{stove.broil}}
+    \uncover<3- >{\partialpath{}{\node [reference] {\PushSymbol{broil}}}{\node [root node] {}}{stove.broil}}
     \vskip 0.75em
     \uncover<4>{The reference at \textsl{kitchen.py:3:1}  refers to \texttt{stove.broil} in some other file}
 
@@ -2053,17 +2062,17 @@
     \scalebox{0.75}{
     \begin{tikzpicture}[baseline={(current bounding box.center)}]
         \node (root)       [root node]                            {};
-        \node (stove)      [definition]  [left=of root]           {stove};
-        \node (dot)        [pop]         [left=of stove]          {.};
+        \node (stove)      [definition]  [left=of root]           {\PopSymbol{stove}};
+        \node (dot)        [pop]         [left=of stove]          {\PopSymbol{.}};
         \node (s1)         [anon scope]  [left=of dot]            {};
 
-        \setwidestsymbol{broil}
+        \setwidestsymbol{\PopSymbol{broil}}
         \node (s2)         [anon scope]  [above=\scopegap of s1]  {};
-        \node (saute def)  [definition]  [left=of s2]             {\sized{saute}};
+        \node (saute def)  [definition]  [left=of s2]             {\sized{\PopSymbol{saute}}};
         \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
-        \node (broil def)  [definition]  [left=of s3]             {\sized{broil}};
+        \node (broil def)  [definition]  [left=of s3]             {\sized{\PopSymbol{broil}}};
         \node (s4)         [anon scope]  [above=\scopegap of s3]  {};
-        \node (bake def)   [definition]  [left=of s4]             {\sized{bake}};
+        \node (bake def)   [definition]  [left=of s4]             {\sized{\PopSymbol{bake}}};
         \node (s5)         [anon scope]  [above=\scopegap of s4]  {};
 
         \path [-Stealth]
@@ -2082,7 +2091,7 @@
     }
 
     \vskip 2em
-    \uncover<3- >{\partialpath{stove.broil}{\node [root node] {}}{\node [definition] {broil}}{}}
+    \uncover<3- >{\partialpath{stove.broil}{\node [root node] {}}{\node [definition] {\PopSymbol{broil}}}{}}
     \vskip 0.75em
     \uncover<4>{\texttt{stove.broil} is defined at \textsl{stove.py:4:5}.}
 
@@ -2097,13 +2106,13 @@
     \begin{center}
         \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
-            \partialpath{}{\node [reference] {broil}}{\node [root node] {}}{stove.broil}
+            \partialpath{}{\node [reference] {\PushSymbol{broil}}}{\node [root node] {}}{stove.broil}
             \end{center}
         \end{minipage}
             \; $+$ \;
         \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
-            \partialpath{stove.broil}{\node [root node] {}}{\node [definition] {broil}}{}
+            \partialpath{stove.broil}{\node [root node] {}}{\node [definition] {\PopSymbol{broil}}}{}
             \end{center}
         \end{minipage}
         \vskip 2em
@@ -2130,7 +2139,7 @@
     \begin{center}
         \begin{minipage}[t]{\textwidth}
             \begin{center}
-            \partialpath{}{\node [reference] {broil}}{\node [definition] {broil}}{}
+            \partialpath{}{\node [reference] {\PushSymbol{broil}}}{\node [definition] {\PopSymbol{broil}}}{}
             \end{center}
         \end{minipage}
         \vskip 2em
@@ -2166,26 +2175,26 @@
     \scalebox{0.6}{
     \begin{tikzpicture}[baseline={(current bounding box.center)}]
         \node (root)       [root node]                            {};
-        \node (stove)      [definition]  [below=4em of root] {stove};
-        \node (dot)        [pop]         [left=of stove]          {.};
+        \node (stove)      [definition]  [below=4em of root]      {\PopSymbol{stove}};
+        \node (dot)        [pop]         [left=of stove]          {\PopSymbol{.}};
         \node (s1)         [anon scope]  [left=of dot]            {};
 
         \node (s2)         [anon scope]  [above=\scopegap of s1]  {};
-        \node (Stove def)  [definition]  [left=of s2]             {Stove};
+        \node (Stove def)  [definition]  [left=of s2]             {\PopSymbol{Stove}};
         \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
 
-        \node (call)       [pop]  [left=of Stove def]             {()};
+        \node (call)       [pop]  [left=of Stove def]             {\PopSymbol{()}};
         \node (instance)   [exported scope]  [left=of call]       {IM};
-        \node (member)     [pop]  [left=of instance]              {.};
+        \node (member)     [pop]  [left=of instance]              {\PopSymbol{.}};
         \node (m1)         [anon scope]  [left=of member]         {};
 
-        \setwidestsymbol{broil}
+        \setwidestsymbol{\PopSymbol{broil}}
         \node (m2)         [anon scope]  [above=\scopegap of m1]  {};
-        \node (saute def)  [definition]  [left=of m2]             {\sized{saute}};
+        \node (saute def)  [definition]  [left=of m2]             {\sized{\PopSymbol{saute}}};
         \node (m3)         [anon scope]  [above=\scopegap of m2]  {};
-        \node (broil def)  [definition]  [left=of m3]             {\sized{broil}};
+        \node (broil def)  [definition]  [left=of m3]             {\sized{\PopSymbol{broil}}};
         \node (m4)         [anon scope]  [above=\scopegap of m3]  {};
-        \node (bake def)   [definition]  [left=of m4]             {\sized{bake}};
+        \node (bake def)   [definition]  [left=of m4]             {\sized{\PopSymbol{bake}}};
         \node (m5)         [anon scope]  [above=\scopegap of m4]  {};
 
         \path [-Stealth]
@@ -2244,26 +2253,26 @@
     \scalebox{0.6}{
     \begin{tikzpicture}[baseline={(current bounding box.center)}]
         \node (root)       [root node]                            {};
-        \node (stove)      [definition]  [below=4em of root] {stove};
-        \node (dot)        [pop]         [left=of stove]          {.};
+        \node (stove)      [definition]  [below=4em of root]      {\PopSymbol{stove}};
+        \node (dot)        [pop]         [left=of stove]          {\PopSymbol{.}};
         \node (s1)         [anon scope]  [left=of dot]            {};
 
         \node (s2)         [anon scope]  [above=\scopegap of s1]  {};
-        \node (Stove def)  [definition]  [left=of s2]             {Stove};
+        \node (Stove def)  [definition]  [left=of s2]             {\PopSymbol{Stove}};
         \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
 
-        \node (call)       [pop]  [left=of Stove def]             {()};
+        \node (call)       [pop]  [left=of Stove def]             {\PopSymbol{()}};
         \node (instance)   [exported scope]  [left=of call]       {IM};
-        \node (member)     [pop]  [left=of instance]              {.};
+        \node (member)     [pop]  [left=of instance]              {\PopSymbol{.}};
         \node (m1)         [anon scope]  [left=of member]         {};
 
-        \setwidestsymbol{broil}
+        \setwidestsymbol{\PopSymbol{broil}}
         \node (m2)         [anon scope]  [above=\scopegap of m1]  {};
-        \node (saute def)  [definition]  [left=of m2]             {\sized{saute}};
+        \node (saute def)  [definition]  [left=of m2]             {\sized{\PopSymbol{saute}}};
         \node (m3)         [anon scope]  [above=\scopegap of m2]  {};
-        \node (broil def)  [definition]  [left=of m3]             {\sized{broil}};
+        \node (broil def)  [definition]  [left=of m3]             {\sized{\PopSymbol{broil}}};
         \node (m4)         [anon scope]  [above=\scopegap of m3]  {};
-        \node (bake def)   [definition]  [left=of m4]             {\sized{bake}};
+        \node (bake def)   [definition]  [left=of m4]             {\sized{\PopSymbol{bake}}};
         \node (m5)         [anon scope]  [above=\scopegap of m4]  {};
 
         \path [-Stealth]
@@ -2289,7 +2298,7 @@
     }
     \hspace{3em}
 
-    \uncover<2- >{\partialpath{.broil}{\node [exported scope] {IM}}{\node [definition]{broil}}{}}
+    \uncover<2- >{\partialpath{.broil}{\node [exported scope] {IM}}{\node [definition]{\PopSymbol{broil}}}{}}
     \vskip 0.75em
     \uncover<3>{
         The \texttt{Stove} class \\
@@ -2315,13 +2324,13 @@
     \scalebox{0.6}{
         \begin{tikzpicture}[baseline={([yshift=1em] current bounding box.center)}]
         \node (root)         [root node]                            {};
-        \node (kitchen)      [definition]  [above=4em of root]  {kitchen};
-        \node (dot)          [pop]         [left=of kitchen]        {.};
+        \node (kitchen)      [definition]  [above=4em of root]      {\PopSymbol{kitchen}};
+        \node (dot)          [pop]         [left=of kitchen]        {\PopSymbol{.}};
         \node (k1)           [anon scope]  [left=of dot]            {};
 
         \node (k2)           [anon scope]  [above=\scopegap of k1]  {};
-        \node (reimport dot) [push]        [left=of k2]             {.};
-        \node (reimport mod) [push]        [left=of reimport dot]   {stove};
+        \node (reimport dot) [push]        [left=of k2]             {\PushSymbol{.}};
+        \node (reimport mod) [push]        [left=of reimport dot]   {\PushSymbol{stove}};
         \node (k3)           [anon scope]  [above=\scopegap of k2]  {};
 
         \path [-Stealth]
@@ -2367,23 +2376,23 @@
     \scalebox{0.6}{
         \begin{tikzpicture}[baseline={([yshift=1em] current bounding box.center)}]
         \node (root)       [root node]                            {};
-        \node (chef)       [definition]  [right=3em of root]      {chef};
-        \node (dot)        [pop]         [right=of chef]          {.};
+        \node (chef)       [definition]  [right=3em of root]      {\PopSymbol{chef}};
+        \node (dot)        [pop]         [right=of chef]          {\PopSymbol{.}};
         \node (c1)         [anon scope]  [right=of dot]           {};
 
         \node (c2)         [anon scope]  [above=\scopegap of c1]  {};
-        \node (stove ref)  [reference]   [right=of c2]            {stove};
-        \node (member dot) [push]        [right=of stove ref]     {.};
-        \node (broil ref)  [reference]   [right=of member dot]    {broil};
+        \node (stove ref)  [reference]   [right=of c2]            {\PushSymbol{stove}};
+        \node (member dot) [push]        [right=of stove ref]     {\PushSymbol{.}};
+        \node (broil ref)  [reference]   [right=of member dot]    {\PushSymbol{broil}};
         \node (c3)         [anon scope]  [above=\scopegap of c2]  {};
-        \node (stove def)  [definition]  [right=of c3]            {stove};
-        \node (Stove call) [push]        [right=of stove def]     {()};
-        \node (Stove ref)  [reference]   [right=of Stove call]    {Stove};
+        \node (stove def)  [definition]  [right=of c3]            {\PopSymbol{stove}};
+        \node (Stove call) [push]        [right=of stove def]     {\PushSymbol{()}};
+        \node (Stove ref)  [reference]   [right=of Stove call]    {\PushSymbol{Stove}};
         \node (c4)         [anon scope]  [above=\scopegap of c3]  {};
-        \node (import def) [pop]         [right=of c4]            {Stove};
-        \node (import ref) [push]        [right=of import def]    {Stove};
-        \node (import dot) [push]        [right=of import ref]    {.};
-        \node (import mod) [push]        [right=of import dot]    {kitchen};
+        \node (import def) [pop]         [right=of c4]            {\PopSymbol{Stove}};
+        \node (import ref) [push]        [right=of import def]    {\PushSymbol{Stove}};
+        \node (import dot) [push]        [right=of import ref]    {\PushSymbol{.}};
+        \node (import mod) [push]        [right=of import dot]    {\PushSymbol{kitchen}};
         \node (c5)         [anon scope]  [above=\scopegap of c4]  {};
 
         \path [-Stealth]
@@ -2413,7 +2422,7 @@
     }
 
     \vskip 3em
-    \uncover<3- >{\partialpath{}{\node [reference] {broil}}{\node [root node]{}}{kitchen.Stove().broil}}
+    \uncover<3- >{\partialpath{}{\node [reference] {\PushSymbol{broil}}}{\node [root node]{}}{kitchen.Stove().broil}}
     \vskip 0.75em
     \uncover<4>{
         If you can find what \texttt{kitchen.Stove} resolves to and can call it \\
@@ -2432,7 +2441,7 @@
     \begin{center}
         \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
-            \partialpath{}{\node [reference] {broil}}{\node [root node]{}}{kitchen.Stove().broil}
+            \partialpath{}{\node [reference] {\PushSymbol{broil}}}{\node [root node]{}}{kitchen.Stove().broil}
             \end{center}
         \end{minipage}
         \begin{uncoverenv}<2>
@@ -2475,7 +2484,7 @@
     \begin{center}
         \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
-            \partialpath{}{\node [reference] {broil}}{\node [root node]{}}{stove.Stove().broil}
+            \partialpath{}{\node [reference] {\PushSymbol{broil}}}{\node [root node]{}}{stove.Stove().broil}
             \end{center}
         \end{minipage}
         \begin{uncoverenv}<2>
@@ -2516,14 +2525,14 @@
     \begin{center}
         \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
-            \partialpath{}{\node [reference] {broil}}{\node [exported scope]{IM}}{.broil}
+            \partialpath{}{\node [reference] {\PushSymbol{broil}}}{\node [exported scope]{IM}}{.broil}
             \end{center}
         \end{minipage}
         \begin{uncoverenv}<2>
             \; $+$ \;
         \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
-            \partialpath{.broil}{\node [exported scope] {IM}}{\node [definition]{broil}}{}
+            \partialpath{.broil}{\node [exported scope] {IM}}{\node [definition]{\PopSymbol{broil}}}{}
             \end{center}
         \end{minipage}
         \end{uncoverenv}
@@ -2557,7 +2566,7 @@
     \begin{center}
         \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
-            \partialpath{}{\node [reference] {broil}}{\node [definition]{broil}}{}
+            \partialpath{}{\node [reference] {\PushSymbol{broil}}}{\node [definition]{\PopSymbol{broil}}}{}
             \end{center}
         \end{minipage}
         \phantom{\; $+$ \;}
@@ -2716,18 +2725,18 @@
             \node (s0)     [anon scope]      at(2,1)  {};
             \node (sB)     [named scope]     at(3,1)  {B};
             \node (s7)     [exported scope]  at(4,1)  {7};
-            \node (A)      [definition]      at(1,2)  {A};
+            \node (A)      [definition]      at(1,2)  {\PopSymbol{A}};
 
-            \node (a)      [definition]  [right=of A] {a};
-            \node (A2)     [pop]         [above=of A] {A\textsubscript{2}};
-            \node (main2)  [pop]         [right=of A2] {\_\_main\_\_\textsubscript{2}};
-            \node (bar)    [pop]         [right=of main2] {A\textsubscript{3} \popscope};
+            \node (a)      [definition]  [right=of A] {\PopSymbol{a}};
+            \node (A2)     [pop]         [above=of A] {\PopSymbol{A\textsubscript{2}}};
+            \node (main2)  [pop]         [right=of A2] {\PopSymbol{\_\_main\_\_\textsubscript{2}}};
+            \node (bar)    [pop]         [right=of main2] {\PopScopedSymbol{A\textsubscript{3}}};
 
-            \node (A3)     [reference]  [above=of A2] {A};
-            \node (a3)     [reference]  [right=of A3] {a};
-            \node (A4)     [push]       [above=of A3] {A\textsubscript{4}};
-            \node (main4)  [push]       [right=of A4] {\_\_main\_\_\textsubscript{4}};
-            \node (foo)    [push]       [right=of main4] {A\textsubscript{3} \pushscope{7}};
+            \node (A3)     [reference]  [above=of A2] {\PushSymbol{A}};
+            \node (a3)     [reference]  [right=of A3] {\PushSymbol{a}};
+            \node (A4)     [push]       [above=of A3] {\PushSymbol{A\textsubscript{4}}};
+            \node (main4)  [push]       [right=of A4] {\PushSymbol{\_\_main\_\_\textsubscript{4}}};
+            \node (foo)    [push]       [right=of main4] {\PushScopedSymbol{A\textsubscript{3}}{7}};
 
             % edges
             \path [-Stealth]
@@ -2943,15 +2952,15 @@
     \hspace{2em}
     \begin{tikzpicture}[baseline={(current bounding box.center)}]
         \node (root)       [root node]                              {};
-        \node (stove)      [definition]  [left=of root]             {stove};
-        \node (dot)        [pop]         [left=of stove]            {::};
+        \node (stove)      [definition]  [left=of root]             {\PopSymbol{stove}};
+        \node (dot)        [pop]         [left=of stove]            {\PopSymbol{::}};
 
         \node (s)          [anon scope]  [above=2\scopegap of dot]  {};
 
-        \setwidestsymbol{broil}
-        \node (broil2 def) [definition]  [left=of s]                {\sized{broil}};
-        \node (saute def)  [definition]  [below=of broil2 def]      {\sized{saute}};
-        \node (broil1 def) [definition]  [above=of broil2 def]      {\sized{broil}};
+        \setwidestsymbol{\PopSymbol{broil}}
+        \node (broil2 def) [definition]  [left=of s]                {\sized{\PopSymbol{broil}}};
+        \node (saute def)  [definition]  [below=of broil2 def]      {\sized{\PopSymbol{saute}}};
+        \node (broil1 def) [definition]  [above=of broil2 def]      {\sized{\PopSymbol{broil}}};
 
         \path [-Stealth]
           (root)      edge (stove)
