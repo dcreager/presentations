@@ -45,9 +45,9 @@
 \newcommand\nilscopestack{\mathit{\circ}}
 
 \newcommand\PushSymbol[1]{$\mathit{\textrm{\raisebox{0.05em}{\scriptsize $\downarrow$}} \; \texttt{#1}}$}
-\newcommand\PushScopedSymbol[2]{$\mathit{\textrm{\raisebox{0.05em}{\scriptsize $\downarrow$}} \; \scoped{#1}{#2}}$}
+\newcommand\PushScopedSymbol[2]{$\mathit{\textrm{\raisebox{0.05em}{\scriptsize $\downarrow$}} \; \scoped{\texttt{#1}}{#2}}$}
 \newcommand\PopSymbol[1]{$\mathit{\textrm{\raisebox{0.05em}{\scriptsize $\uparrow$}} \; \texttt{#1}}$}
-\newcommand\PopScopedSymbol[1]{$\mathit{\textrm{\raisebox{0.05em}{\scriptsize $\uparrow$}} \; \scoped{#1}{\bullet}}$}
+\newcommand\PopScopedSymbol[1]{$\mathit{\textrm{\raisebox{0.05em}{\scriptsize $\uparrow$}} \; \scoped{\texttt{#1}}{\bullet}}$}
 
 \definecolor{sgdef}  {RGB}{159,0,0}
 \definecolor{sgpop}  {RGB}{230,142,131}
@@ -138,6 +138,15 @@
     ] {\tiny #1};
 }
 
+\tikzset{control node/.style={
+    node distance=0.5cm,
+    draw=sgjump, thick,
+    fill=white,
+    text=sgjump,
+    inner xsep=7pt, inner ysep=5pt,
+    node font={\sffamily \smaller[1]},
+}}
+
 \newcommand{\widestsymbol}{}
 \newcommand{\setwidestsymbol}[1]{\renewcommand{\widestsymbol}{#1}}
 \newcommand{\sized}[2][\widestsymbol]{\makebox[\widthof{#1}]{#2}}
@@ -157,6 +166,13 @@
 \tikzset{
     highlight node on/.code args={<#1>}{%
         \alt<#1>{\pgfkeysalso{highlight node}}{}%
+    }
+}
+
+\tikzset{
+    invisible/.style={opacity=0},
+    visible on/.code args={<#1>}{%
+        \alt<#1>{}{\pgfkeysalso{invisible}}%
     }
 }
 
@@ -252,8 +268,17 @@
 }
 \makeatother
 
+\newlength\stwlength
+\newcommand\makesamewidth[3][c]{%
+  \settowidth{\stwlength}{#2}%
+  \makebox[\stwlength][#1]{#3}%
+}
+
 \newcommand{\symbolstack}[1]{$\langle \texttt{\relscale{0.8}#1} \rangle$}
 \newcommand{\currentsymbolstack}[1]{\textsmaller[2]{Symbol stack:} \symbolstack{#1}}
+
+\newcommand{\scopestack}[1]{$( #1 )$}
+\newcommand{\currentscopestack}[1]{\textsmaller[2]{\makesamewidth[l]{Symbol stack:}{Scope stack:}} \scopestack{#1}}
 
 \newcommand{\partialpath}[4]{
     \symbolstack{#1}
@@ -1927,6 +1952,272 @@
         \onslide<18,21,25,28>           \currentsymbolstack{.Stove().broil}
         \onslide<19-20>                 \currentsymbolstack{kitchen.Stove().broil}
         \onslide<26-27>                 \currentsymbolstack{stove.Stove().broil}
+    \end{overprint}
+    \end{minipage}
+    \end{center}
+\end{frame}
+
+
+% Dataflow
+
+\begin{frame}[fragile]
+    \frametitle{The dataflow example}
+    \begin{center}
+    \begin{minipage}[t]{9em}
+    \begin{minted}[label=dataflow.py]{python}
+        def ?\tikzmark{passthrough_def_start}?passthrough(?\tikzmark{x_def_start}?x?\tikzmark{x_def_end}?):
+            return ?\tikzmark{x_ref_start}?x?\tikzmark{x_ref_end}?
+    \end{minted}
+    \end{minipage}
+    \hspace{0.5em}
+    \begin{minipage}[t]{15em}
+    \begin{minted}[label=a.py]{python}
+        from dataflow import ?\tikzmark{passthrough_import_start}?passthrough?\tikzmark{passthrough_import_end}?
+
+        class ?\tikzmark{A_def_start}?A?\tikzmark{A_def_end}?:
+            ?\tikzmark{def_start}?one?\tikzmark{def_end}? = 1
+
+        ?\tikzmark{passthrough_ref_start}?passthrough?\tikzmark{passthrough_ref_end}?(?\tikzmark{A_ref_start}?A?\tikzmark{A_ref_end}?).?\tikzmark{ref_start}?one?\tikzmark{ref_end}?
+    \end{minted}
+    \end{minipage}
+    \end{center}
+    \curvecodeline%
+      [-]%
+      {[yshift=-4pt] pic cs:ref_start}%
+      {+(-135:0.5cm) and +(-75:0.5cm)}%
+      {[xshift=15pt, yshift=-4pt] pic cs:passthrough_ref_start}%
+    \curvecodeline%
+      [-]%
+      {[xshift=15pt, yshift=8pt] pic cs:passthrough_ref_start}%
+      {+(75:1cm) and +(-90:1cm)}%
+      {[xshift=15pt, yshift=-4pt] pic cs:passthrough_import_start}%
+    \curvecodeline%
+      [-]%
+      {[xshift=15pt, yshift=8pt] pic cs:passthrough_import_start}%
+      {+(90:1cm) and +(90:1cm)}%
+      {[xshift=13pt, yshift=8pt] pic cs:passthrough_def_start}%
+    \curvecodeline%
+      [-]%
+      {[xshift=15pt, yshift=-2pt] pic cs:passthrough_def_start}%
+      {+(-45:0.25cm) and +(180:0.25cm)}%
+      {[xshift=-2pt, yshift=3pt] pic cs:x_ref_start}%
+    \curvecodeline%
+      [-]%
+      {[xshift=2pt, yshift=3pt] pic cs:x_ref_end}%
+      {+(0:0.25cm) and +(180:0.25cm)}%
+      {[xshift=-2pt, yshift=2pt] pic cs:x_def_start}%
+    \curvecodeline%
+      [-]%
+      {[xshift=2pt, yshift=2pt] pic cs:x_def_end}%
+      {+(0:4cm) and +(0:1cm)}%
+      {[xshift=2pt, yshift=4pt] pic cs:A_ref_end}%
+    \curvecodeline%
+      [-]%
+      {[xshift=-2pt, yshift=4pt] pic cs:A_ref_start}%
+      {+(175:0.5cm) and +(-85:0.5cm)}%
+      {[xshift=-1pt, yshift=-4pt] pic cs:A_def_end}%
+    \curvecodeline%
+      {[xshift=1pt, yshift=8pt] pic cs:A_def_start}%
+      {+(105:0.5cm) and +(90:0.5cm)}%
+      {[xshift=4pt, yshift=8pt] pic cs:def_start}%
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{The dataflow example}
+    \begin{center}
+    \scalebox{0.6}{
+    \begin{tikzpicture}
+        \node (root)       [highlight node on={<2,3,17>}]
+                           [root node]                            {};
+
+        \node (a)          [highlight node on={<3>}]
+                           [definition]  [right=2em of root]      {\PopSymbol{a}};
+        \node (dot)        [highlight node on={<3>}]
+                           [pop]         [above=of a]             {\PopSymbol{.}};
+        \node (a1)         [highlight node on={<3>}]
+                           [anon scope]  [above=\scopegap of dot] {};
+
+        \node (a2)         [highlight node on={<3,10,33>}]
+                           [anon scope]  [above=\scopegap of a1]  {};
+        \node (pt ref)     [highlight node on={<3,9>}]
+                           [reference]  [right=of a2]             {\PushSymbol{passthrough}};
+        \node (call)       [highlight node on={<3,8>}]
+                           [push]  [right=of pt ref]              {\PushScopedSymbol{()}{A}};
+        \node (member dot) [highlight node on={<3,7>}]
+                           [push]  [right=of call]                {\PushSymbol{.}};
+        \node (one ref)    [highlight node on={<3,4,6>}]
+                           [reference]  [right=of member dot]     {\PushSymbol{one}};
+
+        \node (A ref)      [highlight node on={<3,32>}]
+                           [reference] [left=of a2]               {\PushSymbol{A}};
+        \node (zero def)   [highlight node on={<3,31>}]
+                           [pop]  [above=of A ref]                {\PopSymbol{0}};
+        \node (actuals)    [highlight node on={<3,30>}]
+                           [exported scope]  [above=of zero def]  {A};
+
+        \node (a3)         [highlight node on={<3,11,34>}]
+                           [anon scope]  [above=\scopegap of a2]  {};
+        \node (A def)      [highlight node on={<3,35>}]
+                           [definition]  [right=of a3]            {\PopSymbol{A}};
+        \node (class)      [highlight node on={<3,36>}]
+                           [exported scope]  [right=of A def]     {C};
+        \node (class dot)  [highlight node on={<3,37>}]
+                           [pop]  [right=of class]                {\PopSymbol{.}};
+        \node (members)    [highlight node on={<3,38>}]
+                           [anon scope]  [right=of class dot]     {};
+        \node (one def)    [highlight node on={<3,4,39>}]
+                           [definition]  [right=of members]       {\PopSymbol{one}};
+
+        \node (a4)         [highlight node on={<3,12>}]
+                           [anon scope]  [above=\scopegap of a3]  {};
+        \node (import def) [highlight node on={<3,13>}]
+                           [pop]  [right=of a4]                   {\PopSymbol{passthrough}};
+        \node (import ref) [highlight node on={<3,14>}]
+                           [push]  [right=of import def]          {\PushSymbol{passthrough}};
+        \node (import dot) [highlight node on={<3,15>}]
+                           [push]  [right=of import ref]          {\PushSymbol{.}};
+        \node (import mod) [highlight node on={<3,16>}]
+                           [push]  [right=of import dot]          {\PushSymbol{dataflow}};
+
+        \node (a5)         [highlight node on={<3>}]
+                           [anon scope]  [above=\scopegap of a4]  {};
+
+        \path [-Stealth]
+          (root)       edge (a)
+          (a)          edge (dot)
+          (dot)        edge (a1)
+          (a1)         edge (a2)
+          (one ref)    edge [highlight inner edge on=<4>, show path on=<7>]
+                            (member dot)
+          (member dot) edge [highlight inner edge on=<4>, show path on=<8>]
+                            (call)
+          (call)       edge [highlight inner edge on=<4>, show path on=<9>]
+                            (pt ref)
+          (pt ref)     edge [highlight inner edge on=<4>, show path on=<10>]
+                            (a2)
+          (a2)         edge [highlight inner edge on=<4>, show path on=<11>]
+                            (a3)
+          (a2)         edge [visible on={<4,34- >}]
+                            [highlight inner edge on=<4>, show path on=<34>]
+                            [out control=+(130:0.5cm), in control=+(-130:0.5cm)]
+                            (a3)
+          (actuals)    edge [highlight inner edge on=<4>, show path on=<31>]
+                            (zero def)
+          (zero def)   edge [highlight inner edge on=<4>, show path on=<32>]
+                            (A ref)
+          (A ref)      edge [highlight inner edge on=<4>, show path on=<33>]
+                            (a2)
+          (a3)         edge [highlight inner edge on=<4>, show path on=<35>]
+                            (A def)
+          (A def)      edge [highlight inner edge on=<4>, show path on=<36>]
+                            (class)
+          (class)      edge [highlight inner edge on=<4>, show path on=<37>]
+                            (class dot)
+          (class dot)  edge [highlight inner edge on=<4>, show path on=<38>]
+                            (members)
+          (members)    edge [highlight end edge on=<4>, show path on=<39>]
+                            (one def)
+          (a3)         edge [highlight inner edge on=<4>, show path on=<12>]
+                            (a4)
+          (a4)         edge [highlight inner edge on=<4>, show path on=<13>]
+                            (import def)
+          (import def) edge [highlight inner edge on=<4>, show path on=<14>]
+                            (import ref)
+          (import ref) edge [highlight inner edge on=<4>, show path on=<15>]
+                            (import dot)
+          (import dot) edge [highlight inner edge on=<4>, show path on=<16>]
+                            (import mod)
+          (import mod) edge [overlay, in control=+(-45:2cm), out control=+(-90:9cm)]
+                            [highlight inner edge on=<4>, show path on=<17>]
+                            (root)
+          (a4)         edge (a5)
+          ;
+
+        \node (dataflow)   [highlight node on={<2,18>}]
+                           [definition]  [left=2em of root]       {\PopSymbol{dataflow}};
+        \node (dot)        [highlight node on={<2,19>}]
+                           [pop]         [above=of dataflow]      {\PopSymbol{.}};
+        \node (d1)         [highlight node on={<2,20>}]
+                           [anon scope]  [left=\scopegap of dot] {};
+
+        \node (d2)         [highlight node on={<2,21>}]
+                           [anon scope]  [above=\scopegap of d1]  {};
+        \node (pt def)     [highlight node on={<2,22>}]
+                           [definition]  [left=of d2]             {\PopSymbol{passthrough}};
+        \node (called)     [highlight node on={<2,23>}]
+                           [pop]  [left=of pt def]                {\PopScopedSymbol{()}};
+        \node (ret)        [highlight node on={<2,24>}]
+                           [exported scope]  [above=of called]    {R};
+        \node (x ref)      [highlight node on={<2,25>}]
+                           [reference]  [above=of ret]            {\PushSymbol{x}};
+        \node (formals)    [highlight node on={<2,26>}]
+                           [exported scope]  [above=of x ref]     {F};
+        \node (x def)      [highlight node on={<2,27>}]
+                           [pop]  [right=of formals]              {\PopSymbol{x}};
+        \node (x param)    [highlight node on={<2>}]
+                           [push]  [right=of x def]               {\PushSymbol{x}};
+        \node (zero param) [highlight node on={<2,28>}]
+                           [push]  [above=of x param]             {\PushSymbol{0}};
+        \node (x jump)     [highlight node on={<2,29>}]
+                           [control node] [right=of zero param]   {JUMP};
+
+        \node (d3)         [highlight node on={<2>}]
+                           [anon scope]  [above=\scopegap of d2]  {};
+
+        \path [-Stealth]
+          (root)       edge [highlight inner edge on=<4>, show path on=<18>]
+                            (dataflow)
+          (dataflow)   edge [highlight inner edge on=<4>, show path on=<19>]
+                            (dot)
+          (dot)        edge [highlight inner edge on=<4>, show path on=<20>]
+                            (d1)
+          (d1)         edge [highlight inner edge on=<4>, show path on=<21>]
+                            (d2)
+          (d2)         edge [highlight inner edge on=<4>, show path on=<22>]
+                            (pt def)
+          (pt def)     edge [highlight inner edge on=<4>, show path on=<23>]
+                            (called)
+          (called)     edge [highlight inner edge on=<4>, show path on=<24>]
+                            (ret)
+          (ret)        edge [highlight inner edge on=<4>, show path on=<25>]
+                            (x ref)
+          (x ref)      edge [highlight inner edge on=<4>, show path on=<26>]
+                            (formals)
+          (formals)    edge [highlight inner edge on=<4>, show path on=<27>]
+                            (x def)
+          (x def)      edge (x param)
+          (x def)      edge [highlight inner edge on=<4>, show path on=<28>]
+                            (zero param)
+          (x param)    edge (x jump)
+          (zero param) edge [highlight inner edge on=<4>, show path on=<29>]
+                            (x jump)
+          (x jump)     edge [in control=+(135:1cm), out control=+(0:1cm)]
+                            [visible on={<4,30- >}]
+                            [highlight inner edge on=<4>, show path on=<30>]
+                            [dotted]
+                            (actuals)
+          (d2)         edge (d3)
+          ;
+
+    \end{tikzpicture}
+    }
+    \vskip 2em
+    \begin{minipage}{0.5\textwidth}
+    \begin{overprint}
+        \onslide<5,39>                \currentsymbolstack{}
+        \onslide<6,37-38>             \currentsymbolstack{one}
+        \onslide<7,23-24,27,31,35-36> \currentsymbolstack{.one}
+        \onslide<8,13,22>             \currentsymbolstack{$\scoped{()}{A}$.one}
+        \onslide<9-12,14,19-21>       \currentsymbolstack{passthrough$\scoped{()}{A}$.one}
+        \onslide<15,18>               \currentsymbolstack{.passthrough$\scoped{()}{A}$.one}
+        \onslide<16-17>               \currentsymbolstack{dataflow.passthrough$\scoped{()}{A}$.one}
+        \onslide<25-26>               \currentsymbolstack{x.one}
+        \onslide<28-30>               \currentsymbolstack{0.one}
+        \onslide<32-34>               \currentsymbolstack{A.one}
+    \end{overprint}
+    \begin{overprint}
+        \onslide<5-22,30- >           \currentscopestack{}
+        \onslide<23-29>               \currentscopestack{A}
     \end{overprint}
     \end{minipage}
     \end{center}
