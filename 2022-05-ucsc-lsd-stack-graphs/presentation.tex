@@ -1,6 +1,7 @@
 \documentclass[aspectratio=169]{beamer}
 \mode<presentation>
 
+\usepackage{array}
 \usepackage{etoolbox}
 \usepackage{calc}
 \usepackage{relsize}
@@ -274,20 +275,18 @@
   \makebox[\stwlength][#1]{#3}%
 }
 
-\newcommand{\symbolstack}[1]{$\langle \texttt{\relscale{0.8}#1} \rangle$}
-\newcommand{\currentsymbolstack}[1]{\textsmaller[2]{Symbol stack:} \symbolstack{#1}}
+\newcommand{\symbolstack}[1]{\langle \texttt{\relscale{0.8}#1} \rangle}
 
-\newcommand{\scopestack}[1]{$( #1 )$}
-\newcommand{\currentscopestack}[1]{\textsmaller[2]{\makesamewidth[l]{Symbol stack:}{Scope stack:}} \scopestack{#1}}
+\newcommand{\scopestack}[1]{( #1 )}
 
 \newcommand{\partialpath}[4]{
-    \symbolstack{#1}
+    $\symbolstack{#1}$
     \hspace{0.01em}
     \scalebox{0.75}{\tikz[baseline={([yshift=-0.7ex] current bounding box.center)}] #2;}
     \texttt{\relscale{0.8}\textasciitilde\textasciitilde>}  % all that just to get a ~~> ligature
     \scalebox{0.75}{\tikz[baseline={([yshift=-0.7ex] current bounding box.center)}] #3;}
     \hspace{0.01em}
-    \symbolstack{#4}
+    $\symbolstack{#4}$
 }
 
 \newlength{\titlewidth}
@@ -1390,15 +1389,15 @@
           ;
     \end{tikzpicture}
     }
-    \vskip 2em
-    \begin{minipage}{0.5\textwidth}
-    \begin{overprint}
-        \onslide<6-8,10,15-18> \currentsymbolstack{broil}
-        \onslide<5,9,19>       \currentsymbolstack{}
-        \onslide<11,14>        \currentsymbolstack{.broil}
-        \onslide<12-13>        \currentsymbolstack{stove.broil}
-    \end{overprint}
-    \end{minipage}
+    \vskip 3em
+    \begin{tabular}{m{5em} m{10em}}
+        \only<5- >          {\textsmaller[2]{Symbol stack:}} &
+        \only<6-8,10,15-18> {$\symbolstack{broil}$}
+        \only<5,9,19>       {$\nilsymbolstack$}
+        \only<11,14>        {$\symbolstack{.broil}$}
+        \only<12-13>        {$\symbolstack{stove.broil}$}
+        \\
+    \end{tabular}
     \end{center}
 \end{frame}
 
@@ -1652,19 +1651,19 @@
     \end{tikzpicture}
     }
     \vskip 2em
-    \begin{minipage}{0.5\textwidth}
-    \begin{overprint}
-        \onslide<6,39>                  \currentsymbolstack{}
-        \onslide<7,35-38>               \currentsymbolstack{broil}
-        \onslide<8,12,33-34>            \currentsymbolstack{.broil}
-        \onslide<9-11>                  \currentsymbolstack{stove.broil}
-        \onslide<13,16,32>              \currentsymbolstack{().broil}
-        \onslide<14-15,17,22-24,29-31>  \currentsymbolstack{Stove().broil}
-        \onslide<18,21,25,28>           \currentsymbolstack{.Stove().broil}
-        \onslide<19-20>                 \currentsymbolstack{kitchen.Stove().broil}
-        \onslide<26-27>                 \currentsymbolstack{stove.Stove().broil}
-    \end{overprint}
-    \end{minipage}
+    \begin{tabular}{m{5em} m{10em}}
+        \only<6- >                   {\textsmaller[2]{Symbol stack:}} &
+        \only<6,39>                  {$\nilsymbolstack$}
+        \only<7,35-38>               {$\symbolstack{broil}$}
+        \only<8,12,33-34>            {$\symbolstack{.broil}$}
+        \only<9-11>                  {$\symbolstack{stove.broil}$}
+        \only<13,16,32>              {$\symbolstack{().broil}$}
+        \only<14-15,17,22-24,29-31>  {$\symbolstack{Stove().broil}$}
+        \only<18,21,25,28>           {$\symbolstack{.Stove().broil}$}
+        \only<19-20>                 {$\symbolstack{kitchen.Stove().broil}$}
+        \only<26-27>                 {$\symbolstack{stove.Stove().broil}$}
+        \\
+    \end{tabular}
     \end{center}
 \end{frame}
 
@@ -1913,24 +1912,24 @@
     \end{tikzpicture}
     }
     \vskip 2em
-    \begin{minipage}{0.5\textwidth}
-    \begin{overprint}
-        \onslide<5,39>                \currentsymbolstack{}
-        \onslide<6,37-38>             \currentsymbolstack{one}
-        \onslide<7,23-24,27,31,35-36> \currentsymbolstack{.one}
-        \onslide<8,13,22>             \currentsymbolstack{$\scoped{()}{A}$.one}
-        \onslide<9-12,14,19-21>       \currentsymbolstack{passthrough$\scoped{()}{A}$.one}
-        \onslide<15,18>               \currentsymbolstack{.passthrough$\scoped{()}{A}$.one}
-        \onslide<16-17>               \currentsymbolstack{dataflow.passthrough$\scoped{()}{A}$.one}
-        \onslide<25-26>               \currentsymbolstack{x.one}
-        \onslide<28-30>               \currentsymbolstack{0.one}
-        \onslide<32-34>               \currentsymbolstack{A.one}
-    \end{overprint}
-    \begin{overprint}
-        \onslide<5-22,30- >           \currentscopestack{}
-        \onslide<23-29>               \currentscopestack{A}
-    \end{overprint}
-    \end{minipage}
+    \begin{tabular}{m{5em} m{14em}}
+        \only<5- >                 {\textsmaller[2]{Symbol stack:}} &
+        \only<5,39>                {$\nilsymbolstack$}
+        \only<6,37-38>             {$\symbolstack{one}$}
+        \only<7,23-24,27,31,35-36> {$\symbolstack{.one}$}
+        \only<8,13,22>             {$\symbolstack{$\scoped{()}{A}$.one}$}
+        \only<9-12,14,19-21>       {$\symbolstack{passthrough$\scoped{()}{A}$.one}$}
+        \only<15,18>               {$\symbolstack{.passthrough$\scoped{()}{A}$.one}$}
+        \only<16-17>               {$\symbolstack{dataflow.passthrough$\scoped{()}{A}$.one}$}
+        \only<25-26>               {$\symbolstack{x.one}$}
+        \only<28-30>               {$\symbolstack{0.one}$}
+        \only<32-34>               {$\symbolstack{A.one}$}
+        \\
+        \only<5- >                 {\textsmaller[2]{Scope stack:}} &
+        \only<5-22,30- >           {$\nilscopestack$}
+        \only<23-29>               {$\scopestack{A}$}
+        \\
+    \end{tabular}
     \end{center}
 \end{frame}
 
