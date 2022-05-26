@@ -279,14 +279,14 @@
 
 \newcommand{\scopestack}[1]{( #1 )}
 
-\newcommand{\partialpath}[4]{
-    $\symbolstack{#1}$
+\newcommand{\partialpath}[6]{%
+    $\{#1, #2\}$
     \hspace{0.01em}
-    \scalebox{0.75}{\tikz[baseline={([yshift=-0.7ex] current bounding box.center)}] #2;}
-    \texttt{\relscale{0.8}\textasciitilde\textasciitilde>}  % all that just to get a ~~> ligature
     \scalebox{0.75}{\tikz[baseline={([yshift=-0.7ex] current bounding box.center)}] #3;}
+    \texttt{\relscale{0.8}\textasciitilde\textasciitilde>}  % all that just to get a ~~> ligature
+    \scalebox{0.75}{\tikz[baseline={([yshift=-0.7ex] current bounding box.center)}] #4;}
     \hspace{0.01em}
-    $\symbolstack{#4}$
+    $\{#5, #6\}$
 }
 
 \newlength{\titlewidth}
@@ -2034,7 +2034,11 @@
     }
 
     \vskip 5em
-    \uncover<3- >{\partialpath{}{\node [reference] {\PushSymbol{broil}}}{\node [root node] {}}{stove.broil}}
+    \uncover<3- >{\partialpath
+        {\nilsymbolstack}{\nilscopestack}
+        {\node [reference] {\PushSymbol{broil}}}
+        {\node [root node] {}}
+        {\symbolstack{stove.broil}}{\nilscopestack}}
     \vskip 0.75em
     \uncover<4>{The reference at \textsl{kitchen.py:3:1}  refers to \texttt{stove.broil} in some other file}
 
@@ -2092,7 +2096,11 @@
     }
 
     \vskip 2em
-    \uncover<3- >{\partialpath{stove.broil}{\node [root node] {}}{\node [definition] {\PopSymbol{broil}}}{}}
+    \uncover<3- >{\partialpath
+        {\symbolstack{stove.broil} \cdot \psi}{\phi}
+        {\node [root node] {}}
+        {\node [definition] {\PopSymbol{broil}}}
+        {\psi}{\phi}}
     \vskip 0.75em
     \uncover<4>{\texttt{stove.broil} is defined at \textsl{stove.py:4:5}.}
 
@@ -2107,18 +2115,35 @@
     \begin{center}
         \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
-            \partialpath{}{\node [reference] {\PushSymbol{broil}}}{\node [root node] {}}{stove.broil}
+            \scalebox{0.75}{\partialpath
+                {\nilsymbolstack}{\nilscopestack}
+                {\node [reference] {\PushSymbol{broil}}}
+                {\node [root node] {}}
+                {\symbolstack{stove.broil}}{\nilscopestack}}
             \end{center}
         \end{minipage}
             \; $+$ \;
         \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
-            \partialpath{stove.broil}{\node [root node] {}}{\node [definition] {\PopSymbol{broil}}}{}
+            \scalebox{0.75}{\partialpath
+                {\symbolstack{stove.broil} \cdot \psi}{\phi}
+                {\node [root node] {}}
+                {\node [definition] {\PopSymbol{broil}}}
+                {\psi}{\phi}}
             \end{center}
         \end{minipage}
-        \vskip 2em
+        \vskip 0.5em
+        \begin{minipage}[t][1cm][t]{0.46\textwidth}
+        \begin{center}
+            \scalebox{0.75}{
+                \onslide<2>{$\psi = \nilsymbolstack, \phi = \nilscopestack$}
+            }
+        \end{center}
+        \end{minipage}
+        \vskip 0.5em
         \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
+            \smaller[1]
             The reference at \textsl{kitchen.py:3:1} \\
             refers to \texttt{stove.broil} in some other file
             \end{center}
@@ -2126,6 +2151,7 @@
             \; $+$ \;
         \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
+            \smaller[1]
             \texttt{stove.broil} is defined at \textsl{stove.py:4:5}
             \end{center}
         \end{minipage}
@@ -2140,12 +2166,23 @@
     \begin{center}
         \begin{minipage}[t]{\textwidth}
             \begin{center}
-            \partialpath{}{\node [reference] {\PushSymbol{broil}}}{\node [definition] {\PopSymbol{broil}}}{}
+            \scalebox{0.75}{\partialpath
+                {\nilsymbolstack}{\nilscopestack}
+                {\node [reference] {\PushSymbol{broil}}}
+                {\node [definition] {\PopSymbol{broil}}}
+                {\nilsymbolstack}{\nilscopestack}}
             \end{center}
         \end{minipage}
-        \vskip 2em
+        \vskip 0.5em
+        \begin{minipage}[t][1cm][t]{0.46\textwidth}
+            \scalebox{0.75}{
+                \vphantom{$\psi = \nilsymbolstack, \phi = \nilscopestack$}
+            }
+        \end{minipage}
+        \vskip 0.5em
         \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
+            \smaller[1]
             The reference at \textsl{kitchen.py:3:1} \\
             is defined at \textsl{stove.py:4:5}. \\
             \end{center}
@@ -2221,7 +2258,11 @@
     }
     \hspace{3em}
 
-    \uncover<3- >{\partialpath{stove.Stove()}{\node [root node]{}}{\node [exported scope] {IM}}{}}
+    \uncover<3- >{\partialpath
+        {\symbolstack{stove.Stove()} \cdot \psi}{\phi}
+        {\node [root node]{}}
+        {\node [exported scope] {IM}}
+        {\psi}{\phi}}
     \vskip 0.75em
     \uncover<4>{
         Invoking \texttt{stove.Stove} \\
@@ -2299,7 +2340,11 @@
     }
     \hspace{3em}
 
-    \uncover<2- >{\partialpath{.broil}{\node [exported scope] {IM}}{\node [definition]{\PopSymbol{broil}}}{}}
+    \uncover<2- >{\partialpath
+        {\symbolstack{.broil} \cdot \psi}{\phi}
+        {\node [exported scope] {IM}}
+        {\node [definition]{\PopSymbol{broil}}}
+        {\psi}{\phi}}
     \vskip 0.75em
     \uncover<3>{
         The \texttt{Stove} class \\
@@ -2349,7 +2394,11 @@
     }
 
     \vskip 3em
-    \uncover<3- >{\partialpath{kitchen.}{\node [root node] {}}{\node [root node]{}}{stove.}}
+    \uncover<3- >{\partialpath
+        {\symbolstack{kitchen.} \cdot \psi}{\phi}
+        {\node [root node] {}}
+        {\node [root node]{}}
+        {\symbolstack{stove.} \cdot \psi}{\phi}}
     \vskip 0.75em
     \uncover<4>{
         If you are looking for \texttt{kitchen.[anything]} \\
@@ -2423,7 +2472,11 @@
     }
 
     \vskip 3em
-    \uncover<3- >{\partialpath{}{\node [reference] {\PushSymbol{broil}}}{\node [root node]{}}{kitchen.Stove().broil}}
+    \uncover<3- >{\partialpath
+        {\nilsymbolstack}{\nilscopestack}
+        {\node [reference] {\PushSymbol{broil}}}
+        {\node [root node]{}}
+        {\symbolstack{kitchen.Stove().broil}}{\nilscopestack}}
     \vskip 0.75em
     \uncover<4>{
         If you can find what \texttt{kitchen.Stove} resolves to and can call it \\
@@ -2442,20 +2495,37 @@
     \begin{center}
         \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
-            \partialpath{}{\node [reference] {\PushSymbol{broil}}}{\node [root node]{}}{kitchen.Stove().broil}
+            \scalebox{0.75}{\partialpath
+                {\nilsymbolstack}{\nilscopestack}
+                {\node [reference] {\PushSymbol{broil}}}
+                {\node [root node]{}}
+                {\symbolstack{kitchen.Stove().broil}}{\nilscopestack}}
             \end{center}
         \end{minipage}
-        \begin{uncoverenv}<2>
+        \begin{uncoverenv}<2- >
             \; $+$ \;
         \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
-            \partialpath{kitchen.}{\node [root node] {}}{\node [root node]{}}{stove.}
+            \scalebox{0.75}{\partialpath
+                {\symbolstack{kitchen.} \cdot \psi}{\phi}
+                {\node [root node] {}}
+                {\node [root node]{}}
+                {\symbolstack{stove.} \cdot \psi}{\phi}}
             \end{center}
         \end{minipage}
         \end{uncoverenv}
-        \vskip 2em
+        \vskip 0.5em
+        \begin{minipage}[t][1cm][t]{0.46\textwidth}
+        \begin{center}
+            \scalebox{0.75}{
+                \onslide<3>{$\psi = \symbolstack{Stove().broil}, \phi = \nilscopestack$}
+            }
+        \end{center}
+        \end{minipage}
+        \vskip 0.5em
         \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
+            \smaller[1]
             If you can find what \texttt{kitchen.Stove} \\
             resolves to and can call it, then the \\
             result should have a member \\
@@ -2463,10 +2533,11 @@
             \textsl{chef.py:4:7} resolves to.
             \end{center}
         \end{minipage}
-        \begin{uncoverenv}<2>
+        \begin{uncoverenv}<2- >
             \; $+$ \;
         \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
+            \smaller[1]
             If you are looking for \\
             \texttt{kitchen.[anything]} \\
             then you might find it at \\
@@ -2485,20 +2556,37 @@
     \begin{center}
         \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
-            \partialpath{}{\node [reference] {\PushSymbol{broil}}}{\node [root node]{}}{stove.Stove().broil}
+            \scalebox{0.75}{\partialpath
+                {\nilsymbolstack}{\nilscopestack}
+                {\node [reference] {\PushSymbol{broil}}}
+                {\node [root node]{}}
+                {\symbolstack{stove.Stove().broil}}{\nilscopestack}}
             \end{center}
         \end{minipage}
-        \begin{uncoverenv}<2>
+        \begin{uncoverenv}<2- >
             \; $+$ \;
         \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
-            \partialpath{stove.Stove()}{\node [root node]{}}{\node [exported scope] {IM}}{}
+            \scalebox{0.75}{\partialpath
+                {\symbolstack{stove.Stove()} \cdot \psi}{\phi}
+                {\node [root node]{}}
+                {\node [exported scope] {IM}}
+                {\psi}{\phi}}
             \end{center}
         \end{minipage}
         \end{uncoverenv}
-        \vskip 2em
+        \vskip 0.5em
+        \begin{minipage}[t][1cm][t]{0.46\textwidth}
+        \begin{center}
+            \scalebox{0.75}{
+                \onslide<3>{$\psi = \symbolstack{.broil}, \phi = \nilscopestack$}
+            }
+        \end{center}
+        \end{minipage}
+        \vskip 0.5em
         \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
+            \smaller[1]
             If you can find what \texttt{stove.Stove} \\
             resolves to and can call it, then the \\
             result should have a member \\
@@ -2506,10 +2594,11 @@
             \textsl{chef.py:4:7} resolves to.
             \end{center}
         \end{minipage}
-        \begin{uncoverenv}<2>
+        \begin{uncoverenv}<2- >
             \; $+$ \;
         \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
+            \smaller[1]
             Invoking \texttt{stove.Stove} gives you \\
             an instance of the \texttt{Stove} class.
             \end{center}
@@ -2526,30 +2615,48 @@
     \begin{center}
         \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
-            \partialpath{}{\node [reference] {\PushSymbol{broil}}}{\node [exported scope]{IM}}{.broil}
+            \scalebox{0.75}{\partialpath
+                {\nilsymbolstack}{\nilscopestack}
+                {\node [reference] {\PushSymbol{broil}}}
+                {\node [exported scope]{IM}}
+                {\symbolstack{.broil}}{\nilscopestack}}
             \end{center}
         \end{minipage}
-        \begin{uncoverenv}<2>
+        \begin{uncoverenv}<2- >
             \; $+$ \;
         \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
-            \partialpath{.broil}{\node [exported scope] {IM}}{\node [definition]{\PopSymbol{broil}}}{}
+            \scalebox{0.75}{\partialpath
+                {\symbolstack{.broil} \cdot \psi}{\phi}
+                {\node [exported scope] {IM}}
+                {\node [definition]{\PopSymbol{broil}}}
+                {\psi}{\phi}}
             \end{center}
         \end{minipage}
         \end{uncoverenv}
-        \vskip 2em
+        \vskip 0.5em
+        \begin{minipage}[t][1cm][t]{0.46\textwidth}
+        \begin{center}
+            \scalebox{0.75}{
+                \onslide<3>{$\psi = \nilsymbolstack, \phi = \nilscopestack$}
+            }
+        \end{center}
+        \end{minipage}
+        \vskip 0.5em
         \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
+            \smaller[1]
             The \texttt{Stove} class \\
             should have a member \\
             named \texttt{broil} which the reference at \\
             \textsl{chef.py:4:7} resolves to.
             \end{center}
         \end{minipage}
-        \begin{uncoverenv}<2>
+        \begin{uncoverenv}<2- >
             \; $+$ \;
         \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
+            \smaller[1]
             The \texttt{Stove} class has an \\
             instance member named \texttt{broil} \\
             defined at \textsl{stove.py:5:9}.
@@ -2567,16 +2674,29 @@
     \begin{center}
         \begin{minipage}[t]{0.46\textwidth}
             \begin{center}
-            \partialpath{}{\node [reference] {\PushSymbol{broil}}}{\node [definition]{\PopSymbol{broil}}}{}
+            \scalebox{0.75}{\partialpath
+                {\nilsymbolstack}{\nilscopestack}
+                {\node [reference] {\PushSymbol{broil}}}
+                {\node [definition]{\PopSymbol{broil}}}
+                {\nilsymbolstack}{\nilscopestack}}
             \end{center}
         \end{minipage}
         \phantom{\; $+$ \;}
         \begin{minipage}[t]{0.46\textwidth}
             \strut
         \end{minipage}
-        \vskip 2em
+        \vskip 0.5em
+        \begin{minipage}[t][1cm][t]{0.46\textwidth}
+        \begin{center}
+            \scalebox{0.75}{
+                \vphantom{$\psi = \symbolstack{Stove().broil}, \phi = \nilscopestack$}
+            }
+        \end{center}
+        \end{minipage}
+        \vskip 0.5em
         \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
+            \smaller[1]
             The definition at \textsl{stove.py:5:9} \\
             is what the reference at \\
             \textsl{chef.py:4:7} resolves to.
@@ -2584,6 +2704,7 @@
         \end{minipage}
         \phantom{\; $+$ \;}
         \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \smaller[1]
             \strut
         \end{minipage}
     \end{center}
