@@ -2711,6 +2711,792 @@
 \end{frame}
 
 
+\begin{frame}[t,fragile]
+    \frametitle{The dataflow example}
+
+    \begin{center}
+
+    \begin{minipage}{9em}
+    \begin{minted}[label=dataflow.py]{python}
+        def ?\tikzmark{passthrough_def_start}?passthrough(?\tikzmark{x_def_start}?x?\tikzmark{x_def_end}?):
+            return ?\tikzmark{x_ref_start}?x?\tikzmark{x_ref_end}?
+    \end{minted}
+    \end{minipage}
+    \hspace{2em}
+    \scalebox{0.6}{
+    \begin{tikzpicture}[baseline={([yshift=1em] current bounding box.center)}]
+        \node (root)       [root node]                            {};
+
+        \node (dataflow)   [definition]  [left=2em of root]       {\PopSymbol{dataflow}};
+        \node (dot)        [pop]         [above=of dataflow]      {\PopSymbol{.}};
+        \node (d1)         [anon scope]  [left=\scopegap of dot] {};
+
+        \node (d2)         [anon scope]  [above=\scopegap of d1]  {};
+        \node (pt def)     [definition]  [left=of d2]             {\PopSymbol{passthrough}};
+        \node (called)     [pop]  [left=of pt def]                {\PopScopedSymbol{()}};
+        \node (ret)        [exported scope]  [above=of called]    {R};
+        \node (x ref)      [reference]  [above=of ret]            {\PushSymbol{x}};
+        \node (formals)    [exported scope]  [above=of x ref]     {F};
+        \node (x def)      [pop]  [right=of formals]              {\PopSymbol{x}};
+        \node (x param)    [push]  [right=of x def]               {\PushSymbol{x}};
+        \node (zero param) [push]  [above=of x param]             {\PushSymbol{0}};
+        \node (x jump)     [control node] [right=of zero param]   {JUMP};
+
+        \node (d3)         [anon scope]  [above=\scopegap of d2]  {};
+
+        \path [-Stealth]
+          (root)       edge [highlight inner edge on=<2- >]
+                            (dataflow)
+          (dataflow)   edge [highlight inner edge on=<2- >]
+                            (dot)
+          (dot)        edge [highlight inner edge on=<2- >]
+                            (d1)
+          (d1)         edge [highlight inner edge on=<2- >]
+                            (d2)
+          (d2)         edge [highlight inner edge on=<2- >]
+                            (pt def)
+          (pt def)     edge [highlight inner edge on=<2- >]
+                            (called)
+          (called)     edge [highlight end edge on=<2- >]
+                            (ret)
+          (ret)        edge (x ref)
+          (x ref)      edge (formals)
+          (formals)    edge (x def)
+          (x def)      edge (x param)
+          (x def)      edge (zero param)
+          (x param)    edge (x jump)
+          (zero param) edge (x jump)
+          (d2)         edge (d3)
+          ;
+    \end{tikzpicture}
+    }
+    \hspace{3em}
+
+    \vskip 1em
+    \uncover<3- >{\partialpath
+        {\symbolstack{dataflow.passthrough$\scoped{\texttt{()}}{\phi_A}$} \cdot \psi}{\phi}
+        {\node [root node]{}}
+        {\node [exported scope] {R}}
+        {\psi}{\phi_A}}
+    \vskip 0.75em
+    \uncover<4>{
+        \texttt{dataflow.passthrough} is a function \\
+        that can be invoked. \\
+    }
+
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[t,fragile]
+    \frametitle{The dataflow example}
+
+    \begin{center}
+
+    \begin{minipage}{9em}
+    \begin{minted}[label=dataflow.py]{python}
+        def ?\tikzmark{passthrough_def_start}?passthrough(?\tikzmark{x_def_start}?x?\tikzmark{x_def_end}?):
+            return ?\tikzmark{x_ref_start}?x?\tikzmark{x_ref_end}?
+    \end{minted}
+    \end{minipage}
+    \hspace{2em}
+    \scalebox{0.6}{
+    \begin{tikzpicture}[baseline={([yshift=1em] current bounding box.center)}]
+        \node (root)       [root node]                            {};
+
+        \node (dataflow)   [definition]  [left=2em of root]       {\PopSymbol{dataflow}};
+        \node (dot)        [pop]         [above=of dataflow]      {\PopSymbol{.}};
+        \node (d1)         [anon scope]  [left=\scopegap of dot] {};
+
+        \node (d2)         [anon scope]  [above=\scopegap of d1]  {};
+        \node (pt def)     [definition]  [left=of d2]             {\PopSymbol{passthrough}};
+        \node (called)     [pop]  [left=of pt def]                {\PopScopedSymbol{()}};
+        \node (ret)        [exported scope]  [above=of called]    {R};
+        \node (x ref)      [reference]  [above=of ret]            {\PushSymbol{x}};
+        \node (formals)    [exported scope]  [above=of x ref]     {F};
+        \node (x def)      [pop]  [right=of formals]              {\PopSymbol{x}};
+        \node (x param)    [push]  [right=of x def]               {\PushSymbol{x}};
+        \node (zero param) [push]  [above=of x param]             {\PushSymbol{0}};
+        \node (x jump)     [control node] [right=of zero param]   {JUMP};
+
+        \node (d3)         [anon scope]  [above=\scopegap of d2]  {};
+
+        \path [-Stealth]
+          (root)       edge (dataflow)
+          (dataflow)   edge (dot)
+          (dot)        edge (d1)
+          (d1)         edge (d2)
+          (d2)         edge (pt def)
+          (pt def)     edge (called)
+          (called)     edge (ret)
+          (ret)        edge [highlight inner edge on=<2- >]
+                            (x ref)
+          (x ref)      edge [highlight inner edge on=<2- >]
+                            (formals)
+          (formals)    edge [highlight inner edge on=<2- >]
+                            (x def)
+          (x def)      edge (x param)
+          (x def)      edge [highlight inner edge on=<2- >]
+                            (zero param)
+          (x param)    edge (x jump)
+          (zero param) edge [highlight end edge on=<2- >]
+                            (x jump)
+          (d2)         edge (d3)
+          ;
+    \end{tikzpicture}
+    }
+    \hspace{3em}
+
+    \vskip 1em
+    \uncover<3- >{\partialpath
+        {\psi}{\phi}
+        {\node [exported scope] {R}}
+        {\node [control node]{JUMP}}
+        {\symbolstack{0} \cdot \psi}{\phi}}
+    \vskip 0.75em
+    \uncover<4>{
+        The return value of \texttt{dataflow.passthrough} \\
+        has the same type as positional parameter 0. \\
+    }
+
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[t,fragile]
+    \frametitle{The dataflow example}
+
+    \begin{center}
+
+    \begin{minipage}[t]{15em}
+    \begin{minted}[label=a.py]{python}
+        from dataflow import ?\tikzmark{passthrough_import_start}?passthrough?\tikzmark{passthrough_import_end}?
+
+        class ?\tikzmark{A_def_start}?A?\tikzmark{A_def_end}?:
+            ?\tikzmark{def_start}?one?\tikzmark{def_end}? = 1
+
+        ?\tikzmark{passthrough_ref_start}?passthrough?\tikzmark{passthrough_ref_end}?(?\tikzmark{A_ref_start}?A?\tikzmark{A_ref_end}?).?\tikzmark{ref_start}?one?\tikzmark{ref_end}?
+    \end{minted}
+    \end{minipage}
+    \hspace{2em}
+    \scalebox{0.6}{
+    \begin{tikzpicture}[baseline={([yshift=4em] current bounding box.center)}]
+        \node (root)       [root node]                            {};
+
+        \node (a)          [definition]  [left=2em of root]       {\PopSymbol{a}};
+        \node (dot)        [pop]         [left=of a]              {\PopSymbol{.}};
+        \node (a1)         [anon scope]  [left=\scopegap of dot]  {};
+
+        \node (a2)         [anon scope]  [above=\scopegap of a1]  {};
+        \node (pt ref)     [reference]  [right=of a2]             {\PushSymbol{passthrough}};
+        \node (call)       [push]  [right=of pt ref]              {\PushScopedSymbol{()}{A}};
+        \node (member dot) [push]  [right=of call]                {\PushSymbol{.}};
+        \node (one ref)    [reference]  [right=of member dot]     {\PushSymbol{one}};
+
+        \node (A ref)      [reference] [left=of a2]               {\PushSymbol{A}};
+        \node (zero def)   [pop]  [above=of A ref]                {\PopSymbol{0}};
+        \node (actuals)    [exported scope]  [above=of zero def]  {A};
+
+        \node (a3)         [anon scope]  [above=\scopegap of a2]  {};
+        \node (A def)      [definition]  [right=of a3]            {\PopSymbol{A}};
+        \node (class)      [exported scope]  [right=of A def]     {C};
+        \node (class dot)  [pop]  [right=of class]                {\PopSymbol{.}};
+        \node (members)    [anon scope]  [right=of class dot]     {};
+        \node (one def)    [definition]  [right=of members]       {\PopSymbol{one}};
+
+        \node (a4)         [anon scope]  [above=\scopegap of a3]  {};
+        \node (import def) [pop]  [right=of a4]                   {\PopSymbol{passthrough}};
+        \node (import ref) [push]  [right=of import def]          {\PushSymbol{passthrough}};
+        \node (import dot) [push]  [right=of import ref]          {\PushSymbol{.}};
+        \node (import mod) [push]  [right=of import dot]          {\PushSymbol{dataflow}};
+
+        \node (a5)         [anon scope]  [above=\scopegap of a4]  {};
+
+        \path [-Stealth]
+          (root)       edge (a)
+          (a)          edge (dot)
+          (dot)        edge (a1)
+          (a1)         edge (a2)
+          (one ref)    edge [highlight inner edge on=<2- >]
+                            (member dot)
+          (member dot) edge [highlight inner edge on=<2- >]
+                            (call)
+          (call)       edge [highlight inner edge on=<2- >]
+                            (pt ref)
+          (pt ref)     edge [highlight inner edge on=<2- >]
+                            (a2)
+          (a2)         edge [highlight inner edge on=<2- >]
+                            (a3)
+          (actuals)    edge (zero def)
+          (zero def)   edge (A ref)
+          (A ref)      edge (a2)
+          (a3)         edge (A def)
+          (A def)      edge (class)
+          (class)      edge (class dot)
+          (class dot)  edge (members)
+          (members)    edge (one def)
+          (a3)         edge [highlight inner edge on=<2- >]
+                            (a4)
+          (a4)         edge [highlight inner edge on=<2- >]
+                            (import def)
+          (import def) edge [highlight inner edge on=<2- >]
+                            (import ref)
+          (import ref) edge [highlight inner edge on=<2- >]
+                            (import dot)
+          (import dot) edge [highlight inner edge on=<2- >]
+                            (import mod)
+          (import mod) edge [overlay, in control=+(5:4cm), out control=+(-90:4cm)]
+                            [highlight end edge on=<2- >]
+                            (root)
+          (a4)         edge (a5)
+          ;
+    \end{tikzpicture}
+    }
+    \hspace{3em}
+
+    \vskip 2em
+    \uncover<3- >{\partialpath
+        {\nilsymbolstack}{\nilscopestack}
+        {\node [reference] {one}}
+        {\node [root node]{}}
+        {\symbolstack{dataflow.passthrough$\scoped{()}{A}$.one}}{\nilscopestack}}
+    \vskip 0.75em
+    \uncover<4>{
+        If you can find what \texttt{dataflow.passthrough} resolves to and can call it \\
+        then the result should have a member named \texttt{one} \\
+        which the reference at \textsl{a.py:6:16} resolves to. \\
+    }
+
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[t,fragile]
+    \frametitle{The dataflow example}
+
+    \begin{center}
+
+    \begin{minipage}[t]{15em}
+    \begin{minted}[label=a.py]{python}
+        from dataflow import ?\tikzmark{passthrough_import_start}?passthrough?\tikzmark{passthrough_import_end}?
+
+        class ?\tikzmark{A_def_start}?A?\tikzmark{A_def_end}?:
+            ?\tikzmark{def_start}?one?\tikzmark{def_end}? = 1
+
+        ?\tikzmark{passthrough_ref_start}?passthrough?\tikzmark{passthrough_ref_end}?(?\tikzmark{A_ref_start}?A?\tikzmark{A_ref_end}?).?\tikzmark{ref_start}?one?\tikzmark{ref_end}?
+    \end{minted}
+    \end{minipage}
+    \hspace{2em}
+    \scalebox{0.6}{
+    \begin{tikzpicture}[baseline={([yshift=4em] current bounding box.center)}]
+        \node (root)       [root node]                            {};
+
+        \node (a)          [definition]  [left=2em of root]       {\PopSymbol{a}};
+        \node (dot)        [pop]         [left=of a]              {\PopSymbol{.}};
+        \node (a1)         [anon scope]  [left=\scopegap of dot]  {};
+
+        \node (a2)         [anon scope]  [above=\scopegap of a1]  {};
+        \node (pt ref)     [reference]  [right=of a2]             {\PushSymbol{passthrough}};
+        \node (call)       [push]  [right=of pt ref]              {\PushScopedSymbol{()}{A}};
+        \node (member dot) [push]  [right=of call]                {\PushSymbol{.}};
+        \node (one ref)    [reference]  [right=of member dot]     {\PushSymbol{one}};
+
+        \node (A ref)      [reference] [left=of a2]               {\PushSymbol{A}};
+        \node (zero def)   [pop]  [above=of A ref]                {\PopSymbol{0}};
+        \node (actuals)    [exported scope]  [above=of zero def]  {A};
+
+        \node (a3)         [anon scope]  [above=\scopegap of a2]  {};
+        \node (A def)      [definition]  [right=of a3]            {\PopSymbol{A}};
+        \node (class)      [exported scope]  [right=of A def]     {C};
+        \node (class dot)  [pop]  [right=of class]                {\PopSymbol{.}};
+        \node (members)    [anon scope]  [right=of class dot]     {};
+        \node (one def)    [definition]  [right=of members]       {\PopSymbol{one}};
+
+        \node (a4)         [anon scope]  [above=\scopegap of a3]  {};
+        \node (import def) [pop]  [right=of a4]                   {\PopSymbol{passthrough}};
+        \node (import ref) [push]  [right=of import def]          {\PushSymbol{passthrough}};
+        \node (import dot) [push]  [right=of import ref]          {\PushSymbol{.}};
+        \node (import mod) [push]  [right=of import dot]          {\PushSymbol{dataflow}};
+
+        \node (a5)         [anon scope]  [above=\scopegap of a4]  {};
+
+        \path [-Stealth]
+          (root)       edge (a)
+          (a)          edge (dot)
+          (dot)        edge (a1)
+          (a1)         edge (a2)
+          (one ref)    edge (member dot)
+          (member dot) edge (call)
+          (call)       edge (pt ref)
+          (pt ref)     edge (a2)
+          (a2)         edge [highlight inner edge on=<2- >]
+                            (a3)
+          (actuals)    edge [highlight inner edge on=<2- >]
+                            (zero def)
+          (zero def)   edge [highlight inner edge on=<2- >]
+                            (A ref)
+          (A ref)      edge [highlight inner edge on=<2- >]
+                            (a2)
+          (a3)         edge [highlight inner edge on=<2- >]
+                            (A def)
+          (A def)      edge [highlight end edge on=<2- >]
+                            (class)
+          (class)      edge (class dot)
+          (class dot)  edge (members)
+          (members)    edge (one def)
+          (a3)         edge (a4)
+          (a4)         edge (import def)
+          (import def) edge (import ref)
+          (import ref) edge (import dot)
+          (import dot) edge (import mod)
+          (import mod) edge [overlay, in control=+(5:4cm), out control=+(-90:4cm)]
+                            (root)
+          (a4)         edge (a5)
+          ;
+    \end{tikzpicture}
+    }
+    \hspace{3em}
+
+    \vskip 2em
+    \uncover<3- >{\partialpath
+        {\symbolstack{0} \cdot \psi}{\phi}
+        {\node [exported scope] {A}}
+        {\node [exported scope] {C}}
+        {\psi}{\phi}}
+    \vskip 0.75em
+    \uncover<4>{
+        The class \texttt{A} is positional parameter 0 \\
+        in the call to \texttt{dataflow.passthrough}. \\
+    }
+
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[t,fragile]
+    \frametitle{The dataflow example}
+
+    \begin{center}
+
+    \begin{minipage}[t]{15em}
+    \begin{minted}[label=a.py]{python}
+        from dataflow import ?\tikzmark{passthrough_import_start}?passthrough?\tikzmark{passthrough_import_end}?
+
+        class ?\tikzmark{A_def_start}?A?\tikzmark{A_def_end}?:
+            ?\tikzmark{def_start}?one?\tikzmark{def_end}? = 1
+
+        ?\tikzmark{passthrough_ref_start}?passthrough?\tikzmark{passthrough_ref_end}?(?\tikzmark{A_ref_start}?A?\tikzmark{A_ref_end}?).?\tikzmark{ref_start}?one?\tikzmark{ref_end}?
+    \end{minted}
+    \end{minipage}
+    \hspace{2em}
+    \scalebox{0.6}{
+    \begin{tikzpicture}[baseline={([yshift=4em] current bounding box.center)}]
+        \node (root)       [root node]                            {};
+
+        \node (a)          [definition]  [left=2em of root]       {\PopSymbol{a}};
+        \node (dot)        [pop]         [left=of a]              {\PopSymbol{.}};
+        \node (a1)         [anon scope]  [left=\scopegap of dot]  {};
+
+        \node (a2)         [anon scope]  [above=\scopegap of a1]  {};
+        \node (pt ref)     [reference]  [right=of a2]             {\PushSymbol{passthrough}};
+        \node (call)       [push]  [right=of pt ref]              {\PushScopedSymbol{()}{A}};
+        \node (member dot) [push]  [right=of call]                {\PushSymbol{.}};
+        \node (one ref)    [reference]  [right=of member dot]     {\PushSymbol{one}};
+
+        \node (A ref)      [reference] [left=of a2]               {\PushSymbol{A}};
+        \node (zero def)   [pop]  [above=of A ref]                {\PopSymbol{0}};
+        \node (actuals)    [exported scope]  [above=of zero def]  {A};
+
+        \node (a3)         [anon scope]  [above=\scopegap of a2]  {};
+        \node (A def)      [definition]  [right=of a3]            {\PopSymbol{A}};
+        \node (class)      [exported scope]  [right=of A def]     {C};
+        \node (class dot)  [pop]  [right=of class]                {\PopSymbol{.}};
+        \node (members)    [anon scope]  [right=of class dot]     {};
+        \node (one def)    [definition]  [right=of members]       {\PopSymbol{one}};
+
+        \node (a4)         [anon scope]  [above=\scopegap of a3]  {};
+        \node (import def) [pop]  [right=of a4]                   {\PopSymbol{passthrough}};
+        \node (import ref) [push]  [right=of import def]          {\PushSymbol{passthrough}};
+        \node (import dot) [push]  [right=of import ref]          {\PushSymbol{.}};
+        \node (import mod) [push]  [right=of import dot]          {\PushSymbol{dataflow}};
+
+        \node (a5)         [anon scope]  [above=\scopegap of a4]  {};
+
+        \path [-Stealth]
+          (root)       edge (a)
+          (a)          edge (dot)
+          (dot)        edge (a1)
+          (a1)         edge (a2)
+          (one ref)    edge (member dot)
+          (member dot) edge (call)
+          (call)       edge (pt ref)
+          (pt ref)     edge (a2)
+          (a2)         edge (a3)
+          (actuals)    edge (zero def)
+          (zero def)   edge (A ref)
+          (A ref)      edge (a2)
+          (a3)         edge (A def)
+          (A def)      edge (class)
+          (class)      edge [highlight inner edge on=<2- >]
+                            (class dot)
+          (class dot)  edge [highlight inner edge on=<2- >]
+                            (members)
+          (members)    edge [highlight end edge on=<2- >]
+                            (one def)
+          (a3)         edge (a4)
+          (a4)         edge (import def)
+          (import def) edge (import ref)
+          (import ref) edge (import dot)
+          (import dot) edge (import mod)
+          (import mod) edge [overlay, in control=+(5:4cm), out control=+(-90:4cm)]
+                            (root)
+          (a4)         edge (a5)
+          ;
+    \end{tikzpicture}
+    }
+    \hspace{3em}
+
+    \vskip 2em
+    \uncover<3- >{\partialpath
+        {\symbolstack{.one} \cdot \psi}{\phi}
+        {\node [exported scope] {C}}
+        {\node [definition] {one}}
+        {\psi}{\phi}}
+    \vskip 0.75em
+    \uncover<4>{
+        The class \texttt{A} has a class member named \texttt{one} \\
+        which is defined at \textsl{a.py:4:5}. \\
+    }
+
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The dataflow example}
+
+    \vskip 2em
+    \begin{center}
+        \begin{minipage}[t]{0.46\textwidth}
+            \begin{center}
+            \scalebox{0.7}{\partialpath
+                {\nilsymbolstack}{\nilscopestack}
+                {\node [reference] {one}}
+                {\node [root node]{}}
+                {\symbolstack{dataflow.passthrough$\scoped{()}{A}$.one}}{\nilscopestack}}
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2- >
+            \; $+$ \;
+        \begin{minipage}[t]{0.46\textwidth}
+            \begin{center}
+            \scalebox{0.7}{\partialpath
+                {\symbolstack{dataflow.passthrough$\scoped{\texttt{()}}{\phi_A}$} \cdot \psi}{\phi}
+                {\node [root node]{}}
+                {\node [exported scope] {R}}
+                {\psi}{\phi_A}}
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+        \vskip 0.5em
+        \begin{minipage}[t][1cm][t]{0.46\textwidth}
+        \begin{center}
+            \scalebox{0.7}{
+                \onslide<3>{$\psi = \symbolstack{.one}, \phi = \nilscopestack, \phi_A = \scopestack{A} $}
+            }
+        \end{center}
+        \end{minipage}
+        \vskip 0.5em
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \begin{center}
+            \smaller[1]
+            If you can find what \texttt{dataflow.passthrough} \\
+            resolves to and can call it, then the result \\
+            should have a member named \texttt{one} \\
+            which the reference at \textsl{a.py:6:16} resolves to. \\
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2- >
+            \; $+$ \;
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \begin{center}
+            \smaller[1]
+            \texttt{dataflow.passthrough} is a function \\
+            that can be invoked. \\
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The dataflow example}
+
+    \vskip 2em
+    \begin{center}
+        \begin{minipage}[t]{0.46\textwidth}
+            \begin{center}
+            \scalebox{0.7}{\partialpath
+                {\nilsymbolstack}{\nilscopestack}
+                {\node [reference] {one}}
+                {\node [exported scope] {R}}
+                {\symbolstack{.one}}{\scopestack{A}}}
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2- >
+            \; $+$ \;
+        \begin{minipage}[t]{0.46\textwidth}
+            \begin{center}
+            \scalebox{0.7}{\partialpath
+                {\psi}{\phi}
+                {\node [exported scope] {R}}
+                {\node [control node]{JUMP}}
+                {\symbolstack{0} \cdot \psi}{\phi}}
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+        \vskip 0.5em
+        \begin{minipage}[t][1cm][t]{0.46\textwidth}
+        \begin{center}
+            \scalebox{0.7}{
+                \onslide<3>{$\psi = \symbolstack{.one}, \phi = \nilscopestack$}
+            }
+        \end{center}
+        \end{minipage}
+        \vskip 0.5em
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \begin{center}
+            \smaller[1]
+            The result of calling \texttt{dataflow.passthrough} \\
+            should have a member named \texttt{one} \\
+            which the reference at \textsl{a.py:6:16} resolves to. \\
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2- >
+            \; $+$ \;
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \begin{center}
+            \smaller[1]
+            The return value of \texttt{dataflow.passthrough} \\
+            has the same type as positional parameter 0. \\
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The dataflow example}
+
+    \vskip 2em
+    \begin{center}
+        \begin{minipage}[t]{0.46\textwidth}
+            \begin{center}
+            \scalebox{0.7}{\partialpath
+                {\nilsymbolstack}{\nilscopestack}
+                {\node [reference] {one}}
+                {\node [control node] {JUMP}}
+                {\symbolstack{0.one}}{\scopestack{A}}}
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2- >
+            \phantom{\; $+$ \;}
+        \begin{minipage}[t]{0.46\textwidth}
+            \begin{center}
+                \scalebox{0.7}{WORMHOLE}
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+        \vskip 0.5em
+        \begin{minipage}[t][1cm][t]{0.46\textwidth}
+        \begin{center}
+            \scalebox{0.7}{
+                \vphantom{$\psi = \symbolstack{.one}, \phi = \nilscopestack$}
+            }
+        \end{center}
+        \end{minipage}
+        \vskip 0.5em
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \begin{center}
+            \smaller[1]
+            Positional parameter 0 \\
+            should have a member named \texttt{one} \\
+            which the reference at \textsl{a.py:6:16} resolves to. \\
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2- >
+        \phantom{\; $+$ \;}
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \begin{center}
+            \smaller[1]
+            Resolve the \textsf{JUMP} node.
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The dataflow example}
+
+    \vskip 2em
+    \begin{center}
+        \begin{minipage}[t]{0.46\textwidth}
+            \begin{center}
+            \scalebox{0.7}{\partialpath
+                {\nilsymbolstack}{\nilscopestack}
+                {\node [reference] {one}}
+                {\node [exported scope] {A}}
+                {\symbolstack{0.one}}{\nilscopestack}}
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2- >
+            \; $+$ \;
+        \begin{minipage}[t]{0.46\textwidth}
+            \begin{center}
+            \scalebox{0.7}{\partialpath
+                {\symbolstack{0} \cdot \psi}{\phi}
+                {\node [exported scope] {A}}
+                {\node [exported scope] {C}}
+                {\psi}{\phi}}
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+        \vskip 0.5em
+        \begin{minipage}[t][1cm][t]{0.46\textwidth}
+        \begin{center}
+            \scalebox{0.7}{
+                \onslide<3>{$\psi = \symbolstack{.one}, \phi = \nilscopestack$}
+            }
+        \end{center}
+        \end{minipage}
+        \vskip 0.5em
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \begin{center}
+            \smaller[1]
+            Positional parameter 0 \\
+            should have a member named \texttt{one} \\
+            which the reference at \textsl{a.py:6:16} resolves to. \\
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2- >
+            \; $+$ \;
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \begin{center}
+            \smaller[1]
+            The class \texttt{A} is positional parameter 0 \\
+            in the call to \texttt{dataflow.passthrough}. \\
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The dataflow example}
+
+    \vskip 2em
+    \begin{center}
+        \begin{minipage}[t]{0.46\textwidth}
+            \begin{center}
+            \scalebox{0.7}{\partialpath
+                {\nilsymbolstack}{\nilscopestack}
+                {\node [reference] {one}}
+                {\node [exported scope] {C}}
+                {\symbolstack{.one}}{\nilscopestack}}
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2- >
+            \; $+$ \;
+        \begin{minipage}[t]{0.46\textwidth}
+            \begin{center}
+            \scalebox{0.7}{\partialpath
+                {\symbolstack{.one} \cdot \psi}{\phi}
+                {\node [exported scope] {C}}
+                {\node [definition] {one}}
+                {\psi}{\phi}}
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+        \vskip 0.5em
+        \begin{minipage}[t][1cm][t]{0.46\textwidth}
+        \begin{center}
+            \scalebox{0.7}{
+                \onslide<3>{$\psi = \nilsymbolstack, \phi = \nilscopestack$}
+            }
+        \end{center}
+        \end{minipage}
+        \vskip 0.5em
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \begin{center}
+            \smaller[1]
+            The class \texttt{A} \\
+            should have a member named \texttt{one} \\
+            which the reference at \textsl{a.py:6:16} resolves to. \\
+            \end{center}
+        \end{minipage}
+        \begin{uncoverenv}<2- >
+            \; $+$ \;
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \begin{center}
+            \smaller[1]
+            The class \texttt{A} has a class member named \texttt{one} \\
+            which is defined at \textsl{a.py:4:5}. \\
+            \end{center}
+        \end{minipage}
+        \end{uncoverenv}
+    \end{center}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \frametitle{The dataflow example}
+
+    \vskip 2em
+    \begin{center}
+        \begin{minipage}[t]{0.46\textwidth}
+            \begin{center}
+            \scalebox{0.7}{\partialpath
+                {\nilsymbolstack}{\nilscopestack}
+                {\node [reference] {one}}
+                {\node [definition] {one}}
+                {\nilsymbolstack}{\nilscopestack}}
+            \end{center}
+        \end{minipage}
+        \phantom{\; $+$ \;}
+        \begin{minipage}[t]{0.46\textwidth}
+            \strut
+        \end{minipage}
+        \vskip 0.5em
+        \begin{minipage}[t][1cm][t]{0.46\textwidth}
+        \begin{center}
+            \scalebox{0.7}{
+                \vphantom{$\psi = \symbolstack{.one}, \phi = \nilscopestack$}
+            }
+        \end{center}
+        \end{minipage}
+        \vskip 0.5em
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \begin{center}
+            \smaller[1]
+            The definition at \textsl{a.py:4:5} \\
+            is what the reference at \\
+            \textsl{a.py:6:16} resolves to. \\
+            \end{center}
+        \end{minipage}
+        \phantom{\; $+$ \;}
+        \begin{minipage}[c][2cm][c]{0.46\textwidth}
+            \smaller[1]
+            \strut
+        \end{minipage}
+    \end{center}
+\end{frame}
+
+
 \section{Closing}
 
 \begin{frame}
