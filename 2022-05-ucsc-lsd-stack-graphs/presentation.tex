@@ -19,7 +19,11 @@
 \graphicspath{{../images}}
 
 \usepackage{fontspec}
-\setsansfont{Helvetica Neue Light}[BoldFont={Helvetica Neue Bold}]
+\setsansfont{Helvetica Neue Light}[
+    BoldFont={Helvetica Neue Bold},
+    BoldItalicFont={Helvetica Neue Bold Italic},
+    ItalicFont={Helvetica Neue Light Italic}
+]
 \setmonofont{Iosevka Term}
 \newfontface\helvreg{Helvetica Neue}
 
@@ -1100,19 +1104,19 @@
     \vskip 1em
     \begin{center}
         \uncover<3,4>{
-            The reference at \textsl{kitchen.py:3:1} \\
+            The reference at \textit{kitchen.py:3:1} \\
             refers to \texttt{stove.broil} in some other file
         }
         \\
         \uncover<4>{$+$}
         \\
-        \uncover<2,4>{\texttt{stove.broil} is defined at \textsl{stove.py:4:5}}
+        \uncover<2,4>{\texttt{stove.broil} is defined at \textit{stove.py:4:5}}
         \\
         \uncover<4>{$=$}
         \\
         \uncover<4>{
-            The reference at \textsl{kitchen.py:3:1} \\
-            is defined at \textsl{stove.py:4:5}
+            The reference at \textit{kitchen.py:3:1} \\
+            is defined at \textit{stove.py:4:5}
         }
     \end{center}
     \end{minipage}
@@ -1776,7 +1780,7 @@
         {\node [root node] {}}
         {\symbolstack{stove.broil}}{\nilscopestack}}
     \vskip 0.75em
-    \uncover<4>{The reference at \textsl{kitchen.py:3:1}  refers to \texttt{stove.broil} in some other file}
+    \uncover<4>{The reference at \textit{kitchen.py:3:1}  refers to \texttt{stove.broil} in some other file}
 
     \end{center}
 \end{frame}
@@ -1838,7 +1842,7 @@
         {\node [definition] {\PopSymbol{broil}}}
         {\psi}{\phi}}
     \vskip 0.75em
-    \uncover<4>{\texttt{stove.broil} is defined at \textsl{stove.py:4:5}.}
+    \uncover<4>{\texttt{stove.broil} is defined at \textit{stove.py:4:5}.}
 
     \end{center}
 \end{frame}
@@ -1880,7 +1884,7 @@
         \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
             \smaller[1]
-            The reference at \textsl{kitchen.py:3:1} \\
+            The reference at \textit{kitchen.py:3:1} \\
             refers to \texttt{stove.broil} in some other file
             \end{center}
         \end{minipage}
@@ -1888,7 +1892,7 @@
         \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
             \smaller[1]
-            \texttt{stove.broil} is defined at \textsl{stove.py:4:5}
+            \texttt{stove.broil} is defined at \textit{stove.py:4:5}
             \end{center}
         \end{minipage}
     \end{center}
@@ -1919,8 +1923,8 @@
         \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
             \smaller[1]
-            The reference at \textsl{kitchen.py:3:1} \\
-            is defined at \textsl{stove.py:4:5}. \\
+            The reference at \textit{kitchen.py:3:1} \\
+            is defined at \textit{stove.py:4:5}. \\
             \end{center}
         \end{minipage}
     \end{center}
@@ -2180,7 +2184,7 @@
     \uncover<4>{
         If you can find what \texttt{dataflow.passthrough} resolves to and can call it \\
         then the result should have a member named \texttt{one} \\
-        which the reference at \textsl{a.py:6:16} resolves to. \\
+        which the reference at \textit{a.py:6:16} resolves to. \\
     }
 
     \end{center}
@@ -2381,7 +2385,7 @@
     \vskip 0.75em
     \uncover<4>{
         The class \texttt{A} has a class member named \texttt{one} \\
-        which is defined at \textsl{a.py:4:5}. \\
+        which is defined at \textit{a.py:4:5}. \\
     }
 
     \end{center}
@@ -2429,7 +2433,7 @@
             If you can find what \texttt{dataflow.passthrough} \\
             resolves to and can call it, then the result \\
             should have a member named \texttt{one} \\
-            which the reference at \textsl{a.py:6:16} resolves to. \\
+            which the reference at \textit{a.py:6:16} resolves to. \\
             \end{center}
         \end{minipage}
         \begin{uncoverenv}<2- >
@@ -2486,7 +2490,7 @@
             \smaller[1]
             The result of calling \texttt{dataflow.passthrough} \\
             should have a member named \texttt{one} \\
-            which the reference at \textsl{a.py:6:16} resolves to. \\
+            which the reference at \textit{a.py:6:16} resolves to. \\
             \end{center}
         \end{minipage}
         \begin{uncoverenv}<2- >
@@ -2539,7 +2543,7 @@
             \smaller[1]
             Positional parameter 0 \\
             should have a member named \texttt{one} \\
-            which the reference at \textsl{a.py:6:16} resolves to. \\
+            which the reference at \textit{a.py:6:16} resolves to. \\
             \end{center}
         \end{minipage}
         \begin{uncoverenv}<2- >
@@ -2595,7 +2599,7 @@
             \smaller[1]
             Positional parameter 0 \\
             should have a member named \texttt{one} \\
-            which the reference at \textsl{a.py:6:16} resolves to. \\
+            which the reference at \textit{a.py:6:16} resolves to. \\
             \end{center}
         \end{minipage}
         \begin{uncoverenv}<2- >
@@ -2652,7 +2656,7 @@
             \smaller[1]
             The class \texttt{A} \\
             should have a member named \texttt{one} \\
-            which the reference at \textsl{a.py:6:16} resolves to. \\
+            which the reference at \textit{a.py:6:16} resolves to. \\
             \end{center}
         \end{minipage}
         \begin{uncoverenv}<2- >
@@ -2661,7 +2665,7 @@
             \begin{center}
             \smaller[1]
             The class \texttt{A} has a class member named \texttt{one} \\
-            which is defined at \textsl{a.py:4:5}. \\
+            which is defined at \textit{a.py:4:5}. \\
             \end{center}
         \end{minipage}
         \end{uncoverenv}
@@ -2699,9 +2703,9 @@
         \begin{minipage}[c][2cm][c]{0.46\textwidth}
             \begin{center}
             \smaller[1]
-            The definition at \textsl{a.py:4:5} \\
+            The definition at \textit{a.py:4:5} \\
             is what the reference at \\
-            \textsl{a.py:6:16} resolves to. \\
+            \textit{a.py:6:16} resolves to. \\
             \end{center}
         \end{minipage}
         \phantom{\; $+$ \;}
@@ -2987,7 +2991,7 @@
     \begin{center}
     \begin{tikzpicture}
         \node (s) [anon scope] {};
-        \node (d) [definition] [right=of s] {\textsl{@name}};
+        \node (d) [definition] [right=of s] {\textit{@name}};
         \path [-Stealth] (s) edge (d);
     \end{tikzpicture}
     \end{center}
