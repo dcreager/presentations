@@ -56,6 +56,8 @@
 \definecolor{sgpush} {RGB}{161,190,230}
 \definecolor{sgjump} {RGB}{161,64,140}
 
+\newcommand\scopestackelement[1]{\textsf{\textcolor{sgjump}{#1}}}
+
 \tikzset{root node/.style={
     node distance=0.5cm,
     circle, fill=black, inner sep=0pt,
@@ -277,7 +279,7 @@
 
 \newcommand{\symbolstack}[1]{\langle \texttt{\relscale{0.8}#1} \rangle}
 
-\newcommand{\scopestack}[1]{( #1 )}
+\newcommand{\scopestack}[1]{( \textsf{\relscale{0.8}#1} )}
 
 \newcommand{\partialpath}[6]{%
     $\{#1, #2\}$
@@ -1486,7 +1488,7 @@
         \node (pt ref)     [highlight node on={<3,9>}]
                            [reference]  [right=of a2]             {\PushSymbol{passthrough}};
         \node (call)       [highlight node on={<3,8>}]
-                           [push]  [right=of pt ref]              {\PushScopedSymbol{()}{A}};
+                           [push]  [right=of pt ref]              {\PushScopedSymbol{()}{\scopestackelement{A}}};
         \node (member dot) [highlight node on={<3,7>}]
                            [push]  [right=of call]                {\PushSymbol{.}};
         \node (one ref)    [highlight node on={<3,4,6>}]
@@ -1496,7 +1498,7 @@
                            [reference] [left=of a2]               {\PushSymbol{A}};
         \node (zero def)   [highlight node on={<3,31>}]
                            [pop]  [above=of A ref]                {\PopSymbol{0}};
-        \node (actuals)    [highlight node on={<3,30>}]
+        \node (actuals)    [highlight node on={<3,8,30>}]
                            [exported scope]  [above=of zero def]  {A};
 
         \node (a3)         [highlight node on={<3,11,34>}]
@@ -1651,17 +1653,17 @@
         \only<5,39>                {$\nilsymbolstack$}
         \only<6,37-38>             {$\symbolstack{one}$}
         \only<7,23-24,27,31,35-36> {$\symbolstack{.one}$}
-        \only<8,13,22>             {$\symbolstack{$\scoped{()}{A}$.one}$}
-        \only<9-12,14,19-21>       {$\symbolstack{passthrough$\scoped{()}{A}$.one}$}
-        \only<15,18>               {$\symbolstack{.passthrough$\scoped{()}{A}$.one}$}
-        \only<16-17>               {$\symbolstack{dataflow.passthrough$\scoped{()}{A}$.one}$}
+        \only<8,13,22>             {$\symbolstack{$\scoped{()}{\scopestackelement{A}}$.one}$}
+        \only<9-12,14,19-21>       {$\symbolstack{passthrough$\scoped{()}{\scopestackelement{A}}$.one}$}
+        \only<15,18>               {$\symbolstack{.passthrough$\scoped{()}{\scopestackelement{A}}$.one}$}
+        \only<16-17>               {$\symbolstack{dataflow.passthrough$\scoped{()}{\scopestackelement{A}}$.one}$}
         \only<25-26>               {$\symbolstack{x.one}$}
         \only<28-30>               {$\symbolstack{0.one}$}
         \only<32-34>               {$\symbolstack{A.one}$}
         \\
         \only<5- >                 {\textsmaller[2]{Scope stack:}} &
         \only<5-22,30- >           {$\nilscopestack$}
-        \only<23-29>               {$\scopestack{A}$}
+        \only<23-29>               {$\scopestack{\scopestackelement{A}}$}
         \\
     \end{tabular}
     \end{center}
@@ -2103,7 +2105,7 @@
 
         \node (a2)         [anon scope]  [above=\scopegap of a1]  {};
         \node (pt ref)     [reference]  [right=of a2]             {\PushSymbol{passthrough}};
-        \node (call)       [push]  [right=of pt ref]              {\PushScopedSymbol{()}{A}};
+        \node (call)       [push]  [right=of pt ref]              {\PushScopedSymbol{()}{\scopestackelement{A}}};
         \node (member dot) [push]  [right=of call]                {\PushSymbol{.}};
         \node (one ref)    [reference]  [right=of member dot]     {\PushSymbol{one}};
 
@@ -2173,7 +2175,7 @@
         {\nilsymbolstack}{\nilscopestack}
         {\node [reference] {one}}
         {\node [root node]{}}
-        {\symbolstack{dataflow.passthrough$\scoped{()}{A}$.one}}{\nilscopestack}}
+        {\symbolstack{dataflow.passthrough$\scoped{()}{\scopestackelement{A}}$.one}}{\nilscopestack}}
     \vskip 0.75em
     \uncover<4>{
         If you can find what \texttt{dataflow.passthrough} resolves to and can call it \\
@@ -2211,7 +2213,7 @@
 
         \node (a2)         [anon scope]  [above=\scopegap of a1]  {};
         \node (pt ref)     [reference]  [right=of a2]             {\PushSymbol{passthrough}};
-        \node (call)       [push]  [right=of pt ref]              {\PushScopedSymbol{()}{A}};
+        \node (call)       [push]  [right=of pt ref]              {\PushScopedSymbol{()}{\scopestackelement{A}}};
         \node (member dot) [push]  [right=of call]                {\PushSymbol{.}};
         \node (one ref)    [reference]  [right=of member dot]     {\PushSymbol{one}};
 
@@ -2313,7 +2315,7 @@
 
         \node (a2)         [anon scope]  [above=\scopegap of a1]  {};
         \node (pt ref)     [reference]  [right=of a2]             {\PushSymbol{passthrough}};
-        \node (call)       [push]  [right=of pt ref]              {\PushScopedSymbol{()}{A}};
+        \node (call)       [push]  [right=of pt ref]              {\PushScopedSymbol{()}{\scopestackelement{A}}};
         \node (member dot) [push]  [right=of call]                {\PushSymbol{.}};
         \node (one ref)    [reference]  [right=of member dot]     {\PushSymbol{one}};
 
@@ -2397,7 +2399,7 @@
                 {\nilsymbolstack}{\nilscopestack}
                 {\node [reference] {one}}
                 {\node [root node]{}}
-                {\symbolstack{dataflow.passthrough$\scoped{()}{A}$.one}}{\nilscopestack}}
+                {\symbolstack{dataflow.passthrough$\scoped{()}{\scopestackelement{A}}$.one}}{\nilscopestack}}
             \end{center}
         \end{minipage}
         \begin{uncoverenv}<2- >
@@ -2416,7 +2418,7 @@
         \begin{minipage}[t][1cm][t]{0.46\textwidth}
         \begin{center}
             \scalebox{0.7}{
-                \onslide<3>{$\psi = \symbolstack{.one}, \phi = \nilscopestack, \phi_A = \scopestack{A} $}
+                \onslide<3>{$\psi = \symbolstack{.one}, \phi = \nilscopestack, \phi_A = \scopestack{\scopestackelement{A}} $}
             }
         \end{center}
         \end{minipage}
@@ -2455,7 +2457,7 @@
                 {\nilsymbolstack}{\nilscopestack}
                 {\node [reference] {one}}
                 {\node [exported scope] {R}}
-                {\symbolstack{.one}}{\scopestack{A}}}
+                {\symbolstack{.one}}{\scopestack{\scopestackelement{A}}}}
             \end{center}
         \end{minipage}
         \begin{uncoverenv}<2- >
@@ -2512,7 +2514,7 @@
                 {\nilsymbolstack}{\nilscopestack}
                 {\node [reference] {one}}
                 {\node [control node] {JUMP}}
-                {\symbolstack{0.one}}{\scopestack{A}}}
+                {\symbolstack{0.one}}{\scopestack{\scopestackelement{A}}}}
             \end{center}
         \end{minipage}
         \begin{uncoverenv}<2- >
