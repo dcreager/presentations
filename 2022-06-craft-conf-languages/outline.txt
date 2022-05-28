@@ -85,3 +85,109 @@ And also, to clarify, I'm going to be relentlessly positive! This is absolutely
 not a sermon about the One True Programming Style that everyone should switch
 over to. For those of you following along in the chat room or at home
 afterwards, please stay positive too!
+
+
+Recursion vs iteration
+----------------------
+
+hero image: https://flic.kr/p/5RQPx9
+
+Factorial as a loop
+  (in several imperative languages to claim that they're all "the same" and at
+  this level, it's just syntax)
+
+Factorial as a recursive function
+  - Our first taste of "functional programming"
+  - Focus on example in Haskell
+  - also show that the recursive style is also possible in imperative languages
+    like C and Rust
+  - Show comparison to the "math" definition of factorial
+
+Implementation concerns — stack space
+  - Show fixed/reused space for imperative loop
+  - but linear growth of call stacks for recursive function
+
+Show that loop style is also possible in Haskell (everything that's Turing
+complete is Turing complete), and it does guarantee that you use fixed space,
+but it's fighting against the grain of the language
+
+Instead, rewrite using the iterative recursion pattern
+  - Drawback: code no longer "obviously" lines up with math definition
+  - Can we make compilers that are smart enough to translate the former into the
+    latter? So that we can write the "obviously correct" thing, and let the
+    computer figure out how to make it run most efficiently on our hardware. If
+    this kind of question interests you, you might have a career in PL research
+    ahead of you!
+
+Another interesting benefit of the recursive style, and of functional
+programming in general, is that it makes it easier to look for higher level
+patterns. Not just "oh there are lots of problems that we can solve with
+recursion". But going deeper: "How many times do we recurse?" "How much work are
+we allowed to do before the recursive call?" "How much work after?"
+
+[Figure out how a couple of recursion schemes map to the answers to those
+questions]
+
+(Now do you see what I mean about "mutual unintelligibility" being the most
+important part of the Tower of Babel myth?)
+
+
+Error handling
+--------------
+
+hero image: https://flic.kr/p/B9WA8y
+
+exceptions
+enums / either / monad / try
+
+
+Resources and cleanup
+---------------------
+
+hero image: https://flic.kr/p/eRjo3W
+
+GC for memory
+malloc + free manually in C
+smart pointer / ownership in Rust (GC is not the only automatic memory
+management!)
+
+Other resources?
+
+Closing a file after you're done with it
+GC finalizers don't work
+Need defer or with
+RAII in C++ and Rust
+
+Make sure it works in all of your return paths!
+
+
+Concurrency
+-----------
+
+hero image: https://flic.kr/p/oeJTmg
+
+OS threads
+green threads / goroutines
+evented: promises, futures, async
+Just do it single threaded! (Coordination always has an overhead)
+
+
+Conclusion
+----------
+
+hero image: https://flic.kr/p/NHDXRb
+
+We've come to the end of our journey. We still have a multitude of programming
+languages (and always will!). But hopefully I've been able to add a bit of order
+to that multitude for you today.
+
+If you've encountered a new style of programming that used to be completely
+alien to you, consider if there are any parts of it that you can bring back to
+your native language and ecosystem. If there aren't, you can at least be
+thankful that you now have a better, more mindful appreciation for the ways
+things are done in your language. And if you do find yourself with some spare
+time for personal learning and experimentation, consider implementing a toy
+project in a language that's completely outside your comfort zone. It will be
+worth the effort!
+
+Thanks for your time!
