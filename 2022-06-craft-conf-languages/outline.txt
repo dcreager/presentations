@@ -28,13 +28,13 @@ many mutually unintelligible languages.
 Now, how does this relate to the history of computing and of programming
 languages? It is, admittedly, not a perfect analogy. I can't claim that there
 was any _single_ programming language that the world's programmers all used in
-the "prehistory" of computing. In fact, there were several groups simultaneously
-trying to build human-readable programming languages on top of machine code and
-assembly.
+the "prehistory" of computing. In fact, starting in the 1940s and 50s, there
+were several groups simultaneously trying to build human-readable programming
+languages on top of machine code and assembly.
 
 [next slide]
 
-But we can say that there are a small handful of languages, like Fortran and
+But we _can_ say that there are a small handful of languages, like Fortran and
 Cobol, that we consider to _share_ the crown of first.
 
 How else is this analogy strained? Well, programmers are certainly guilty of
@@ -43,7 +43,11 @@ of programmers in the 1950s and 1960s. Nevertheless, the end result is the same:
 
 [next slide]
 
-Today, there is a true multitude of programming languages.
+Today, there is a true multitude of programming languages. This wall of logos
+might seem like a lot, but it's actually only a small sample of the languages
+that exist today. GitHub maintains an open-source package called linguist, which
+is a crowd-sourced list of all of the languages that we're aware of — and it
+currently contains more than 500 entries!
 
 As an aside, just throwing these logos up here has probably nerd-sniped several
 of you, so
@@ -59,7 +63,7 @@ Now, for me, the most interesting part of our Tower of Babel analogy is the
 "mutual unintelligibility" part. Like spoken languages, there are _families_ of
 programming languages, where languages within a family are similar enough that
 familiarity with one means that you're likely to understand at least the basics
-of another. While in another family, the very concepts of programming are so
+of another. Whereas in another family, the very concepts of programming are so
 different that it can be almost impossible to understand how those languages
 could possibly work!
 
@@ -75,16 +79,18 @@ use of your time.)
 
 [next slide]
 
-So for the next 20 minutes or so, we're going to explore the multitude together.
-My hope is that regardless of which language you're most fluent in, you'll see
-something new that makes you think about programming differently. I firmly
-believe that knowing about other programming styles and paradigms can make you a
-more effective developer.
+But there is a multitude, and it's one worth exploring. So for the next 20
+minutes or so, we're going to explore the multitude together. My hope is that
+regardless of which language you're most fluent in, you'll see something new
+that makes you think about programming differently. I firmly believe that
+knowing about other programming styles and paradigms can make you a more
+effective developer.
 
 And also, to clarify, I'm going to be relentlessly positive! This is absolutely
 not a sermon about the One True Programming Style that everyone should switch
-over to. For those of you following along in the chat room or at home
-afterwards, please stay positive too!
+over to. I'm not going to make any value judgments regarding static or dynamic
+typing, for instance. For those of you following along in the chat room or at
+home afterwards, please stay positive too!
 
 
 Recursion vs iteration
