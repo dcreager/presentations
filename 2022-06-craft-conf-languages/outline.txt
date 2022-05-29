@@ -98,6 +98,10 @@ Recursion vs iteration
 
 hero image: https://flic.kr/p/5RQPx9
 
+To get our feet wet, we're going to start by looking at some very high-level
+patterns that show up time and again. What facilities do our programming
+languages give us for performing the same work over and over?
+
 Factorial as a loop
   (in several imperative languages to claim that they're all "the same" and at
   this level, it's just syntax)
