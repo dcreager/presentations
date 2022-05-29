@@ -99,12 +99,27 @@ Recursion vs iteration
 hero image: https://flic.kr/p/5RQPx9
 
 To get our feet wet, we're going to start by looking at some very high-level
-patterns that show up time and again. What facilities do our programming
-languages give us for performing the same work over and over?
+patterns that show up time and again. Our first pattern is repetition: What
+facilities do our programming languages give us for performing the same work
+over and over?
 
-Factorial as a loop
-  (in several imperative languages to claim that they're all "the same" and at
-  this level, it's just syntax)
+We'll use a pretty simple example to start with: computing the factorial of a
+number. If you're not familiar with factorial, to calculate the factorial of a
+number x, you just multiply together all of the numbers from 1 to x.
+
+[next slide]
+
+Here we can see an implementation of factorial in Go, using a for loop. The for
+loop steps through each integer from 1 to x, multiplying them together in an
+"accumulator", which here we call result.
+
+Go is an example of an "imperative" programming language, where the bulk of your
+program consists of a sequence of statements that are executed in order. The for
+loop, and its cousin the while loop, are ubiquitous in imperative languages.
+Most popular languages these days are imperative. And in fact, we can look at
+factorial in [next] Perl, [next] and Python, [next] and C, [next] and C++,
+[next] and Rust. And in all of these cases, the implementation looks more or
+less identical, just with slight differences in syntax.
 
 Factorial as a recursive function
   - Our first taste of "functional programming"
