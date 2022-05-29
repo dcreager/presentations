@@ -164,7 +164,7 @@ Make sure it works in all of your return paths!
 Concurrency
 -----------
 
-hero image: https://flic.kr/p/oeJTmg
+hero image: https://flic.kr/p/NpqGS
 
 OS threads
 green threads / goroutines
