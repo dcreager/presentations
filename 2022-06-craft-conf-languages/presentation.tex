@@ -4,7 +4,6 @@
 \usepackage{calc}
 \usepackage{relsize}
 \usepackage{graphicx}
-\usepackage[group-separator={,}]{siunitx}
 \usepackage[overlay,absolute]{textpos}
 
 \graphicspath{{../images}}
@@ -273,24 +272,26 @@
 
     \begin{textblock*}{13em}(80mm - 6.5em,52mm)
     \begin{center}
-    $$ x! = 1 \times 2 \times \cdots \times x $$
     $$
-        \begin{array}{r@{\;}c@{\;}r}
-            1!  &=& 1 \\
-            4!  &=& 24 \\
-            10! &=& \num{3628800} \\
+        \begin{array}{l@{\quad}c@{\quad}c}
+            F_0    &\triangleq& 0 \\
+            F_1    &\triangleq& 1 \\
+            F_x    &\triangleq& F_{x-1} + F_{x-2} \\
         \end{array}
+    $$
+    $$
+        0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, \ldots
     $$
     \end{center}
     \end{textblock*}
 
-    \showlisting<2>[firstline=5,lastline=11]{80mm - 10em}{20mm}{20em}{go}{examples/factorial.go}
+    \showlisting<2>[firstline=5,lastline=14]{80mm - 10em}{10mm}{20em}{go}{examples/fibonacci.go}
 
-    \showlisting<3>[lastline=8]{80mm - 6.5em}{20mm}{13em}{perl}{examples/factorial.pl}
-    \showlisting<4>[lastline=5]{80mm - 7.5em}{20mm}{15em}{python}{examples/factorial.py}
-    \showlisting<5>[lastline=7]{80mm - 11.5em}{20mm}{23em}{c}{examples/factorial.c}
-    \showlisting<6>[lastline=7]{80mm - 11.5em}{20mm}{23em}{cpp}{examples/factorial.cc}
-    \showlisting<7>[lastline=7]{80mm - 7.5em}{20mm}{15em}{rust}{examples/factorial.rs}
+    \showlisting<3>[lastline=11]{80mm - 6.5em}{10mm}{13em}{perl}{examples/fibonacci.pl}
+    \showlisting<4>[lastline=6]{80mm - 7.5em}{10mm}{15em}{python}{examples/fibonacci.py}
+    \showlisting<5>[lastline=10]{80mm - 11.5em}{10mm}{23em}{c}{examples/fibonacci.c}
+    \showlisting<6>[lastline=10]{80mm - 11.5em}{10mm}{23em}{cpp}{examples/fibonacci.cc}
+    \showlisting<7>[lastline=10]{80mm - 7.5em}{10mm}{15em}{rust}{examples/fibonacci.rs}
 \end{frame}
 
 
