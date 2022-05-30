@@ -1,8 +1,8 @@
-int fib(int x) {
-    int a = 0;
-    int b = 1;
-    for (int i = 0; i < x; i++) {
-        int next = a + b;
+long fib(long x) {
+    long a = 0;
+    long b = 1;
+    for (long i = 0; i < x; i++) {
+        long next = a + b;
         a = b;
         b = next;
     }

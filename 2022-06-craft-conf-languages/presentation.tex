@@ -294,6 +294,31 @@
     \showlisting<7>[lastline=10]{80mm - 7.5em}{10mm}{15em}{rust}{examples/fibonacci.rs}
 \end{frame}
 
+\begin{frame}[fragile]
+    \frametitle{Recursion}
+
+    \begin{textblock*}{13em}(80mm - 6.5em,52mm)
+    \begin{center}
+    $$
+        \begin{array}{l@{\quad}c@{\quad}c}
+            F_0    &\triangleq& 0 \\
+            F_1    &\triangleq& 1 \\
+            F_x    &\triangleq& F_{x-1} + F_{x-2} \\
+        \end{array}
+    $$
+    $$
+        0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, \ldots
+    $$
+    \end{center}
+    \end{textblock*}
+
+    \showlisting<1>[lastline=3]{80mm - 7.5em}{10mm}{15em}{haskell}{examples/fibonacci.hs}
+    \showlisting<2>[lastline=5]{80mm - 9em}{10mm}{18em}{c}{examples/fibonacci-recursive.c}
+
+    \showlisting<3>[lastline=3]{80mm - 10em}{10mm}{20em}{haskell}{examples/fibonacci-iterative.hs}
+    \showlisting<4>[lastline=8]{80mm - 10em}{10mm}{20em}{c}{examples/fibonacci-iterative.c}
+\end{frame}
+
 
 \section{Handling failure}
 

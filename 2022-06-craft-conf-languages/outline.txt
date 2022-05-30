@@ -123,28 +123,33 @@ Fibonacci in [next] Perl, [next] and Python, [next] and C, [next] and C++,
 [next] and Rust. And in all of these cases, the implementation looks more or
 less identical, just with slight differences in syntax.
 
-Factorial as a recursive function
-  - Our first taste of "functional programming"
-  - Focus on example in Haskell
-  - also show that the recursive style is also possible in imperative languages
-    like C and Rust
-  - Show comparison to the "math" definition of factorial
+[next slide]
 
-Implementation concerns — stack space
-  - Show fixed/reused space for imperative loop
-  - but linear growth of call stacks for recursive function
+But loops aren't the only way to repeat yourself! Another pattern is
+"recursion", where you define a function that calls itself. Here we can see a
+recursive definition of Fibonacci in Haskell, a "functional" programming
+language. A defining characteristic of functional languages is that modifying
+variables is prohibited — or at least, greatly frowned upon. One nice feature of
+this functional implementation is that it's very similar to the mathematical
+definition that we're trying to implement!
 
-Show that loop style is also possible in Haskell (everything that's Turing
-complete is Turing complete), and it does guarantee that you use fixed space,
-but it's fighting against the grain of the language
+This style is not limited to functional languages — we can implement this same
+recursive definition in imperative languages too. [next] Here's what it looks
+like in C.
 
-Instead, rewrite using the iterative recursion pattern
-  - Drawback: code no longer "obviously" lines up with math definition
-  - Can we make compilers that are smart enough to translate the former into the
-    latter? So that we can write the "obviously correct" thing, and let the
-    computer figure out how to make it run most efficiently on our hardware. If
-    this kind of question interests you, you might have a career in PL research
-    ahead of you!
+One problem with this implementation is that it's slow! It might not be obvious,
+but we actually do an exponential amount of work, because we end up calculating
+each previous number multiple times. Note that this isn't a problem with
+recursion in general, it's just a problem with this particular implementation.
+
+[next slide]
+
+We can fix it, while still being recursive, by maintaining the previous two
+values in "a" and "b" variables like we did in the loop implementation. In this
+Haskell version, we can't _update_ a and b in the loop body, but we can achieve
+the same result by making a recursive call with new values for _parameters_
+named a and b. [next] And like before, this pattern is not limited to functional
+languages: here it is in C.
 
 Another interesting benefit of the recursive style, and of functional
 programming in general, is that it makes it easier to look for higher level
