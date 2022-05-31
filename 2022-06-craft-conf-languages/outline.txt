@@ -328,14 +328,58 @@ when the pointer goes out of scope. [next] Rust has a similar facility, but its
 smart pointers are called "Box" and "Arc" instead of "unique_ptr" and
 "shared_ptr".
 
-Other resources?
+[next slide]
 
-Closing a file after you're done with it
-GC finalizers don't work
-Need defer or with
-RAII in C++ and Rust
+Of course, memory is not the only resource that we have to manage. For example,
+you might need to open a local file and save some data to it. Your OS limits the
+number of files that your program can have open at any time. How does your
+language help you remember to _close_ the file when you're done?
 
-Make sure it works in all of your return paths!
+As you might expect, in C, the language doesn't help you - you have to remember
+to close the file yourself. Note how cleanup and error handling interact with
+each other! If there are multiple exit points in our function, we have to
+remember to clean up after ourselves after all of them!
+
+[next slide]
+
+The pattern that we saw in C++ for managing memory works for other resources
+too. The general name of the pattern is "RAII" — Resource Acquisition is
+Initialization. You create an object that will _clean up itself_ when it goes
+out of scope. unique_ptr cleans up memory, ofstream cleans up an open file.
+Because RAII is tied to the lifetime of a value, this process is entirely
+deterministic — you can tell exactly when each resource will be freed. And RAII
+combines nicely with exceptions: even if one of the file I/O functions raises an
+exception, the file will be correctly closed, without us having to write any
+extra code.
+
+[next slide]
+
+Like with smart pointers, Rust uses RAII to manage most resources as well. And
+RAII plays just as nicely with error values. If either of the ? operators
+returns an error, the file will be correctly closed.
+
+[next slide]
+
+How does this work in a garbage collected language? You might be tempted to use
+a similar trick, and have a garbage-collected object manage the resource for
+you. However, garbage collection is typically nondeterministic — there's no
+guarantee _when_ your objects will be freed, just that they will be
+_eventually_. That's not good enough for managing resources like open files,
+where you usually want to ensure that the file is closed _as soon as you're done
+using it_.
+
+Go's solution is the "defer" statement. It "registers" a function call, which is
+guaranteed to be called once the enclosing function returns, regardless of
+_where_ the function returns.
+
+[next slide]
+
+Python's approach is the "with" statement. You provide a "context manager",
+which is a special kind of value that knows how to "start" and "stop", or "open"
+and "close", itself. The with statement guarantees that the context manager will
+be opened before any of the statements in the body, and that it will be closed
+after the with statement is done executing — again, no matter _how_ or _where_
+control leaves the with statement.
 
 
 Concurrency
