@@ -186,6 +186,38 @@ Error handling
 
 hero image: https://flic.kr/p/B9WA8y
 
+The next pattern we're going to look at is how we handle error conditions in our
+programs. You might be surprised to learn how many different error handling
+strategies there are!
+
+[next slide]
+
+As our running example in this section, we're going to look at some code that
+can parse a single digit, stored in as a single ASCII character, into the
+corresponding integer value. This is a process that can fail, since not every
+ASCII character is a digit.
+
+[next slide]
+
+Many languages use "exceptions" to handle these errors conditions. Java is one
+of the most well-known examples. Here is what our "parse digit" function could
+look like in Java. [next] And here it is in Python. [next] and in C++.
+
+You can think of exceptions as aborting the flow of your program. A function
+"throws" an exception _instead of_ returning a value. At that point, your
+program starts "unwinding" its call stack, looking for some code that knows how
+to handle that exception.
+
+[next slide]
+
+We can expand our C++ example to show a parse exception being handled via a
+try/catch block. This kind of statement runs the code in the try clause, and if
+any part of that code (include anything that it calls) throws an exception, the
+catch clauses have a chance to handle the exception. Notice how the exception
+might not be handled by the immediate caller of the function that threw the
+exception — it might propagate up any number of calls on the call stack before
+we find an appropriate handler.
+
 exceptions
 enums / either / monad / try
 

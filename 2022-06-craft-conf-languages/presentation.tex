@@ -363,6 +363,26 @@
     \shadowedtitle{10mm}{5mm}{Handling failure}
 \end{frame}
 
+\begin{frame}
+    \frametitle{Digits}
+
+    \begin{center}
+    \begin{tabular}{c@{\quad}c@{\quad}c}
+        $\texttt{'0'} \ldots \texttt{'9'}$  &$\Rightarrow$&  $0 \ldots 9$ \\
+        \textit{anything else} &$\Rightarrow$& \textbf{error!} \\
+    \end{tabular}
+    \end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Exceptions}
+
+    \showlisting<1>{80mm - 10em}{10mm}{20em}{java}{examples/ParseDigit.java}
+    \showlisting<2>[lastline=4]{80mm - 12.5em}{10mm}{25em}{python}{examples/parse-digit.py}
+    \showlisting<3>[firstline=6,lastline=11]{80mm - 15em}{10mm}{30em}{cpp}{examples/parse-digit.cc}
+    \showlisting<4>[firstline=6,lastline=23]{80mm - 15em}{10mm}{30em}{cpp}{examples/parse-digit.cc}
+\end{frame}
+
 
 \section{Cleaning up}
 
