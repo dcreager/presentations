@@ -3,11 +3,13 @@ package main
 import "errors"
 import "fmt"
 
+var InvalidDigit = errors.New("not a digit")
+
 func ParseDigit(ch byte) (int, error) {
 	if ch >= '0' && ch <= '9' {
 		return int(ch - '0'), nil
 	}
-	return 0, errors.New("not a digit")
+	return 0, InvalidDigit
 }
 
 func ParseFile(contents string) error {

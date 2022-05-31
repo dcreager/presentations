@@ -1,4 +1,5 @@
-long fib(long x) {
+long
+fib(long x) {
     long a = 0;
     long b = 1;
     for (long i = 0; i < x; i++) {

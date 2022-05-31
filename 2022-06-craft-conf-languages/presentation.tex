@@ -68,7 +68,7 @@
 
 \usepackage[outputdir=.build]{minted}
 \usemintedstyle{tango}
-\setminted{autogobble,fontsize=\relscale{0.8},frame=single,framesep=6pt,tabsize=4}
+\setminted{autogobble,fontsize=\relscale{0.7},frame=single,framesep=6pt,tabsize=4}
 
 \newcommand<>{\languageicon}[2][145mm,5mm]{%
     \begin{textblock*}{4mm}(#1)
@@ -304,13 +304,13 @@
     \end{center}
     \end{textblock*}
 
-    \showlisting<1>[firstline=5,lastline=14]{80mm - 10em}{10mm}{20em}{go}{examples/fibonacci.go}
+    \showlisting<1>[firstline=5,lastline=14]{80mm - 6em}{10mm}{12em}{go}{examples/fibonacci.go}
 
-    \showlisting<2>[lastline=11]{80mm - 6.5em}{10mm}{13em}{perl}{examples/fibonacci.pl}
-    \showlisting<3>[lastline=6]{80mm - 7.5em}{10mm}{15em}{python}{examples/fibonacci.py}
-    \showlisting<4>[lastline=10]{80mm - 11.5em}{10mm}{23em}{c}{examples/fibonacci.c}
-    \showlisting<5>[lastline=10]{80mm - 11.5em}{10mm}{23em}{cpp}{examples/fibonacci.cc}
-    \showlisting<6>[lastline=10]{80mm - 7.5em}{10mm}{15em}{rust}{examples/fibonacci.rs}
+    \showlisting<2>[lastline=11]{80mm - 6em}{10mm}{12em}{perl}{examples/fibonacci.pl}
+    \showlisting<3>[lastline=6]{80mm - 5.5em}{10mm}{11em}{python}{examples/fibonacci.py}
+    \showlisting<4>[lastline=11]{80mm - 7em}{10mm}{14em}{c}{examples/fibonacci.c}
+    \showlisting<5>[lastline=11]{80mm - 7em}{10mm}{14em}{cpp}{examples/fibonacci.cc}
+    \showlisting<6>[lastline=10]{80mm - 6em}{10mm}{12em}{rust}{examples/fibonacci.rs}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -332,10 +332,10 @@
     \end{textblock*}
 
     \showlisting<1>[lastline=3]{80mm - 7.5em}{10mm}{15em}{haskell}{examples/fibonacci.hs}
-    \showlisting<2>[lastline=5]{80mm - 9em}{10mm}{18em}{c}{examples/fibonacci-recursive.c}
+    \showlisting<2>[lastline=6]{80mm - 7em}{10mm}{14em}{c}{examples/fibonacci-recursive.c}
 
-    \showlisting<3>[lastline=3]{80mm - 10em}{10mm}{20em}{haskell}{examples/fibonacci-iterative.hs}
-    \showlisting<4>[lastline=8]{80mm - 10em}{10mm}{20em}{c}{examples/fibonacci-iterative.c}
+    \showlisting<3>[lastline=3]{80mm - 9em}{10mm}{18em}{haskell}{examples/fibonacci-iterative.hs}
+    \showlisting<4>[lastline=10]{80mm - 7.5em}{10mm}{15em}{c}{examples/fibonacci-iterative.c}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -349,7 +349,7 @@
     \end{center}
     \end{textblock*}
 
-    \showlisting<3>[lastline=4]{120mm - 7.5em}{35mm}{15em}{haskell}{examples/fibonacci-histo.hs}
+    \showlisting<3>[lastline=4]{120mm - 6em}{35mm}{12em}{haskell}{examples/fibonacci-histo.hs}
 \end{frame}
 
 
@@ -377,26 +377,26 @@
 \begin{frame}[fragile]
     \frametitle{Exceptions}
 
-    \showlisting<1>{80mm - 10em}{10mm}{20em}{java}{examples/ParseDigit.java}
-    \showlisting<2>[lastline=4]{80mm - 12.5em}{10mm}{25em}{python}{examples/parse-digit.py}
-    \showlisting<3>[firstline=6,lastline=11]{80mm - 15em}{10mm}{30em}{cpp}{examples/parse-digit.cc}
-    \showlisting<4>[firstline=6,lastline=23]{80mm - 15em}{10mm}{30em}{cpp}{examples/parse-digit.cc}
+    \showlisting<1>{80mm - 9.5em}{10mm}{19em}{java}{examples/ParseDigit.java}
+    \showlisting<2>[lastline=4]{80mm - 11em}{10mm}{22em}{python}{examples/parse-digit.py}
+    \showlisting<3>[firstline=6,lastline=12]{80mm - 8.5em}{10mm}{17em}{cpp}{examples/parse-digit.cc}
+    \showlisting<4>[firstline=6,lastline=26]{80mm - 8.5em}{10mm}{17em}{cpp}{examples/parse-digit.cc}
 \end{frame}
 
 \begin{frame}[fragile]
     \frametitle{Error values}
 
-    \showlisting<1-2>[firstline=3,lastline=8]{40mm - 9.5em}{10mm}{19em}{c}{examples/parse-digit.c}
-    \showlisting<2>  [firstline=10,lastline=23]{120mm - 9.5em}{10mm}{19em}{c}{examples/parse-digit.c}
+    \showlisting<1-2>[firstline=3,lastline=9]{5mm}{10mm}{19em}{c}{examples/parse-digit.c}
+    \showlisting<2>  [firstline=11,lastline=26]{120mm - 8.5em}{10mm}{17em}{c}{examples/parse-digit.c}
 
-    \showlisting<3>[firstline=6,lastline=11]{40mm - 9.5em}{10mm}{19em}{go}{examples/parse_digit.go}
-    \showlisting<3>[firstline=13,lastline=26]{120mm - 9.5em}{10mm}{19em}{go}{examples/parse_digit.go}
+    \showlisting<3>[firstline=6,lastline=13]{5mm}{10mm}{19em}{go}{examples/parse_digit.go}
+    \showlisting<3>[firstline=15,lastline=28]{120mm - 8.5em}{10mm}{17em}{go}{examples/parse_digit.go}
 
-    \showlisting<4>[lastline=9]{40mm - 9.5em}{10mm}{19em}{rust}{examples/parse_digit.rs}
-    \showlisting<4>[firstline=11,lastline=22]{120mm - 9.5em}{10mm}{19em}{rust}{examples/parse_digit.rs}
+    \showlisting<4>[lastline=9]{5mm}{10mm}{19em}{rust}{examples/parse_digit.rs}
+    \showlisting<4>[firstline=11,lastline=22]{120mm - 8.5em}{10mm}{17em}{rust}{examples/parse_digit.rs}
 
-    \showlisting<5>[firstline=3,lastline=9]{40mm - 9.5em}{10mm}{19em}{haskell}{examples/parse_digit.hs}
-    \showlisting<5>[firstline=11,lastline=17]{120mm - 9.5em}{10mm}{19em}{haskell}{examples/parse_digit.hs}
+    \showlisting<5>[firstline=3,lastline=9]{5mm}{10mm}{19em}{haskell}{examples/parse_digit.hs}
+    \showlisting<5>[firstline=11,lastline=17]{120mm - 8.5em}{10mm}{17em}{haskell}{examples/parse_digit.hs}
 \end{frame}
 
 
