@@ -18,7 +18,7 @@ void use_file(const std::string& contents) {
     try {
         parse_file(contents);
     } catch (const invalid_argument& ex) {
-        std::cout << "The file contained an invalid digit!";
+        std::cout << ex.what() << std::endl;
     }
 }
 

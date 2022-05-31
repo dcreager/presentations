@@ -218,8 +218,61 @@ might not be handled by the immediate caller of the function that threw the
 exception — it might propagate up any number of calls on the call stack before
 we find an appropriate handler.
 
-exceptions
-enums / either / monad / try
+That's one of the defining characteristics of exceptions: your callers get to
+decide where and how to handle them, and they might silently propagate through
+functions that don't mention exceptions at all. Some people like that, because
+it means that many of your functions can focus on the "happy path", and not have
+to worry about explicit error handling. Other people don't like that, because
+they feel that the implicit control flow is harder to reason about.
+
+[next slide]
+
+Next let's look at the opposite end of the spectrum. Here is how our parse digit
+function might look in C, where error handling is very explicit. In C, there is
+no _single_ error handling strategy that is used everywhere consistently. A
+common pattern is to use special "sentinel" values to indicate errors. Since our
+parse digit function only needs the values from 0 to 9, we can use any other
+integer result to indicate an error. -1 is often used.
+
+Otherwise, the structure is not really all that different from the version that
+uses exceptions. We still need to detect the error condition; we just use a
+"return" statement instead of a "throw" statement to signal the error.
+
+[next slide]
+
+The changes are more obvious where we handle the errors. In particular, note
+that our parse_file function has to _explicitly_ pass the error condition on to
+its caller.
+
+[next slide]
+
+In Go, the overall structure is very similar, but we can take advantage of the
+fact that Go functions can return _multiple_ values. That means that we don't
+have to reserve a sentinel value to indicate errors, and can encode errors using
+their own specific type. Our ParseDigit function returns _both_ a normal value
+and an error, and the caller knows that only one or the other should actually be
+used.
+
+[next slide]
+
+In Rust, we also use regular values to encode errors, but we can also express
+the idea that our parse_digit function returns _either_ a successful result _or_
+an error. In Go, our function returned _both_, and we relied on the caller
+knowing that the "result" would not contain any useful data if the function
+returned an error.
+
+Rust also requires intermediate functions to explicitly propagate errors, but it
+adds the ? operator, which helps remove some of the boilerplate involved.
+
+[next slide]
+
+And lastly, error handling is not specific to imperative languages; errors can
+occur when you're using a functional language too. Here is what our example
+looks like in Haskell. It's very similar to Rust, though the either type is
+actually called "Either". And Haskell uses "do" notation to accomplish the same
+task as Rust's question mark operator. (This works because Haskell's Either type
+is a "monad" — another esoteric functional programming term, which we do _not_
+have the time to dive into today.)
 
 
 Resources and cleanup

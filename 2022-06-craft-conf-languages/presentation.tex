@@ -68,7 +68,7 @@
 
 \usepackage[outputdir=.build]{minted}
 \usemintedstyle{tango}
-\setminted{autogobble,fontsize=\relscale{0.8},frame=single,framesep=6pt,escapeinside=??,tabsize=4}
+\setminted{autogobble,fontsize=\relscale{0.8},frame=single,framesep=6pt,tabsize=4}
 
 \newcommand<>{\languageicon}[2][145mm,5mm]{%
     \begin{textblock*}{4mm}(#1)
@@ -381,6 +381,22 @@
     \showlisting<2>[lastline=4]{80mm - 12.5em}{10mm}{25em}{python}{examples/parse-digit.py}
     \showlisting<3>[firstline=6,lastline=11]{80mm - 15em}{10mm}{30em}{cpp}{examples/parse-digit.cc}
     \showlisting<4>[firstline=6,lastline=23]{80mm - 15em}{10mm}{30em}{cpp}{examples/parse-digit.cc}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Error values}
+
+    \showlisting<1-2>[firstline=3,lastline=8]{40mm - 9.5em}{10mm}{19em}{c}{examples/parse-digit.c}
+    \showlisting<2>  [firstline=10,lastline=23]{120mm - 9.5em}{10mm}{19em}{c}{examples/parse-digit.c}
+
+    \showlisting<3>[firstline=6,lastline=11]{40mm - 9.5em}{10mm}{19em}{go}{examples/parse_digit.go}
+    \showlisting<3>[firstline=13,lastline=26]{120mm - 9.5em}{10mm}{19em}{go}{examples/parse_digit.go}
+
+    \showlisting<4>[lastline=9]{40mm - 9.5em}{10mm}{19em}{rust}{examples/parse_digit.rs}
+    \showlisting<4>[firstline=11,lastline=22]{120mm - 9.5em}{10mm}{19em}{rust}{examples/parse_digit.rs}
+
+    \showlisting<5>[firstline=3,lastline=9]{40mm - 9.5em}{10mm}{19em}{haskell}{examples/parse_digit.hs}
+    \showlisting<5>[firstline=11,lastline=17]{120mm - 9.5em}{10mm}{19em}{haskell}{examples/parse_digit.hs}
 \end{frame}
 
 
