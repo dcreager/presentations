@@ -280,10 +280,53 @@ Resources and cleanup
 
 hero image: https://flic.kr/p/eRjo3W
 
-GC for memory
-malloc + free manually in C
-smart pointer / ownership in Rust (GC is not the only automatic memory
-management!)
+Next we're going to talk about how you clean up after yourself. This is
+especially important for long-running programs like servers. If you need to
+allocate or acquire resources as part of handling a request, but don't release
+those resources when you're done, you'll quickly exhaust your available
+capacity.
+
+[next slide]
+
+The original resource that programs have had to manage since the dawn of
+computing is memory. To start, we're going to look at what's needed in C, where
+there are no language facilities to help you. Here you can see a data type,
+along with helper functions for allocating and deallocating instances of this
+type that live on the heap. Note how one of the fields itself needs to be
+managed, since we make a copy of the person's name.
+
+[next slide]
+
+And here we can how you might use these functions to handle instances of this
+new type. [next] But because you're managing resources manually, you'd better
+make sure you free everything!
+
+Now, I'm not gonna lie, this is very cumbersome to have to manually manage your
+resources like this! But it does have one genuine benefit, too — you can see
+in your code precisely where everything is acquired or released. Especially for
+low-level or real-time programs, it can be useful to know that every instruction
+that the CPU executes is due to code that you wrote.
+
+However, it's fair to say that most programmers have decided that that benefit
+is not worth the extra work needed to manage resources manually — at least for
+memory!
+
+[next slide]
+
+If you want to avoid that manual bookkeeping, a simple choice would be to use a
+language that does this bookkeeping for you. Here we see the same example in Go,
+[next] and in Python, both of which use garbage collectors to manage memory for
+you.
+
+[next slide]
+
+Garbage collection is not your only option! C++ "smart pointers" are another
+approach that is just as automatic. Here's the C++ version that manually manages
+memory, like our original C version. [next] And here's the C++ that uses
+unique_ptr and shared_ptr, which automatically release the underlying memory
+when the pointer goes out of scope. [next] Rust has a similar facility, but its
+smart pointers are called "Box" and "Arc" instead of "unique_ptr" and
+"shared_ptr".
 
 Other resources?
 
