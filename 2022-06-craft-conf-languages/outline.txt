@@ -157,11 +157,28 @@ patterns. Not just "oh there are lots of problems that we can solve with
 recursion". But going deeper: "How many times do we recurse?" "How much work are
 we allowed to do before the recursive call?" "How much work after?"
 
-[Figure out how a couple of recursion schemes map to the answers to those
-questions]
+In the functional programming world, the answers to these questions lead to a
+number of different "recursion schemes". Their names can sound strange if you're
+not used to them. (Now do you see what I mean about "mutual unintelligibility"
+being the most striking part of the Tower of Babel myth?) But those names do
+have very specific and precise meanings, which is useful when you're using
+functional programming as a lens to explore deep topics in computer science.
 
-(Now do you see what I mean about "mutual unintelligibility" being the most
-important part of the Tower of Babel myth?)
+[next slide]
+
+Today, I'll just point out that the Fibonacci sequence is an example of a
+"histomorphism". The "histo" part has the same root as "history", and signifies
+that each recursive step has access to the full history of previously computed
+values.
+
+[next slide]
+
+Here's what Fibonacci looks like in Haskell when implemented as a histomorphism.
+Like all recursion schemes, you don't actually see any recursion! That's handled
+for you by the recursion scheme itself. We just have to specify what should
+happen during each recursive step. For a histomorphism, we're given a list of
+the previously computed values, and can inspect those values however we need to
+compute the next value.
 
 
 Error handling
