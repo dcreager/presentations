@@ -381,6 +381,16 @@ be opened before any of the statements in the body, and that it will be closed
 after the with statement is done executing — again, no matter _how_ or _where_
 control leaves the with statement.
 
+[next slide]
+
+To wrap things up in this section, we can look at Zig, which is an intersting
+hybrid of all of the approaches we've seen so far. Like C, the Zig ethos is that
+every instruction the CPU executes should be visible in the code — so no
+"hidden" behavior like RAII guards. It uses a defer statement like Go to ensure
+that resources are freed. Its error handling is more like Rust, where fallible
+functions _either_ return a value or an error, and it has an analogue to Rust's
+? operator, though it's spelled "try".
+
 
 Concurrency
 -----------
