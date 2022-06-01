@@ -7,12 +7,8 @@ type Person struct {
 	Age  int
 }
 
-func NewPerson(name string, age int) *Person {
-	return &Person{Name: name, Age: age}
-}
-
 func ProcessFamily() {
-	me := NewPerson("Doug", 42)
+	me := Person{Name: "Doug", Age: 42}
 	fmt.Printf("%s is %d years old\n", me.Name, me.Age)
 }
 
