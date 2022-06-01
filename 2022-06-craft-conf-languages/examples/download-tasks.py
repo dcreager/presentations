@@ -1,11 +1,13 @@
-async function downloadFiles() {
-    await Promise.all([
+import asyncio
+
+async def download(url):
+    pass
+
+async def download_files():
+    await asyncio.gather(
         download("https://a.example.com/a.csv"),
         download("https://b.example.com/b.csv"),
         download("https://c.example.com/c.csv"),
-    ]);
-}
+    )
 
-async function download(url) {}
-
-downloadFiles().then(x => {});
+asyncio.run(download_files())

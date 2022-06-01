@@ -902,6 +902,108 @@
         \includegraphics[width=160mm]{bottling-plant.jpg}
     \end{textblock*}
     \shadowedtitle{143mm - \titlewidth}{77mm}{Concurrency}
+
+    \pdfpcnote{
+        The last area that we'll look at is concurrency. Broadly speaking, our
+        programs are either CPU-bound or I/O-bound. A CPU-bound program performs
+        pure computation, and is only limited by the speed of the CPU that it's
+        executing on. Most of the examples that we've seen so far today have
+        been CPU-bound.
+
+        But most programs these days are not CPU-bound, and have to perform
+        large amounts of I/O to accomplish their work, whether reading and
+        writing from local disk, or communicating with other programs running on
+        other machines. A defining characteristic of I/O-bound work is that
+        our programs have to _wait_ for it to finish. We don't know how long it
+        will take for another program to respond, or for its response to make
+        its way back to us.
+    }
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Goroutines}
+
+    \showlisting<1>[firstline=5,lastline=22]{80mm - 10em}{10mm}{20em}{go}{examples/download.go}
+    \showlisting<2>[firstline=5,lastline=10]{80mm - 10em}{10mm}{20em}{go}{examples/download-goroutine.go}
+    \showlisting<3>[firstline=7,lastline=27]{80mm - 12em}{10mm}{24em}{go}{examples/download-syncgroup.go}
+
+    \only<1>{\pdfpcnote{
+        As a running example, we can consider a program that needs to download
+        three files from separate servers. Here is how that program might look
+        in Go. (For simplicity, we're assuming that we have a function that we
+        can call that actually performs the download.) \\
+        \\
+        An important thing to note about this program is that the Download
+        function is a _blocking_ call — it won't return until the requested file
+        has been fully downloaded. That means that the second download doesn't
+        start until the first one is done. That's probably not the most
+        efficient strategy, since we don't know how far away the three servers
+        are, or how fast our connections to them are. For a small number of
+        downloads like this, it would be better to perform them concurrently, to
+        fully maximize our available network capacity. \\
+        \\
+        (Also note that this is a good example of how "concurrency" is not the
+        same thing as "parallelism". At the hardware level, our network card can
+        only receive packets from one connection at a time, so our downloads are
+        not parallel. The packets from each connection can be interleaved with
+        each other, though, meaning that they are concurrent.)
+    }}
+
+    \only<2>{\pdfpcnote{
+        Go provides a nice facility for performing work concurrently, by
+        creating a new "goroutine" for each download. Each goroutine is a block
+        of code, and Go's runtime takes care of scheduling goroutines
+        efficiently across however many CPUs are available. Importantly, if any
+        goroutine is blocked - waiting for a response from another machine, for
+        instance - the Go scheduler automatically moves it aside to allow other
+        goroutines to proceed. \\
+        \\
+        This is what the concurrent version looks like, by performing each
+        Download call within a separate goroutine. \\
+        \\
+        However, we've lost two things with this implementation. First, we no
+        longer have access to the error value that tells us if a download fails.
+        And second, goroutines run in the background, and so our DownloadFiles
+        function returns immediately, without waiting for all three downloads to
+        finish.
+    }}
+
+    \only<3>{\pdfpcnote{
+        Go provides several helper types in its standard library to handle these
+        kinds of situation. In particular, we can use a "WaitGroup" to wait for
+        all three goroutines to finish before returning. Because the downloads
+        happen in goroutines, they still get to run concurrently.
+    }}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{OS threads}
+
+    \showlisting<1>[firstline=6,lastline=17]{80mm - 12em}{10mm}{24em}{python}{examples/download-threads.py}
+
+    \only<1>{\pdfpcnote{
+        Next we can look at what this example might look like another language.
+        Here we see a Python version that superficially looks like it's doing
+        the same thing. However, there's an important difference: this code is
+        spawning _OS_ threads instead of _goroutines_ to handle each download.
+    }}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Async / futures / promises / tasks}
+
+    \showlisting<1>[firstline=6,lastline=11]{80mm - 10em}{10mm}{20em}{python}{examples/download-tasks.py}
+    \showlisting<2>[firstline=8,lastline=15]{80mm - 10em}{10mm}{20em}{rust}{examples/download.rs}
+    \showlisting<3>[firstline=1,lastline=7]{80mm - 10em}{10mm}{20em}{javascript}{examples/download.js}
+
+    \only<1>{\pdfpcnote{
+        async: Go solution requires tight coupling between language, stdlib, and
+        runtime scheduler. OS thread solution can be inefficient with > 10,000
+        threads. Async makes it clearer in the code where the potential
+        "blocking" points are. Also allows scheduler to be just another library
+        component. Same syntax to enqueue tasks in e.g. separate work pools vs
+        the global event loop.
+    }}
 \end{frame}
 
 
