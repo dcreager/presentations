@@ -4,6 +4,7 @@
 \usepackage{calc}
 \usepackage{relsize}
 \usepackage{graphicx}
+\usepackage{pdfpc}
 \usepackage[overlay,absolute]{textpos}
 
 \graphicspath{{../images}}
@@ -89,6 +90,18 @@
 
 \begin{frame}
     \titlepage
+
+    \pdfpcnote{
+        Introduce myself. Doug Creager, Semantic Code team at GitHub. Part of
+        the "Code Productivity" group. Code Nav, Code Search, Vulnerability
+        Analysis, etc. \\
+        \\
+        Want these features to be available for _everyone_. That means that
+        we're exposed to all of the programming languages that are hosted on
+        GitHub. Which, if you think about it, is basically the same as "all of
+        the programming languages in the world". So we have an interesting, very
+        wide, perspective on languages, which I hope to share with you today.
+    }
 \end{frame}
 
 
@@ -115,6 +128,65 @@
         }
         \includegraphics[height=80mm]{tower-of-babel-weltenchronik.png}
     \end{textblock*}
+
+    \only<1>{\pdfpcnote{
+        We often like to compare programming languages with spoken languages, so
+        I want to start with a famous myth from the Old Testament. This is a
+        painting from the late 1300s, depicting the Tower of Babel. If you're
+        not familiar with this myth, the Tower of Babel is meant to explain why
+        people speak different languages. The story goes that after the Great
+        Flood of Noah, the human world was united as a single people who spoke
+        the same language. They were so proud of themselves and their
+        accomplishments that they decided to build a tower tall enough to reach
+        the heavens. And is often the case in the Old Testament, this is a story
+        of God punishing humanity for its hubris. In this case, he sundered the
+        people, spreading them to the corners of the Earth, and causing them to
+        start speaking many mutually unintelligible languages. \\
+        \\
+        Now, how does this relate to the history of computing and of programming
+        languages? It is, admittedly, not a perfect analogy. I can't claim that
+        there was any _single_ programming language that the world's programmers
+        all used in the "prehistory" of computing. In fact, starting in the
+        1940s and 50s, there were several groups simultaneously trying to build
+        human-readable programming languages on top of machine code and
+        assembly.
+    }}
+
+    \only<2>{\pdfpcnote{
+        But we _can_ say that there are a small handful of languages, like
+        Fortran and Cobol, that we consider to _share_ the crown of first. \\
+        \\
+        How else is this analogy strained? Well, programmers are certainly
+        guilty of hubris - but I'm not going to claim that divine retribution
+        sundered the world of programmers in the 1950s and 1960s. Nevertheless,
+        the end result is the same:
+    }}
+
+    \only<3>{\pdfpcnote{
+        Today, there is a true multitude of programming languages. This wall of
+        logos might seem like a lot, but it's actually only a small sample of
+        the languages that exist today. GitHub maintains an open-source package
+        called linguist, which is a crowd-sourced list of all of the languages
+        that we're aware of - and it currently contains more than 500 entries! \\
+        \\
+        As an aside, just throwing these logos up here has probably nerd-sniped
+        several of you, so...
+    }}
+
+    \only<4>{\pdfpcnote{
+        let's go ahead and play a game of Pyramid! There are 35 programming
+        language logos on the screen. Dick Clark wants to know how many of them
+        you recognize! Just a competition with yourself, it's okay if there many
+        that you aren't familiar with. \\
+        \\
+        Now, for me, the most interesting part of our Tower of Babel analogy is
+        the "mutual unintelligibility" part. Like spoken languages, there are
+        _families_ of programming languages, where languages within a family are
+        similar enough that familiarity with one means that you're likely to
+        understand at least the basics of another. Whereas in another family,
+        the very concepts of programming are so different that it can be almost
+        impossible to understand how those languages could possibly work!
+    }}
 
     \begin{textblock*}{15mm}( 72mm,-6mm)
         \only<3- >{\includegraphics[width=12mm]{languages/apl.png}}
@@ -247,6 +319,16 @@
         \picturecredit{Matjaž Mirt}{Tern/čigra}{CC-BY-2.0}{https://flic.kr/p/2kXydKp}
         \includegraphics[width=160mm]{one-tern.jpg}
     \end{textblock*}
+
+    \pdfpcnote{
+        I would claim that most of us these days are really only familiar with
+        one programming language and its ecosystem. We're _aware_ that other
+        programming languages exist, but we don't really take the time to
+        explore other languages to learn where the similarities and differences
+        are. (And to be clear, that's perfectly okay! We all have a limited
+        number of hours in the day. Time is the most finite resource. Learning
+        other languages might genuinely not be the best use of your time.)
+    }
 \end{frame}
 
 \begin{frame}
@@ -254,6 +336,22 @@
         \picturecredit{Mark Gunn}{This just tern'ed into a swarm!}{CC-BY-2.0}{https://flic.kr/p/P11JH1}
         \includegraphics[width=160mm]{terns.jpg}
     \end{textblock*}
+
+    \pdfpcnote{
+        But there is a multitude, and it's one worth exploring. So for the next
+        20 minutes or so, we're going to explore the multitude together. My hope
+        is that regardless of which language you're most fluent in, you'll see
+        something new that makes you think about programming differently. I
+        firmly believe that knowing about other programming styles and paradigms
+        can make you a more effective developer. \\
+        \\
+        And also, to clarify, I'm going to be relentlessly positive! This is
+        absolutely not a sermon about the One True Programming Style that
+        everyone should switch over to. I'm not going to make any value
+        judgments regarding static or dynamic typing, for instance. For those of
+        you following along in the chat room or at home afterwards, please stay
+        positive too!
+    }
 \end{frame}
 
 
@@ -265,6 +363,13 @@
         \includegraphics[width=160mm]{mirror-maze.jpg}
     \end{textblock*}
     \shadowedtitle{153mm - \titlewidth}{80mm}{Repetition}
+
+    \pdfpcnote{
+        To get our feet wet, we're going to start by looking at some very
+        high-level patterns that show up time and again. Our first pattern is
+        repetition: What facilities do our programming languages give us for
+        performing the same work over and over? \\
+    }
 \end{frame}
 
 \begin{frame}[fragile]
@@ -284,6 +389,13 @@
     $$
     \end{center}
     \end{textblock*}
+
+    \pdfpcnote{
+        We'll use a pretty simple example to start with: computing the Fibonacci
+        numbers. If you're not familiar with this sequence, the first Fibonacci
+        numbers are 0 and 1. Each subsequent number is the sum of the previous
+        two.
+    }
 \end{frame}
 
 \begin{frame}[fragile]
@@ -311,6 +423,31 @@
     \showlisting<4>[lastline=11]{80mm - 7em}{10mm}{14em}{c}{examples/fibonacci.c}
     \showlisting<5>[lastline=11]{80mm - 7em}{10mm}{14em}{cpp}{examples/fibonacci.cc}
     \showlisting<6>[lastline=10]{80mm - 6em}{10mm}{12em}{rust}{examples/fibonacci.rs}
+
+    \only<1>{\pdfpcnote{
+        Here we can see an implementation of Fibonacci in Go, using a for loop. We need
+        to keep track of the previous two values, which we'll call "a" and "b". Then we
+        loop through, calculating the next value and "sliding" it into our window of
+        previous values. Once our loop finishes, we know that "a" will contain the
+        Fibonacci number that was requested.
+
+        Go is an example of an "imperative" programming language, where the bulk of your
+        program consists of a sequence of statements that are executed in order. The for
+        loop, and its cousin the while loop, are ubiquitous in imperative languages.
+        Most popular languages these days are imperative. And in fact, we can look at
+        Fibonacci in
+    }}
+
+    \only<2>{\pdfpcnote{Perl}}
+    \only<3>{\pdfpcnote{Python}}
+    \only<4>{\pdfpcnote{C}}
+    \only<5>{\pdfpcnote{C++}}
+    \only<6>{\pdfpcnote{
+        Rust. \\
+        \\
+        And in all of these cases, the implementation looks more or less
+        identical, just with slight differences in syntax.
+    }}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -336,6 +473,42 @@
 
     \showlisting<3>[lastline=3]{80mm - 9em}{10mm}{18em}{haskell}{examples/fibonacci-iterative.hs}
     \showlisting<4>[lastline=10]{80mm - 7.5em}{10mm}{15em}{c}{examples/fibonacci-iterative.c}
+
+    \only<1>{\pdfpcnote{
+        But loops aren't the only way to repeat yourself! Another pattern is
+        "recursion", where you define a function that calls itself. Here we can
+        see a recursive definition of Fibonacci in Haskell, a "functional"
+        programming language. A defining characteristic of functional languages
+        is that modifying variables is prohibited - or at least, greatly frowned
+        upon. One nice feature of this functional implementation is that it's
+        very similar to the mathematical definition that we're trying to
+        implement!
+    }}
+
+    \only<2>{\pdfpcnote{
+        This style is not limited to functional languages - we can implement
+        this same recursive definition in imperative languages too. Here's what
+        it looks like in C. \\
+        \\
+        One problem with this implementation is that it's slow! It might not be
+        obvious, but we actually do an exponential amount of work, because we
+        end up calculating each previous number multiple times. Note that this
+        isn't a problem with recursion in general, it's just a problem with this
+        particular implementation.
+    }}
+
+    \only<3>{\pdfpcnote{
+        We can fix it, while still being recursive, by maintaining the previous
+        two values in "a" and "b" variables like we did in the loop
+        implementation. In this Haskell version, we can't _update_ a and b in
+        the loop body, but we can achieve the same result by making a recursive
+        call with new values for _parameters_ named a and b.
+    }}
+
+    \only<4>{\pdfpcnote{
+        And like before, this pattern is not limited to functional languages:
+        here it is in C.
+    }}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -350,6 +523,39 @@
     \end{textblock*}
 
     \showlisting<3>[lastline=4]{120mm - 6em}{35mm}{12em}{haskell}{examples/fibonacci-histo.hs}
+
+    \only<1>{\pdfpcnote{
+        Another interesting benefit of the recursive style, and of functional
+        programming in general, is that it makes it easier to look for higher
+        level patterns. Not just "oh there are lots of problems that we can
+        solve with recursion". But going deeper: "How many times do we recurse?"
+        "How much work are we allowed to do before the recursive call?" "How
+        much work after?" \\
+        \\
+        In the functional programming world, the answers to these questions lead
+        to a number of different "recursion schemes". Their names can sound
+        strange if you're not used to them. (Now do you see what I mean about
+        "mutual unintelligibility" being the most striking part of the Tower of
+        Babel myth?) But those names do have very specific and precise meanings,
+        which is useful when you're using functional programming as a lens to
+        explore deep topics in computer science.
+    }}
+
+    \only<2>{\pdfpcnote{
+        Today, I'll just point out that the Fibonacci sequence is an example of
+        a "histomorphism". The "histo" part has the same root as "history", and
+        signifies that each recursive step has access to the full history of
+        previously computed values.
+    }}
+
+    \only<3>{\pdfpcnote{
+        Here's what Fibonacci looks like in Haskell when implemented as a
+        histomorphism. Like all recursion schemes, you don't actually see any
+        recursion! That's handled for you by the recursion scheme itself. We
+        just have to specify what should happen during each recursive step. For
+        a histomorphism, we're given a list of the previously computed values,
+        and can inspect those values however we need to compute the next value.
+    }}
 \end{frame}
 
 
@@ -361,6 +567,12 @@
         \includegraphics[width=160mm]{blown-tire.jpg}
     \end{textblock*}
     \shadowedtitle{10mm}{5mm}{Handling failure}
+
+    \pdfpcnote{
+        The next pattern we're going to look at is how we handle error
+        conditions in our programs. You might be surprised to learn how many
+        different error handling strategies there are!
+    }
 \end{frame}
 
 \begin{frame}
@@ -372,6 +584,13 @@
         \textit{anything else} &$\Rightarrow$& \textbf{error!} \\
     \end{tabular}
     \end{center}
+
+    \pdfpcnote{
+        As our running example in this section, we're going to look at some code
+        that can parse a single digit, stored in as a single ASCII character,
+        into the corresponding integer value. This is a process that can fail,
+        since not every ASCII character is a digit.
+    }
 \end{frame}
 
 \begin{frame}[fragile]
@@ -381,6 +600,42 @@
     \showlisting<2>[lastline=4]{80mm - 11em}{10mm}{22em}{python}{examples/parse-digit.py}
     \showlisting<3>[firstline=6,lastline=12]{80mm - 8.5em}{10mm}{17em}{cpp}{examples/parse-digit.cc}
     \showlisting<4>[firstline=6,lastline=26]{80mm - 8.5em}{10mm}{17em}{cpp}{examples/parse-digit.cc}
+
+    \only<1>{\pdfpcnote{
+        Many languages use "exceptions" to handle these errors conditions. Java
+        is one of the most well-known examples. Here is what our "parse digit"
+        function could look like in Java.
+    }}
+
+    \only<2>{\pdfpcnote{And here it is in Python.}}
+
+    \only<3>{\pdfpcnote{
+        and in C++. \\
+        \\
+        You can think of exceptions as aborting the flow of your program. A
+        function "throws" an exception _instead of_ returning a value. At that
+        point, your program starts "unwinding" its call stack, looking for some
+        code that knows how to handle that exception.
+    }}
+
+    \only<4>{\pdfpcnote{
+        We can expand our C++ example to show a parse exception being handled
+        via a try/catch block. This kind of statement runs the code in the try
+        clause, and if any part of that code (include anything that it calls)
+        throws an exception, the catch clauses have a chance to handle the
+        exception. Notice how the exception might not be handled by the
+        immediate caller of the function that threw the exception - it might
+        propagate up any number of calls on the call stack before we find an
+        appropriate handler. \\
+        \\
+        That's one of the defining characteristics of exceptions: your callers
+        get to decide where and how to handle them, and they might silently
+        propagate through functions that don't mention exceptions at all. Some
+        people like that, because it means that many of your functions can focus
+        on the "happy path", and not have to worry about explicit error
+        handling. Other people don't like that, because they feel that the
+        implicit control flow is harder to reason about.
+    }}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -397,6 +652,59 @@
 
     \showlisting<5>[firstline=3,lastline=9]{5mm}{10mm}{19em}{haskell}{examples/parse_digit.hs}
     \showlisting<5>[firstline=11,lastline=17]{120mm - 8.5em}{10mm}{17em}{haskell}{examples/parse_digit.hs}
+
+    \only<1>{\pdfpcnote{
+        Next let's look at the opposite end of the spectrum. Here is how our
+        parse digit function might look in C, where error handling is very
+        explicit. In C, there is no _single_ error handling strategy that is
+        used everywhere consistently. A common pattern is to use special
+        "sentinel" values to indicate errors. Since our parse digit function
+        only needs the values from 0 to 9, we can use any other integer result
+        to indicate an error. -1 is often used. \\
+        \\
+        Otherwise, the structure is not really all that different from the
+        version that uses exceptions. We still need to detect the error
+        condition; we just use a "return" statement instead of a "throw"
+        statement to signal the error.
+    }}
+
+    \only<2>{\pdfpcnote{
+        The changes are more obvious where we handle the errors. In particular,
+        note that our parse_file function has to _explicitly_ pass the error
+        condition on to its caller.
+    }}
+
+    \only<3>{\pdfpcnote{
+        In Go, the overall structure is very similar, but we can take advantage
+        of the fact that Go functions can return _multiple_ values. That means
+        that we don't have to reserve a sentinel value to indicate errors, and
+        can encode errors using their own specific type. Our ParseDigit function
+        returns _both_ a normal value and an error, and the caller knows that
+        only one or the other should actually be used.
+    }}
+
+    \only<4>{\pdfpcnote{
+        In Rust, we also use regular values to encode errors, but we can also
+        express the idea that our parse_digit function returns _either_ a
+        successful result _or_ an error. In Go, our function returned _both_,
+        and we relied on the caller knowing that the "result" would not contain
+        any useful data if the function returned an error. \\
+        \\
+        Rust also requires intermediate functions to explicitly propagate
+        errors, but it adds the ? operator, which helps remove some of the
+        boilerplate involved.
+    }}
+
+    \only<5>{\pdfpcnote{
+        And lastly, error handling is not specific to imperative languages;
+        errors can occur when you're using a functional language too. Here is
+        what our example looks like in Haskell. It's very similar to Rust,
+        though the either type is actually called "Either". And Haskell uses
+        "do" notation to accomplish the same task as Rust's question mark
+        operator. (This works because Haskell's Either type is a "monad" -
+        another esoteric functional programming term, which we do _not_ have the
+        time to dive into today.)
+    }}
 \end{frame}
 
 
@@ -408,6 +716,14 @@
         \includegraphics[width=160mm]{landfill.jpg}
     \end{textblock*}
     \shadowedtitle{133mm - \titlewidth}{14mm}{Cleaning up}
+
+    \pdfpcnote{
+        Next we're going to talk about how you clean up after yourself. This is
+        especially important for long-running programs like servers. If you need
+        to allocate or acquire resources as part of handling a request, but
+        don't release those resources when you're done, you'll quickly exhaust
+        your available capacity.
+    }
 \end{frame}
 
 \begin{frame}[fragile]
@@ -416,6 +732,36 @@
     \showlisting<1-3>[firstline=5,lastline=23]{5mm}{10mm}{17em}{c}{examples/memory.c}
     \showlisting<2>  [firstline=26,lastline=31]{155mm - 21em}{10mm}{21em}{c}{examples/memory.c}
     \showlisting<3>  [firstline=34,lastline=39]{155mm - 21em}{10mm}{21em}{c}{examples/memory.c}
+
+    \only<1>{\pdfpcnote{
+        The original resource that programs have had to manage since the dawn of
+        computing is memory. To start, we're going to look at what's needed in
+        C, where there are no language facilities to help you. Here you can see
+        a data type, along with helper functions for allocating and deallocating
+        instances of this type that live on the heap. Note how one of the fields
+        itself needs to be managed, since we make a copy of the person's name.
+    }}
+
+    \only<2>{\pdfpcnote{
+        And here we can how you might use these functions to handle instances of
+        this new type.
+    }}
+
+    \only<3>{\pdfpcnote{
+        But because you're managing resources manually, you'd better make sure
+        you free everything! \\
+        \\
+        Now, I'm not gonna lie, this is very cumbersome to have to manually
+        manage your resources like this! But it does have one genuine benefit,
+        too - you can see in your code precisely where everything is acquired or
+        released. Especially for low-level or real-time programs, it can be
+        useful to know that every instruction that the CPU executes is due to
+        code that you wrote. \\
+        \\
+        However, it's fair to say that most programmers have decided that that
+        benefit is not worth the extra work needed to manage resources manually
+        - at least for memory!
+    }}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -435,6 +781,34 @@
 
     \showlisting<5>[firstline=3,lastline=14]{5mm}{10mm}{17em}{rust}{examples/memory.rs}
     \showlisting<5>[firstline=16,lastline=19]{155mm - 21em}{10mm}{21em}{rust}{examples/memory.rs}
+
+    \only<1>{\pdfpcnote{
+        If you want to avoid that manual bookkeeping, a simple choice would be
+        to use a language that does this bookkeeping for you. Here we see the
+        same example in Go,
+    }}
+
+    \only<2>{\pdfpcnote{
+        and in Python, both of which use garbage collectors to manage memory for
+        you.
+    }}
+
+    \only<3>{\pdfpcnote{
+        Garbage collection is not your only option! C++ "smart pointers" are
+        another approach that is just as automatic. Here's the C++ version that
+        manually manages memory, like our original C version.
+    }}
+
+    \only<4>{\pdfpcnote{
+        And here's the C++ that uses unique_ptr and shared_ptr, which
+        automatically release the underlying memory when the pointer goes out of
+        scope.
+    }}
+
+    \only<5>{\pdfpcnote{
+        Rust has a similar facility, but its smart pointers are called "Box" and
+        "Arc" instead of "unique_ptr" and "shared_ptr".
+    }}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -450,6 +824,73 @@
     \showlisting<5>[lastline=3]{80mm - 9em}{10mm}{18em}{python}{examples/files.py}
 
     \showlisting<6>[firstline=3,lastline=8]{80mm - 10em}{10mm}{20em}{zig}{examples/files.zig}
+
+    \only<1>{\pdfpcnote{
+        Of course, memory is not the only resource that we have to manage. For
+        example, you might need to open a local file and save some data to it.
+        Your OS limits the number of files that your program can have open at
+        any time. How does your language help you remember to _close_ the file
+        when you're done? \\
+        \\
+        As you might expect, in C, the language doesn't help you - you have to
+        remember to close the file yourself. Note how cleanup and error handling
+        interact with each other! If there are multiple exit points in our
+        function, we have to remember to clean up after ourselves after all of
+        them!
+    }}
+
+    \only<2>{\pdfpcnote{
+        The pattern that we saw in C++ for managing memory works for other
+        resources too. The general name of the pattern is "RAII" - Resource
+        Acquisition is Initialization. You create an object that will _clean up
+        itself_ when it goes out of scope. unique_ptr cleans up memory, ofstream
+        cleans up an open file. Because RAII is tied to the lifetime of a value,
+        this process is entirely deterministic - you can tell exactly when each
+        resource will be freed. And RAII combines nicely with exceptions: even
+        if one of the file I/O functions raises an exception, the file will be
+        correctly closed, without us having to write any extra code.
+    }}
+
+    \only<3>{\pdfpcnote{
+        Like with smart pointers, Rust uses RAII to manage most resources as
+        well. And RAII plays just as nicely with error values. If either of the
+        ? operators returns an error, the file will be correctly closed.
+    }}
+
+    \only<4>{\pdfpcnote{
+        How does this work in a garbage collected language? You might be tempted
+        to use a similar trick, and have a garbage-collected object manage the
+        resource for you. However, garbage collection is typically
+        nondeterministic - there's no guarantee _when_ your objects will be
+        freed, just that they will be _eventually_. That's not good enough for
+        managing resources like open files, where you usually want to ensure
+        that the file is closed _as soon as you're done using it_. \\
+        \\
+        Go's solution is the "defer" statement. It "registers" a function call,
+        which is guaranteed to be called once the enclosing function returns,
+        regardless of _where_ the function returns.
+    }}
+
+    \only<5>{\pdfpcnote{
+        Python's approach is the "with" statement. You provide a "context
+        manager", which is a special kind of value that knows how to "start" and
+        "stop", or "open" and "close", itself. The with statement guarantees
+        that the context manager will be opened before any of the statements in
+        the body, and that it will be closed after the with statement is done
+        executing - again, no matter _how_ or _where_ control leaves the with
+        statement.
+    }}
+
+    \only<6>{\pdfpcnote{
+        To wrap things up in this section, we can look at Zig, which is an
+        intersting hybrid of all of the approaches we've seen so far. Like C,
+        the Zig ethos is that every instruction the CPU executes should be
+        visible in the code - so no "hidden" behavior like RAII guards. It uses
+        a defer statement like Go to ensure that resources are freed. Its error
+        handling is more like Rust, where fallible functions _either_ return a
+        value or an error, and it has an analogue to Rust's ? operator, though
+        it's spelled "try".
+    }}
 \end{frame}
 
 
@@ -471,6 +912,24 @@
         \picturecredit{Mark Gunn}{Time to tern in}{CC-BY-2.0}{https://flic.kr/p/NHDXRb}
         \includegraphics[width=160mm]{terns-resting.jpg}
     \end{textblock*}
+
+    \pdfpcnote{
+        We've come to the end of our journey. We still have a multitude of
+        programming languages (and always will!). But hopefully I've been able
+        to add a bit of order to that multitude for you today. \\
+        \\
+        If you've encountered a new style of programming that used to be
+        completely alien to you, consider if there are any parts of it that you
+        can bring back to your native language and ecosystem. If there aren't,
+        you can at least be thankful that you now have a better, more mindful
+        appreciation for the ways things are done in your language. And if you
+        do find yourself with some spare time for personal learning and
+        experimentation, consider implementing a toy project in a language
+        that's completely outside your comfort zone. It will be worth the
+        effort! \\
+        \\
+        Thanks for your time!
+    }
 \end{frame}
 
 
