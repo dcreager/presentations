@@ -923,8 +923,8 @@
 \begin{frame}[fragile]
     \frametitle{Goroutines}
 
-    \showlisting<1>[firstline=5,lastline=22]{80mm - 10em}{10mm}{20em}{go}{examples/download.go}
-    \showlisting<2>[firstline=5,lastline=10]{80mm - 10em}{10mm}{20em}{go}{examples/download-goroutine.go}
+    \showlisting<1>[firstline=5,lastline=22]{80mm - 10.5em}{10mm}{21em}{go}{examples/download.go}
+    \showlisting<2>[firstline=5,lastline=10]{80mm - 10.5em}{10mm}{21em}{go}{examples/download-goroutine.go}
     \showlisting<3>[firstline=7,lastline=27]{80mm - 12em}{10mm}{24em}{go}{examples/download-syncgroup.go}
 
     \only<1>{\pdfpcnote{
@@ -934,7 +934,7 @@
         can call that actually performs the download.) \\
         \\
         An important thing to note about this program is that the Download
-        function is a _blocking_ call — it won't return until the requested file
+        function is a _blocking_ call - it won't return until the requested file
         has been fully downloaded. That means that the second download doesn't
         start until the first one is done. That's probably not the most
         efficient strategy, since we don't know how far away the three servers
@@ -951,15 +951,16 @@
 
     \only<2>{\pdfpcnote{
         Go provides a nice facility for performing work concurrently, by
-        creating a new "goroutine" for each download. Each goroutine is a block
-        of code, and Go's runtime takes care of scheduling goroutines
-        efficiently across however many CPUs are available. Importantly, if any
-        goroutine is blocked - waiting for a response from another machine, for
-        instance - the Go scheduler automatically moves it aside to allow other
-        goroutines to proceed. \\
+        creating a new "goroutine" for each download. This is what the
+        concurrent version looks like, by performing each Download call within a
+        separate goroutine. \\
         \\
-        This is what the concurrent version looks like, by performing each
-        Download call within a separate goroutine. \\
+        Each goroutine is a separate flow of code, which looks and acts like its
+        own independent synchronous process. Go's runtime takes care of
+        scheduling goroutines efficiently across however many CPUs are
+        available. Importantly, if any goroutine is blocked - waiting for an I/O
+        operation to complete, for instance - the Go scheduler automatically
+        moves it aside to allow other goroutines to proceed. \\
         \\
         However, we've lost two things with this implementation. First, we no
         longer have access to the error value that tells us if a download fails.
@@ -969,10 +970,11 @@
     }}
 
     \only<3>{\pdfpcnote{
-        Go provides several helper types in its standard library to handle these
-        kinds of situation. In particular, we can use a "WaitGroup" to wait for
-        all three goroutines to finish before returning. Because the downloads
-        happen in goroutines, they still get to run concurrently.
+        Those problems are not insurmountable. Go provides several helper types
+        in its standard library to handle these kinds of situation. In
+        particular, we can use a "WaitGroup" to wait for all three goroutines to
+        finish before returning. Because the downloads happen in goroutines,
+        they still get to run concurrently.
     }}
 \end{frame}
 
@@ -980,29 +982,123 @@
     \frametitle{OS threads}
 
     \showlisting<1>[firstline=6,lastline=17]{80mm - 12em}{10mm}{24em}{python}{examples/download-threads.py}
+    \showlisting<2>[firstline=6,lastline=15]{80mm - 12em}{10mm}{24em}{python}{examples/download-threads-many.py}
 
     \only<1>{\pdfpcnote{
         Next we can look at what this example might look like another language.
         Here we see a Python version that superficially looks like it's doing
         the same thing. However, there's an important difference: this code is
-        spawning _OS_ threads instead of _goroutines_ to handle each download.
+        spawning _OS_ threads instead of _goroutines_ to handle each download. \\
+        \\
+        The programming model is very similar - you have multiple independent
+        flows of code, which can execute concurrently. You make blocking I/O
+        calls without worrying how long they will take, and let the scheduler
+        worry about moving them aside to allow other work to proceed. \\
+        \\
+        The primary difference is how those flows are managed. Goroutines are an
+        example of "green" threads, which means that they are managed inside
+        your program itself. (In the case of Go, this is provided by the Go
+        runtime, not by any code you have to write yourself.) OS threads, on the
+        other hand, are managed by your machine's operating system.
+    }}
+
+    \only<2>{\pdfpcnote{
+        This single difference has quite a lot of ramifications. A good rule of
+        thumb is that OS threads are "heavy", since they have a footprint down
+        in your OS kernel. That means you should try to avoid creating lots of
+        them (where "lots" is on the order of 10s of thousands and higher).
+        Whereas green threads are just regular data structures inside your
+        program, and it's typically no problem to create millions of them, if
+        that's the right way to structure your program. \\
+        \\
+        On the other hand, a green thread scheduler is its own API, which your
+        code must know how to interact with. Again, with Go, this is handled for
+        you by the language and the standard library. But it means, for
+        instance, that it's hard to call code written in another language from
+        your Go code, since that "foreign" code won't know how to interact with
+        the Go scheduler. OS threads, on the other hand, are managed by the
+        kernel, and contain any code, written in any language, that the machine
+        knows how to execute.
     }}
 \end{frame}
 
 \begin{frame}[fragile]
     \frametitle{Async / futures / promises / tasks}
 
-    \showlisting<1>[firstline=6,lastline=11]{80mm - 10em}{10mm}{20em}{python}{examples/download-tasks.py}
-    \showlisting<2>[firstline=8,lastline=15]{80mm - 10em}{10mm}{20em}{rust}{examples/download.rs}
-    \showlisting<3>[firstline=1,lastline=7]{80mm - 10em}{10mm}{20em}{javascript}{examples/download.js}
+    \showlisting<1,3>[firstline=1,lastline=7]{80mm - 12.5em}{10mm}{25em}{javascript}{examples/download-serial.js}
+    \showlisting<2>[firstline=1,lastline=7]{80mm - 10.5em}{10mm}{21em}{javascript}{examples/download-concurrent.js}
+    \showlisting<4>[firstline=1,lastline=7]{80mm - 13em}{10mm}{26em}{javascript}{examples/download-async-serial.js}
+    \showlisting<5>[firstline=1,lastline=7]{80mm - 10em}{10mm}{20em}{javascript}{examples/download-async-concurrent.js}
+    \showlisting<6>[firstline=6,lastline=11]{80mm - 10em}{10mm}{20em}{python}{examples/download-tasks.py}
+    \showlisting<7>[firstline=8,lastline=15]{80mm - 10.5em}{10mm}{21em}{rust}{examples/download.rs}
 
     \only<1>{\pdfpcnote{
-        async: Go solution requires tight coupling between language, stdlib, and
-        runtime scheduler. OS thread solution can be inefficient with > 10,000
-        threads. Async makes it clearer in the code where the potential
-        "blocking" points are. Also allows scheduler to be just another library
-        component. Same syntax to enqueue tasks in e.g. separate work pools vs
-        the global event loop.
+        So far we've seen two examples of the same basic programming model: you
+        spawn multiple flows of synchronous blocking code, and let a scheduler
+        take care of executing those efficiently. \\
+        \\
+        There is another model that is equally popular, _asynchronous_ or
+        _event-driven_ I/O. Here we can see what an async version of our example
+        looks like, using JavaScript's original "Promise" API. Here, our
+        download function doesn't block until the download is finished; instead,
+        it creates a "promise" or "future", which you can think of as a handle
+        to the I/O operation that's could proceed concurrently in the
+        background. The promise will fire an event when the operation has
+        finished, and we can register handlers to execute additional code when
+        those events fire.
+    }}
+
+    \only<2>{\pdfpcnote{
+        In this case, the way that we've chained these operations together
+        actually means that the downloads will execute sequentially, just like
+        with our initial attempt in Go. To make the downloads happen
+        sequentially, we can use the "Promise.all" method provided by
+        JavaScript.
+    }}
+
+    \only<3>{\pdfpcnote{
+        Looking back at the original JavaScript, though, we can already see an
+        example of what people refer to as "callback hell". We end up creating a
+        chain of callbacks to handle each of the discrete blocking steps that
+        can occur in a larger I/O operation. If we're not careful, this can lead
+        to some hard-to-follow code, as our callback handlers creep further and
+        further to the right.
+    }}
+
+    \only<4>{\pdfpcnote{
+        To solve this, JavaScript provides special syntax for defining functions
+        that work with promises. Here's what the sequential version looks like
+        with this syntax. A function can be marked "async", to indicate that
+        when you call it, it will return a _promise_ that will execute the
+        function body concurrently, instead of immediately executing in a
+        blocking fashion. Inside an async function, you use the "await" keyword
+        to make calls to _other_ async functions.
+    }}
+
+    \only<5>{\pdfpcnote{
+        And here we can see how our Promise.all example looks with async/await.
+        Some people like this syntax because it makes it obvious in the code
+        which steps could possibly block. Other people dislike this syntax
+        because of what they call the "function coloring" problem - you can only
+        (easily) call an async function from some other async function, so
+        "async-ness" can easily become viral, requiring you to mark a function
+        as async even though it's not really doing any blocking work itself. \\
+        \\
+        And lastly, this asynchronous pattern is not limited to JavaScript.
+    }}
+
+    \only<6>{\pdfpcnote{
+        Here we can see the equivalent in Python
+    }}
+
+    \only<7>{\pdfpcnote{
+        and in Rust. Rust's implementation highlights another benefit of the
+        async style. Async functions are just special syntax for a function that
+        returns a promise, and a promise is a perfectly normal value. That means
+        that you can write _custom_ schedulers, and possibly even have multiple
+        schedulers in the same program. That lets you use the same syntax to
+        enqueue tasks into separate thread pools or the global event loop,
+        should that be useful.
     }}
 \end{frame}
 

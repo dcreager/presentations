@@ -1,7 +1,7 @@
 import threading
 
 def download(url):
-    pass
+    print(url)
 
 def download_files():
     a = download_one("https://a.example.com/a.csv")
