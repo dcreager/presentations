@@ -620,169 +620,159 @@
     \begin{center}
     \scalebox{0.6}{
     \begin{tikzpicture}
-        \node (root)       [highlight node on={<2,3,4,20,27>}]
+        \node (root)       [highlight node on={<17,24>}]
                            [root node]                            {};
 
-        \node (stove)      [highlight node on={<2,28>}]
+        \node (stove)      [highlight node on={<25>}]
                            [definition]  [below=4em of root] {stove};
-        \node (dot)        [highlight node on={<2,29>}]
+        \node (dot)        [highlight node on={<26>}]
                            [pop]         [left=of stove]          {.};
-        \node (s1)         [highlight node on={<2,30>}]
+        \node (s1)         [highlight node on={<27>}]
                            [anon scope]  [left=of dot]            {};
 
-        \node (s2)         [highlight node on={<2,31>}]
+        \node (s2)         [highlight node on={<28>}]
                            [anon scope]  [above=\scopegap of s1]  {};
-        \node (Stove def)  [highlight node on={<2,32>}]
+        \node (Stove def)  [highlight node on={<29>}]
                            [definition]  [left=of s2]             {Stove};
-        \node (s3)         [highlight node on={<2>}]
-                           [anon scope]  [above=\scopegap of s2]  {};
+        \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
 
-        \node (call)       [highlight node on={<2,33>}]
+        \node (call)       [highlight node on={<30>}]
                            [pop]  [left=of Stove def]             {()};
-        \node (instance)   [highlight node on={<2,34>}]
+        \node (instance)   [highlight node on={<31>}]
                            [exported scope]  [left=of call]       {IM};
-        \node (member)     [highlight node on={<2,35>}]
+        \node (member)     [highlight node on={<32>}]
                            [pop]  [left=of instance]              {.};
-        \node (m1)         [highlight node on={<2,36>}]
+        \node (m1)         [highlight node on={<33>}]
                            [anon scope]  [left=of member]         {};
 
         \setwidestsymbol{broil}
-        \node (m2)         [highlight node on={<2,37>}]
+        \node (m2)         [highlight node on={<34>}]
                            [anon scope]  [above=\scopegap of m1]  {};
-        \node (saute def)  [highlight node on={<2>}]
-                           [definition]  [left=of m2]             {\sized{saute}};
-        \node (m3)         [highlight node on={<2,38>}]
+        \node (saute def)  [definition]  [left=of m2]             {\sized{saute}};
+        \node (m3)         [highlight node on={<35>}]
                            [anon scope]  [above=\scopegap of m2]  {};
-        \node (broil def)  [highlight node on={<2,5,39>}]
+        \node (broil def)  [highlight node on={<2,36>}]
                            [definition]  [left=of m3]             {\sized{broil}};
-        \node (m4)         [highlight node on=<2>]
-                           [anon scope]  [above=\scopegap of m3]  {};
-        \node (bake def)   [highlight node on=<2>]
-                           [definition]  [left=of m4]             {\sized{bake}};
-        \node (m5)         [highlight node on=<2>]
-                           [anon scope]  [above=\scopegap of m4]  {};
+        \node (m4)         [anon scope]  [above=\scopegap of m3]  {};
+        \node (bake def)   [definition]  [left=of m4]             {\sized{bake}};
+        \node (m5)         [anon scope]  [above=\scopegap of m4]  {};
 
         \path [-Stealth]
-          (root)      edge [highlight inner edge on=<5>, show path on=<28>] (stove)
-          (stove)     edge [highlight inner edge on=<5>, show path on=<29>] (dot)
-          (dot)       edge [highlight inner edge on=<5>, show path on=<30>] (s1)
-          (s1)        edge [highlight inner edge on=<5>, show path on=<31>] (s2)
+          (root)      edge [highlight inner edge on=<2>, show path on=<25>] (stove)
+          (stove)     edge [highlight inner edge on=<2>, show path on=<26>] (dot)
+          (dot)       edge [highlight inner edge on=<2>, show path on=<27>] (s1)
+          (s1)        edge [highlight inner edge on=<2>, show path on=<28>] (s2)
           (s2)        edge (s3)
-                      edge [highlight inner edge on=<5>, show path on=<32>] (Stove def)
-          (Stove def) edge [highlight inner edge on=<5>, show path on=<33>] (call)
-          (call)      edge [highlight inner edge on=<5>, show path on=<34>] (instance)
-          (instance)  edge [highlight inner edge on=<5>, show path on=<35>] (member)
-          (member)    edge [highlight inner edge on=<5>, show path on=<36>] (m1)
-          (m1)        edge [highlight inner edge on=<5>, show path on=<37>] (m2)
-          (m2)        edge [highlight inner edge on=<5>, show path on=<38>] (m3)
+                      edge [highlight inner edge on=<2>, show path on=<29>] (Stove def)
+          (Stove def) edge [highlight inner edge on=<2>, show path on=<30>] (call)
+          (call)      edge [highlight inner edge on=<2>, show path on=<31>] (instance)
+          (instance)  edge [highlight inner edge on=<2>, show path on=<32>] (member)
+          (member)    edge [highlight inner edge on=<2>, show path on=<33>] (m1)
+          (m1)        edge [highlight inner edge on=<2>, show path on=<34>] (m2)
+          (m2)        edge [highlight inner edge on=<2>, show path on=<35>] (m3)
                       edge (saute def)
           (m3)        edge (m4)
-                      edge [highlight end edge on=<5>, show path on=<39>]   (broil def)
+                      edge [highlight end edge on=<2>, show path on=<36>]   (broil def)
           (m4)        edge (m5)
                       edge (bake def)
           ;
 
-        \node (kitchen)      [highlight node on={<3,21>}]
+        \node (kitchen)      [highlight node on={<18>}]
                              [definition]  [above=4em of root]  {kitchen};
-        \node (dot)          [highlight node on={<3,22>}]
+        \node (dot)          [highlight node on={<19>}]
                              [pop]         [left=of kitchen]        {.};
-        \node (k1)           [highlight node on={<3,23>}]
+        \node (k1)           [highlight node on={<20>}]
                              [anon scope]  [left=of dot]            {};
 
-        \node (k2)           [highlight node on={<3,24>}]
+        \node (k2)           [highlight node on={<21>}]
                              [anon scope]  [above=\scopegap of k1]  {};
-        \node (reimport dot) [highlight node on={<3,25>}]
+        \node (reimport dot) [highlight node on={<22>}]
                              [push]        [left=of k2]             {.};
-        \node (reimport mod) [highlight node on={<3,26>}]
+        \node (reimport mod) [highlight node on={<23>}]
                              [push]        [left=of reimport dot]   {stove};
-        \node (k3)           [highlight node on=<3>]
-                             [anon scope]  [above=\scopegap of k2]  {};
+        \node (k3)           [anon scope]  [above=\scopegap of k2]  {};
 
         \path [-Stealth]
-          (root)         edge [highlight inner edge on=<5>, show path on=<21>] (kitchen)
-          (kitchen)      edge [highlight inner edge on=<5>, show path on=<22>] (dot)
-          (dot)          edge [highlight inner edge on=<5>, show path on=<23>] (k1)
-          (k1)           edge [highlight inner edge on=<5>, show path on=<24>] (k2)
+          (root)         edge [highlight inner edge on=<2>, show path on=<18>] (kitchen)
+          (kitchen)      edge [highlight inner edge on=<2>, show path on=<19>] (dot)
+          (dot)          edge [highlight inner edge on=<2>, show path on=<20>] (k1)
+          (k1)           edge [highlight inner edge on=<2>, show path on=<21>] (k2)
           (k2)           edge (k3)
-                         edge [highlight inner edge on=<5>, show path on=<25>] (reimport dot)
-          (reimport dot) edge [highlight inner edge on=<5>, show path on=<26>] (reimport mod)
+                         edge [highlight inner edge on=<2>, show path on=<22>] (reimport dot)
+          (reimport dot) edge [highlight inner edge on=<2>, show path on=<23>] (reimport mod)
           (reimport mod) edge [overlay, in control=+(135:2cm), out control=+(-90:1.5cm)]
-                              [highlight inner edge on=<5>, show path on=<27>] (root)
+                              [highlight inner edge on=<2>, show path on=<24>] (root)
           ;
 
-        \node (chef)       [highlight node on=<4>]
-                           [definition]  [right=3em of root]      {chef};
-        \node (dot)        [highlight node on=<4>]
-                           [pop]         [right=of chef]          {.};
-        \node (c1)         [highlight node on=<4>]
-                           [anon scope]  [right=of dot]           {};
+        \node (chef)       [definition]  [right=3em of root]      {chef};
+        \node (dot)        [pop]         [right=of chef]          {.};
+        \node (c1)         [anon scope]  [right=of dot]           {};
 
-        \node (c2)         [highlight node on={<4,10>}]
+        \node (c2)         [highlight node on={<7>}]
                            [anon scope]  [above=\scopegap of c1]  {};
-        \node (stove ref)  [highlight node on={<4,9>}]
+        \node (stove ref)  [highlight node on={<6>}]
                            [reference]   [right=of c2]            {stove};
-        \node (member dot) [highlight node on={<4,8>}]
+        \node (member dot) [highlight node on={<5>}]
                            [push]        [right=of stove ref]     {.};
-        \node (broil ref)  [highlight node on={<4,5,7>}]
+        \node (broil ref)  [highlight node on={<2,4>}]
                            [reference]   [right=of member dot]    {broil};
-        \node (c3)         [highlight node on={<4,11>}]
+        \node (c3)         [highlight node on={<8>}]
                            [anon scope]  [above=\scopegap of c2]  {};
-        \node (stove def)  [highlight node on={<4,12>}]
+        \node (stove def)  [highlight node on={<9>}]
                            [definition]  [right=of c3]            {stove};
-        \node (Stove call) [highlight node on={<4,13>}]
+        \node (Stove call) [highlight node on={<10>}]
                            [push]        [right=of stove def]     {()};
-        \node (Stove ref)  [highlight node on={<4,14>}]
+        \node (Stove ref)  [highlight node on={<11>}]
                            [reference]   [right=of Stove call]    {Stove};
-        \node (c4)         [highlight node on={<4,15>}]
+        \node (c4)         [highlight node on={<12>}]
                            [anon scope]  [above=\scopegap of c3]  {};
-        \node (import def) [highlight node on={<4,16>}]
+        \node (import def) [highlight node on={<13>}]
                            [pop]         [right=of c4]            {Stove};
-        \node (import ref) [highlight node on={<4,17>}]
+        \node (import ref) [highlight node on={<14>}]
                            [push]        [right=of import def]    {Stove};
-        \node (import dot) [highlight node on={<4,18>}]
+        \node (import dot) [highlight node on={<15>}]
                            [push]        [right=of import ref]    {.};
-        \node (import mod) [highlight node on={<4,19>}]
+        \node (import mod) [highlight node on={<16>}]
                            [push]        [right=of import dot]    {kitchen};
-        \node (c5)         [highlight node on=<4>]
-                           [anon scope]  [above=\scopegap of c4]  {};
+        \node (c5)         [anon scope]  [above=\scopegap of c4]  {};
 
         \path [-Stealth]
           (root)       edge (chef)
           (chef)       edge (dot)
           (dot)        edge (c1)
           (c1)         edge (c2)
-          (broil ref)  edge [highlight inner edge on=<5>, show path on=<8>] (member dot)
-          (member dot)  edge [highlight inner edge on=<5>, show path on=<9>] (stove ref)
-          (stove ref)  edge [highlight inner edge on=<5>, show path on=<10>] (c2)
-          (c2)         edge [highlight inner edge on=<5>, show path on=<11>] (c3)
+          (broil ref)  edge [highlight inner edge on=<2>, show path on=<5>] (member dot)
+          (member dot)  edge [highlight inner edge on=<2>, show path on=<6>] (stove ref)
+          (stove ref)  edge [highlight inner edge on=<2>, show path on=<7>] (c2)
+          (c2)         edge [highlight inner edge on=<2>, show path on=<8>] (c3)
           (c3)         edge (c4)
-                       edge [highlight inner edge on=<5>, show path on=<12>] (stove def)
-          (stove def)  edge [highlight inner edge on=<5>, show path on=<13>] (Stove call)
-          (Stove call) edge [highlight inner edge on=<5>, show path on=<14>] (Stove ref)
-          (Stove ref)  edge [highlight inner edge on=<5>, show path on=<15>] 
+                       edge [highlight inner edge on=<2>, show path on=<9>] (stove def)
+          (stove def)  edge [highlight inner edge on=<2>, show path on=<10>] (Stove call)
+          (Stove call) edge [highlight inner edge on=<2>, show path on=<11>] (Stove ref)
+          (Stove ref)  edge [highlight inner edge on=<2>, show path on=<12>] 
                             [in control=+(-65:1cm), out control=+(90:1cm)] (c4)
           (c4)         edge (c5)
-                       edge [highlight inner edge on=<5>, show path on=<16>] (import def)
-          (import def) edge [highlight inner edge on=<5>, show path on=<17>] (import ref)
-          (import ref) edge [highlight inner edge on=<5>, show path on=<18>] (import dot)
-          (import dot) edge [highlight inner edge on=<5>, show path on=<19>] (import mod)
+                       edge [highlight inner edge on=<2>, show path on=<13>] (import def)
+          (import def) edge [highlight inner edge on=<2>, show path on=<14>] (import ref)
+          (import ref) edge [highlight inner edge on=<2>, show path on=<15>] (import dot)
+          (import dot) edge [highlight inner edge on=<2>, show path on=<16>] (import mod)
           (import mod) edge [overlay, in control=+(-45:3cm), out control=+(-90:6cm)]
-                            [highlight inner edge on=<5>, show path on=<20>] (root)
+                            [highlight inner edge on=<2>, show path on=<17>] (root)
           ;
     \end{tikzpicture}
     }
     \vskip 2em
     \begin{tabular}{m{5em} m{14em}}
-        \only<6- >                   {\textsmaller[2]{Symbol stack:}} &
-        \only<6,39>                  {$\nilsymbolstack$}
-        \only<7,35-38>               {$\symbolstack{broil}$}
-        \only<8,12,33-34>            {$\symbolstack{.broil}$}
-        \only<9-11>                  {$\symbolstack{stove.broil}$}
-        \only<13,16,32>              {$\symbolstack{().broil}$}
-        \only<14-15,17,22-24,29-31>  {$\symbolstack{Stove().broil}$}
-        \only<18,21,25,28>           {$\symbolstack{.Stove().broil}$}
-        \only<19-20>                 {$\symbolstack{kitchen.Stove().broil}$}
-        \only<26-27>                 {$\symbolstack{stove.Stove().broil}$}
+        \only<3- >                   {\textsmaller[2]{Symbol stack:}} &
+        \only<3,36>                  {$\nilsymbolstack$}
+        \only<4,32-35>               {$\symbolstack{broil}$}
+        \only<5,9,30-31>             {$\symbolstack{.broil}$}
+        \only<6-8>                   {$\symbolstack{stove.broil}$}
+        \only<10,13,29>              {$\symbolstack{().broil}$}
+        \only<11-12,14,19-21,26-28>  {$\symbolstack{Stove().broil}$}
+        \only<15,18,22,25>           {$\symbolstack{.Stove().broil}$}
+        \only<16-17>                 {$\symbolstack{kitchen.Stove().broil}$}
+        \only<23-24>                 {$\symbolstack{stove.Stove().broil}$}
     \end{tabular}
     \end{center}
 \end{frame}
