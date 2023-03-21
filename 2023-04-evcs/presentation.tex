@@ -2,6 +2,7 @@
 \mode<presentation>
 
 \usepackage{adjustbox}
+\usepackage{array}
 \usepackage{relsize}
 \usepackage{graphicx}
 \usepackage[overlay,absolute]{textpos}
@@ -9,6 +10,8 @@
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta}
 \usetikzlibrary{positioning}
+\usetikzlibrary{shapes.multipart}
+\usetikzlibrary{shadows}
 \usetikzlibrary{tikzmark}
 
 \graphicspath{{../images}}
@@ -118,6 +121,199 @@
         rectangle
         ([xshift=1pt, yshift=-2pt] pic cs:#1_end)
         ;
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% stack graph stuff
+
+\newlength{\scopegap}
+\setlength{\scopegap}{0.9cm}
+
+\newcommand\scoped[2]{#1 \lfloor #2 \rfloor}
+\newcommand\nilsymbolstack{\mathit{\diamond}}
+\newcommand\nilscopestack{\mathit{\circ}}
+
+\newcommand\PushSymbol[1]{$\mathit{\textrm{\raisebox{0.05em}{\scriptsize $\downarrow$}} \; \texttt{#1}}$}
+\newcommand\PushScopedSymbol[2]{$\mathit{\textrm{\raisebox{0.05em}{\scriptsize $\downarrow$}} \; \scoped{\texttt{#1}}{#2}}$}
+\newcommand\PopSymbol[1]{$\mathit{\textrm{\raisebox{0.05em}{\scriptsize $\uparrow$}} \; \texttt{#1}}$}
+\newcommand\PopScopedSymbol[1]{$\mathit{\textrm{\raisebox{0.05em}{\scriptsize $\uparrow$}} \; \scoped{\texttt{#1}}{\bullet}}$}
+
+\definecolor{sgdef}  {RGB}{159,0,0}
+\definecolor{sgpop}  {RGB}{230,142,131}
+\definecolor{sgref}  {RGB}{0,112,196}
+\definecolor{sgpush} {RGB}{161,190,230}
+\definecolor{sgjump} {RGB}{161,64,140}
+
+\newcommand\scopestackelement[1]{\textsf{\textcolor{sgjump}{#1}}}
+
+\tikzset{root node/.style={
+    node distance=0.5cm,
+    circle, fill=black, inner sep=0pt,
+    minimum size=0.35cm
+}}
+
+\tikzset{anon scope/.style={
+    node distance=0.5cm,
+    circle, fill=white, inner sep=0pt,
+    draw=black, semithick,
+    minimum size=0.35cm
+}}
+
+\tikzset{named scope/.style={
+    node distance=0.5cm,
+    circle, fill=white,
+    draw=black, thick, node font={\smaller[2]},
+    minimum size=0.35cm
+}}
+
+\tikzset{exported scope/.style={
+    node distance=0.5cm,
+    circle, fill=white,
+    draw=sgjump, thick, text=sgjump, node font={\smaller[2]},
+    minimum size=0.35cm
+}}
+
+\tikzset{symbol text/.style={
+    fill=white,
+    text height=1.5ex, text depth=0.25ex, node font={\ttfamily \relscale{0.8}},
+    inner xsep=7pt,
+    minimum size=0.75cm,
+}}
+
+\tikzset{definition/.style={
+    node distance=0.5cm,
+    draw=sgdef, thick,
+    text=sgdef, symbol text,
+}}
+
+\tikzset{pop/.style={
+    node distance=0.5cm,
+    rectangle split,
+    rectangle split parts=2,
+    rectangle split horizontal,
+    rectangle split draw splits=false,
+    rectangle split ignore empty parts,
+    draw=sgpop, thick, densely dashed,
+    text=sgpop, symbol text,
+}}
+\newcommand{\popscope}{
+    \nodepart{two}
+    \hspace{-12pt}
+    \tikz \node [circle, fill=sgjump, inner sep=0pt, minimum size=0.25cm] {};
+}
+
+\tikzset{reference/.style={
+    node distance=0.5cm,
+    draw=sgref, thick,
+    text=sgref, symbol text,
+}}
+
+\tikzset{push/.style={
+    node distance=0.5cm,
+    rectangle split,
+    rectangle split parts=2,
+    rectangle split horizontal,
+    rectangle split draw splits=false,
+    rectangle split ignore empty parts,
+    draw=sgpush, thick, densely dashed,
+    text=sgpush, symbol text,
+}}
+\newcommand{\pushscope}[1]{
+    \nodepart{two}
+    \hspace{-12pt}
+    \tikz \node [
+        circle, fill=white,
+        draw=sgjump,
+        text=sgjump, inner sep=2pt,
+        minimum size=0.25cm
+    ] {\tiny #1};
+}
+
+\tikzset{control node/.style={
+    node distance=0.5cm,
+    draw=sgjump, thick,
+    fill=white,
+    text=sgjump,
+    inner xsep=7pt, inner ysep=5pt,
+    node font={\sffamily \smaller[1]},
+}}
+
+\newcommand{\widestsymbol}{}
+\newcommand{\setwidestsymbol}[1]{\renewcommand{\widestsymbol}{#1}}
+\newcommand{\sized}[2][\widestsymbol]{\makebox[\widthof{#1}]{#2}}
+
+\tikzset{
+  alt/.code args={<#1>#2#3}{%
+    \alt<#1>{\pgfkeysalso{#2}}{\pgfkeysalso{#3}} % \pgfkeysalso doesn't change the path
+  }
+}
+
+\tikzset{
+    highlight node/.style={
+        general shadow={fill=black, opacity=0.3},
+        shadow scale=1, shadow xshift=2pt, shadow yshift=-2pt
+    }
+}
+\tikzset{
+    highlight node on/.code args={<#1>}{%
+        \alt<#1>{\pgfkeysalso{highlight node}}{}%
+    }
+}
+
+\tikzset{
+    invisible/.style={opacity=0},
+    visible on/.code args={<#1>}{%
+        \alt<#1>{}{\pgfkeysalso{invisible}}%
+    }
+}
+
+% Animating paths in a stack graph picture
+%   Just add [highlighted on=<slide>] to an edge's style.  The line of the edge
+%   will be blue and extra thick on <slide> AND ALL LATER SLIDES.  It will have
+%   an arrowhead on SLIDE.
+%
+%   Together, this means that you add this to all of the edges that comprise a
+%   path, with increasing <slide> values for each one, and beamer will create an
+%   overlay animation showing the edges of the path get highlighted in order
+%   each time you advance to the next slide.
+\tikzset{highlight edge/.style={line width=2pt, blue, -}}
+\tikzset{highlight edge frontier/.style={-{Triangle[length=4pt,width=4pt]}}}
+\tikzset{
+    show path on/.code args={<#1>}{%
+        \alt<#1- >{\pgfkeysalso{highlight edge}}{}%
+        \alt<#1  >{\pgfkeysalso{highlight edge frontier}}{}%
+    }
+}
+
+\tikzset{
+    highlight inner edge on/.code args={<#1>}{%
+        \alt<#1>{\pgfkeysalso{highlight edge}}{}%
+    }
+}
+\tikzset{
+    highlight end edge on/.code args={<#1>}{%
+        \alt<#1>{\pgfkeysalso{highlight edge, highlight edge frontier}}{}%
+    }
+}
+
+\newlength\stwlength
+\newcommand\makesamewidth[3][c]{%
+  \settowidth{\stwlength}{#2}%
+  \makebox[\stwlength][#1]{#3}%
+}
+
+\newcommand{\symbolstack}[1]{\langle \texttt{\relscale{0.8}#1} \rangle}
+
+\newcommand{\scopestack}[1]{( \textsf{\relscale{0.8}#1} )}
+
+\newcommand{\partialpath}[6]{%
+    $\{#1, #2\}$
+    \hspace{0.01em}
+    \scalebox{0.75}{\tikz[baseline={([yshift=-0.7ex] current bounding box.center)}] #3;}
+    \texttt{\relscale{0.8}\textasciitilde\textasciitilde>}  % all that just to get a ~~> ligature
+    \scalebox{0.75}{\tikz[baseline={([yshift=-0.7ex] current bounding box.center)}] #4;}
+    \hspace{0.01em}
+    $\{#5, #6\}$
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -417,6 +613,178 @@
         \adjincludegraphics[width=160mm]{inchworm.jpg}
     \end{textblock*}
     \shadowedtitle{26mm}{5mm}{Incremental processing}
+\end{frame}
+
+
+\begin{frame}[fragile]
+    \begin{center}
+    \scalebox{0.6}{
+    \begin{tikzpicture}
+        \node (root)       [highlight node on={<2,3,4,20,27>}]
+                           [root node]                            {};
+
+        \node (stove)      [highlight node on={<2,28>}]
+                           [definition]  [below=4em of root] {stove};
+        \node (dot)        [highlight node on={<2,29>}]
+                           [pop]         [left=of stove]          {.};
+        \node (s1)         [highlight node on={<2,30>}]
+                           [anon scope]  [left=of dot]            {};
+
+        \node (s2)         [highlight node on={<2,31>}]
+                           [anon scope]  [above=\scopegap of s1]  {};
+        \node (Stove def)  [highlight node on={<2,32>}]
+                           [definition]  [left=of s2]             {Stove};
+        \node (s3)         [highlight node on={<2>}]
+                           [anon scope]  [above=\scopegap of s2]  {};
+
+        \node (call)       [highlight node on={<2,33>}]
+                           [pop]  [left=of Stove def]             {()};
+        \node (instance)   [highlight node on={<2,34>}]
+                           [exported scope]  [left=of call]       {IM};
+        \node (member)     [highlight node on={<2,35>}]
+                           [pop]  [left=of instance]              {.};
+        \node (m1)         [highlight node on={<2,36>}]
+                           [anon scope]  [left=of member]         {};
+
+        \setwidestsymbol{broil}
+        \node (m2)         [highlight node on={<2,37>}]
+                           [anon scope]  [above=\scopegap of m1]  {};
+        \node (saute def)  [highlight node on={<2>}]
+                           [definition]  [left=of m2]             {\sized{saute}};
+        \node (m3)         [highlight node on={<2,38>}]
+                           [anon scope]  [above=\scopegap of m2]  {};
+        \node (broil def)  [highlight node on={<2,5,39>}]
+                           [definition]  [left=of m3]             {\sized{broil}};
+        \node (m4)         [highlight node on=<2>]
+                           [anon scope]  [above=\scopegap of m3]  {};
+        \node (bake def)   [highlight node on=<2>]
+                           [definition]  [left=of m4]             {\sized{bake}};
+        \node (m5)         [highlight node on=<2>]
+                           [anon scope]  [above=\scopegap of m4]  {};
+
+        \path [-Stealth]
+          (root)      edge [highlight inner edge on=<5>, show path on=<28>] (stove)
+          (stove)     edge [highlight inner edge on=<5>, show path on=<29>] (dot)
+          (dot)       edge [highlight inner edge on=<5>, show path on=<30>] (s1)
+          (s1)        edge [highlight inner edge on=<5>, show path on=<31>] (s2)
+          (s2)        edge (s3)
+                      edge [highlight inner edge on=<5>, show path on=<32>] (Stove def)
+          (Stove def) edge [highlight inner edge on=<5>, show path on=<33>] (call)
+          (call)      edge [highlight inner edge on=<5>, show path on=<34>] (instance)
+          (instance)  edge [highlight inner edge on=<5>, show path on=<35>] (member)
+          (member)    edge [highlight inner edge on=<5>, show path on=<36>] (m1)
+          (m1)        edge [highlight inner edge on=<5>, show path on=<37>] (m2)
+          (m2)        edge [highlight inner edge on=<5>, show path on=<38>] (m3)
+                      edge (saute def)
+          (m3)        edge (m4)
+                      edge [highlight end edge on=<5>, show path on=<39>]   (broil def)
+          (m4)        edge (m5)
+                      edge (bake def)
+          ;
+
+        \node (kitchen)      [highlight node on={<3,21>}]
+                             [definition]  [above=4em of root]  {kitchen};
+        \node (dot)          [highlight node on={<3,22>}]
+                             [pop]         [left=of kitchen]        {.};
+        \node (k1)           [highlight node on={<3,23>}]
+                             [anon scope]  [left=of dot]            {};
+
+        \node (k2)           [highlight node on={<3,24>}]
+                             [anon scope]  [above=\scopegap of k1]  {};
+        \node (reimport dot) [highlight node on={<3,25>}]
+                             [push]        [left=of k2]             {.};
+        \node (reimport mod) [highlight node on={<3,26>}]
+                             [push]        [left=of reimport dot]   {stove};
+        \node (k3)           [highlight node on=<3>]
+                             [anon scope]  [above=\scopegap of k2]  {};
+
+        \path [-Stealth]
+          (root)         edge [highlight inner edge on=<5>, show path on=<21>] (kitchen)
+          (kitchen)      edge [highlight inner edge on=<5>, show path on=<22>] (dot)
+          (dot)          edge [highlight inner edge on=<5>, show path on=<23>] (k1)
+          (k1)           edge [highlight inner edge on=<5>, show path on=<24>] (k2)
+          (k2)           edge (k3)
+                         edge [highlight inner edge on=<5>, show path on=<25>] (reimport dot)
+          (reimport dot) edge [highlight inner edge on=<5>, show path on=<26>] (reimport mod)
+          (reimport mod) edge [overlay, in control=+(135:2cm), out control=+(-90:1.5cm)]
+                              [highlight inner edge on=<5>, show path on=<27>] (root)
+          ;
+
+        \node (chef)       [highlight node on=<4>]
+                           [definition]  [right=3em of root]      {chef};
+        \node (dot)        [highlight node on=<4>]
+                           [pop]         [right=of chef]          {.};
+        \node (c1)         [highlight node on=<4>]
+                           [anon scope]  [right=of dot]           {};
+
+        \node (c2)         [highlight node on={<4,10>}]
+                           [anon scope]  [above=\scopegap of c1]  {};
+        \node (stove ref)  [highlight node on={<4,9>}]
+                           [reference]   [right=of c2]            {stove};
+        \node (member dot) [highlight node on={<4,8>}]
+                           [push]        [right=of stove ref]     {.};
+        \node (broil ref)  [highlight node on={<4,5,7>}]
+                           [reference]   [right=of member dot]    {broil};
+        \node (c3)         [highlight node on={<4,11>}]
+                           [anon scope]  [above=\scopegap of c2]  {};
+        \node (stove def)  [highlight node on={<4,12>}]
+                           [definition]  [right=of c3]            {stove};
+        \node (Stove call) [highlight node on={<4,13>}]
+                           [push]        [right=of stove def]     {()};
+        \node (Stove ref)  [highlight node on={<4,14>}]
+                           [reference]   [right=of Stove call]    {Stove};
+        \node (c4)         [highlight node on={<4,15>}]
+                           [anon scope]  [above=\scopegap of c3]  {};
+        \node (import def) [highlight node on={<4,16>}]
+                           [pop]         [right=of c4]            {Stove};
+        \node (import ref) [highlight node on={<4,17>}]
+                           [push]        [right=of import def]    {Stove};
+        \node (import dot) [highlight node on={<4,18>}]
+                           [push]        [right=of import ref]    {.};
+        \node (import mod) [highlight node on={<4,19>}]
+                           [push]        [right=of import dot]    {kitchen};
+        \node (c5)         [highlight node on=<4>]
+                           [anon scope]  [above=\scopegap of c4]  {};
+
+        \path [-Stealth]
+          (root)       edge (chef)
+          (chef)       edge (dot)
+          (dot)        edge (c1)
+          (c1)         edge (c2)
+          (broil ref)  edge [highlight inner edge on=<5>, show path on=<8>] (member dot)
+          (member dot)  edge [highlight inner edge on=<5>, show path on=<9>] (stove ref)
+          (stove ref)  edge [highlight inner edge on=<5>, show path on=<10>] (c2)
+          (c2)         edge [highlight inner edge on=<5>, show path on=<11>] (c3)
+          (c3)         edge (c4)
+                       edge [highlight inner edge on=<5>, show path on=<12>] (stove def)
+          (stove def)  edge [highlight inner edge on=<5>, show path on=<13>] (Stove call)
+          (Stove call) edge [highlight inner edge on=<5>, show path on=<14>] (Stove ref)
+          (Stove ref)  edge [highlight inner edge on=<5>, show path on=<15>] 
+                            [in control=+(-65:1cm), out control=+(90:1cm)] (c4)
+          (c4)         edge (c5)
+                       edge [highlight inner edge on=<5>, show path on=<16>] (import def)
+          (import def) edge [highlight inner edge on=<5>, show path on=<17>] (import ref)
+          (import ref) edge [highlight inner edge on=<5>, show path on=<18>] (import dot)
+          (import dot) edge [highlight inner edge on=<5>, show path on=<19>] (import mod)
+          (import mod) edge [overlay, in control=+(-45:3cm), out control=+(-90:6cm)]
+                            [highlight inner edge on=<5>, show path on=<20>] (root)
+          ;
+    \end{tikzpicture}
+    }
+    \vskip 2em
+    \begin{tabular}{m{5em} m{14em}}
+        \only<6- >                   {\textsmaller[2]{Symbol stack:}} &
+        \only<6,39>                  {$\nilsymbolstack$}
+        \only<7,35-38>               {$\symbolstack{broil}$}
+        \only<8,12,33-34>            {$\symbolstack{.broil}$}
+        \only<9-11>                  {$\symbolstack{stove.broil}$}
+        \only<13,16,32>              {$\symbolstack{().broil}$}
+        \only<14-15,17,22-24,29-31>  {$\symbolstack{Stove().broil}$}
+        \only<18,21,25,28>           {$\symbolstack{.Stove().broil}$}
+        \only<19-20>                 {$\symbolstack{kitchen.Stove().broil}$}
+        \only<26-27>                 {$\symbolstack{stove.Stove().broil}$}
+    \end{tabular}
+    \end{center}
 \end{frame}
 
 
