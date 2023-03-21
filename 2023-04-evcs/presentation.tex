@@ -624,37 +624,37 @@
                            [root node]                            {};
 
         \node (stove)      [highlight node on={<25>}]
-                           [definition]  [below=4em of root] {stove};
+                           [definition]  [below=4em of root] {\PopSymbol{stove}};
         \node (dot)        [highlight node on={<26>}]
-                           [pop]         [left=of stove]          {.};
+                           [pop]         [left=of stove]          {\PopSymbol{.}};
         \node (s1)         [highlight node on={<27>}]
                            [anon scope]  [left=of dot]            {};
 
         \node (s2)         [highlight node on={<28>}]
                            [anon scope]  [above=\scopegap of s1]  {};
         \node (Stove def)  [highlight node on={<29>}]
-                           [definition]  [left=of s2]             {Stove};
+                           [definition]  [left=of s2]             {\PopSymbol{Stove}};
         \node (s3)         [anon scope]  [above=\scopegap of s2]  {};
 
         \node (call)       [highlight node on={<30>}]
-                           [pop]  [left=of Stove def]             {()};
+                           [pop]  [left=of Stove def]             {\PopSymbol{()}};
         \node (instance)   [highlight node on={<31>}]
                            [exported scope]  [left=of call]       {IM};
         \node (member)     [highlight node on={<32>}]
-                           [pop]  [left=of instance]              {.};
+                           [pop]  [left=of instance]              {\PopSymbol{.}};
         \node (m1)         [highlight node on={<33>}]
                            [anon scope]  [left=of member]         {};
 
-        \setwidestsymbol{broil}
+        \setwidestsymbol{\PopSymbol{broil}}
         \node (m2)         [highlight node on={<34>}]
                            [anon scope]  [above=\scopegap of m1]  {};
-        \node (saute def)  [definition]  [left=of m2]             {\sized{saute}};
+        \node (saute def)  [definition]  [left=of m2]             {\sized{\PopSymbol{saute}}};
         \node (m3)         [highlight node on={<35>}]
                            [anon scope]  [above=\scopegap of m2]  {};
         \node (broil def)  [highlight node on={<2,36>}]
-                           [definition]  [left=of m3]             {\sized{broil}};
+                           [definition]  [left=of m3]             {\sized{\PopSymbol{broil}}};
         \node (m4)         [anon scope]  [above=\scopegap of m3]  {};
-        \node (bake def)   [definition]  [left=of m4]             {\sized{bake}};
+        \node (bake def)   [definition]  [left=of m4]             {\sized{\PopSymbol{bake}}};
         \node (m5)         [anon scope]  [above=\scopegap of m4]  {};
 
         \path [-Stealth]
@@ -678,18 +678,18 @@
           ;
 
         \node (kitchen)      [highlight node on={<18>}]
-                             [definition]  [above=4em of root]  {kitchen};
+                             [definition]  [above=4em of root]  {\PopSymbol{kitchen}};
         \node (dot)          [highlight node on={<19>}]
-                             [pop]         [left=of kitchen]        {.};
+                             [pop]         [left=of kitchen]        {\PopSymbol{.}};
         \node (k1)           [highlight node on={<20>}]
                              [anon scope]  [left=of dot]            {};
 
         \node (k2)           [highlight node on={<21>}]
                              [anon scope]  [above=\scopegap of k1]  {};
         \node (reimport dot) [highlight node on={<22>}]
-                             [push]        [left=of k2]             {.};
+                             [push]        [left=of k2]             {\PushSymbol{.}};
         \node (reimport mod) [highlight node on={<23>}]
-                             [push]        [left=of reimport dot]   {stove};
+                             [push]        [left=of reimport dot]   {\PushSymbol{stove}};
         \node (k3)           [anon scope]  [above=\scopegap of k2]  {};
 
         \path [-Stealth]
@@ -704,36 +704,36 @@
                               [highlight inner edge on=<2>, show path on=<24>] (root)
           ;
 
-        \node (chef)       [definition]  [right=3em of root]      {chef};
-        \node (dot)        [pop]         [right=of chef]          {.};
+        \node (chef)       [definition]  [right=3em of root]      {\PopSymbol{chef}};
+        \node (dot)        [pop]         [right=of chef]          {\PopSymbol{.}};
         \node (c1)         [anon scope]  [right=of dot]           {};
 
         \node (c2)         [highlight node on={<7>}]
                            [anon scope]  [above=\scopegap of c1]  {};
         \node (stove ref)  [highlight node on={<6>}]
-                           [reference]   [right=of c2]            {stove};
+                           [reference]   [right=of c2]            {\PushSymbol{stove}};
         \node (member dot) [highlight node on={<5>}]
-                           [push]        [right=of stove ref]     {.};
+                           [push]        [right=of stove ref]     {\PushSymbol{.}};
         \node (broil ref)  [highlight node on={<2,4>}]
-                           [reference]   [right=of member dot]    {broil};
+                           [reference]   [right=of member dot]    {\PushSymbol{broil}};
         \node (c3)         [highlight node on={<8>}]
                            [anon scope]  [above=\scopegap of c2]  {};
         \node (stove def)  [highlight node on={<9>}]
-                           [definition]  [right=of c3]            {stove};
+                           [definition]  [right=of c3]            {\PopSymbol{stove}};
         \node (Stove call) [highlight node on={<10>}]
-                           [push]        [right=of stove def]     {()};
+                           [push]        [right=of stove def]     {\PushSymbol{()}};
         \node (Stove ref)  [highlight node on={<11>}]
-                           [reference]   [right=of Stove call]    {Stove};
+                           [reference]   [right=of Stove call]    {\PushSymbol{Stove}};
         \node (c4)         [highlight node on={<12>}]
                            [anon scope]  [above=\scopegap of c3]  {};
         \node (import def) [highlight node on={<13>}]
-                           [pop]         [right=of c4]            {Stove};
+                           [pop]         [right=of c4]            {\PopSymbol{Stove}};
         \node (import ref) [highlight node on={<14>}]
-                           [push]        [right=of import def]    {Stove};
+                           [push]        [right=of import def]    {\PushSymbol{Stove}};
         \node (import dot) [highlight node on={<15>}]
-                           [push]        [right=of import ref]    {.};
+                           [push]        [right=of import ref]    {\PushSymbol{.}};
         \node (import mod) [highlight node on={<16>}]
-                           [push]        [right=of import dot]    {kitchen};
+                           [push]        [right=of import dot]    {\PushSymbol{kitchen}};
         \node (c5)         [anon scope]  [above=\scopegap of c4]  {};
 
         \path [-Stealth]
