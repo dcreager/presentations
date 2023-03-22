@@ -3,9 +3,11 @@
 
 \usepackage{adjustbox}
 \usepackage{array}
+\usepackage{fancyvrb}
 \usepackage{relsize}
 \usepackage{graphicx}
 \usepackage[overlay,absolute]{textpos}
+\usepackage{xcolor}
 
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta}
@@ -24,6 +26,8 @@
 ]
 \setmonofont{Iosevka Term}
 \newfontface\helvreg{Helvetica Neue}
+
+\definecolor{grayish}{gray}{0.8}
 
 \title{Stack graphs}
 \subtitle{Name resolution at scale}
@@ -613,6 +617,66 @@
         \adjincludegraphics[width=160mm]{inchworm.jpg}
     \end{textblock*}
     \shadowedtitle{26mm}{5mm}{Incremental processing}
+\end{frame}
+
+\begin{frame}[fragile]
+    \begin{textblock*}{160mm}(0mm,-8.5mm)
+    \begin{Verbatim}
+    7da8cb7380af9a19fb905a263ca247676ccbbd06 ext/requests-logo.ai
+    80406e7c06fc0d7c961fdd2bc1c6f8d7f69c1a54 ext/requests-logo.svg
+    c1fa878547d8a3fb38689ed0fdad438a0ddb4329 pytest.ini
+    9a899df67fb619d871db8b62eea9c1ed436c3a79 requests/__init__.py
+    9844f740abea47edbe57cb01d181b341d021ffb1 requests/__version__.py
+    759d9a56ba0102bb3b7b3abfcfae6731a2ecc243 requests/_internal_utils.py
+    fa4d9b3cc9a2cf6dc2465958387f32193b431410 requests/adapters.py
+    88cfdcebbf51d7bfb7b35579085bf985c6926818 requests/api.py
+    34e7c8b8fc2daa3229423bc9c6ad6e39c3b3d41a requests/auth.py
+    d1a378d787d5a220ef2df694c5cbcd6b4015cbea requests/certs.py
+    c44b35efb984650802c40efbc5281b875bae4adc requests/compat.py
+    56fccd9c2570d2a31365ed11278fd1b6ecc2aa54 requests/cookies.py
+    a80cad80f14411ddf0ba86070d1a65c78dbf7878 requests/exceptions.py
+    e53d35ef6dec122aa4aba941b9c555997a35d143 requests/help.py
+    7a51f212c8a08fc6a04e509e89d8dcc85185df77 requests/hooks.py
+    62dcd0b7c8c64399ad0d317fcfa926e40388d968 requests/models.py
+    7232fe0ff7e85083d47d624532f29badd7c854d0 requests/packages.py
+    d73d700fa6baa975ab9b10fbdb186bccdb9d3610 requests/sessions.py
+    813e8c4e62fdcbbfcb73e2f52e187e0c3c5b84d7 requests/status_codes.py
+    da930e2852049feb2b6e262d442b9cc25ecb2d94 requests/structures.py
+    8170a8d2c45dc6d9dbb44abc4d5ce4d7c548463d requests/utils.py
+    ed8a958e0a8da154b0db9b1edca6e47e5dae146a setup.cfg
+    3dce2965e210359f4c96f174b860e6f403d09ad9 setup.py
+    \end{Verbatim}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \begin{textblock*}{160mm}(0mm,-8.5mm)
+    \begin{Verbatim}[formatcom=\color{grayish},commandchars=\\\{\}]
+    7da8cb7380af9a19fb905a263ca247676ccbbd06 ext/requests-logo.ai
+    80406e7c06fc0d7c961fdd2bc1c6f8d7f69c1a54 ext/requests-logo.svg
+    c1fa878547d8a3fb38689ed0fdad438a0ddb4329 pytest.ini
+    9a899df67fb619d871db8b62eea9c1ed436c3a79 requests/__init__.py
+    9844f740abea47edbe57cb01d181b341d021ffb1 requests/__version__.py
+    759d9a56ba0102bb3b7b3abfcfae6731a2ecc243 requests/_internal_utils.py
+    fa4d9b3cc9a2cf6dc2465958387f32193b431410 requests/adapters.py
+    88cfdcebbf51d7bfb7b35579085bf985c6926818 requests/api.py
+    \textcolor{black}{eeface39ae62c3975ff535e6b1f79f2c28fbf888 requests/auth.py}
+    d1a378d787d5a220ef2df694c5cbcd6b4015cbea requests/certs.py
+    c44b35efb984650802c40efbc5281b875bae4adc requests/compat.py
+    56fccd9c2570d2a31365ed11278fd1b6ecc2aa54 requests/cookies.py
+    a80cad80f14411ddf0ba86070d1a65c78dbf7878 requests/exceptions.py
+    e53d35ef6dec122aa4aba941b9c555997a35d143 requests/help.py
+    7a51f212c8a08fc6a04e509e89d8dcc85185df77 requests/hooks.py
+    \textcolor{black}{457b8412d7cabde41125aaf5ed81fbc86e53eacf requests/models.py}
+    7232fe0ff7e85083d47d624532f29badd7c854d0 requests/packages.py
+    \textcolor{black}{759ecbe03cd52eb7b3ab966c91ad7921a52620eb requests/sessions.py}
+    813e8c4e62fdcbbfcb73e2f52e187e0c3c5b84d7 requests/status_codes.py
+    da930e2852049feb2b6e262d442b9cc25ecb2d94 requests/structures.py
+    \textcolor{black}{28c9366e2f78bc627c5fee05bddc3697c11bcfc7 requests/utils.py}
+    ed8a958e0a8da154b0db9b1edca6e47e5dae146a setup.cfg
+    3dce2965e210359f4c96f174b860e6f403d09ad9 setup.py
+    \end{Verbatim}
+    \end{textblock*}
 \end{frame}
 
 
