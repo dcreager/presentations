@@ -3,6 +3,7 @@
 
 \usepackage{adjustbox}
 \usepackage{array}
+\usepackage{calc}
 \usepackage{fancyvrb}
 \usepackage{relsize}
 \usepackage{graphicx}
@@ -677,6 +678,23 @@
     3dce2965e210359f4c96f174b860e6f403d09ad9 setup.py
     \end{Verbatim}
     \end{textblock*}
+\end{frame}
+
+
+\begin{frame}
+    \begin{textblock*}{80mm}(0mm,0mm)
+        \picturecredit{stantontcady}{Card catalog}{CC-BY-ND-2.0}{https://flic.kr/p/quiyqg}
+        \adjincludegraphics[height=90mm,Clip=8mm 0 {\width - 80mm - 8mm} 0]{card-catalog.jpg}
+    \end{textblock*}
+    \begin{textblock*}{80mm}(80mm,0mm)
+        \picturecredit{neekoh.fi}{Forest Rays}{CC-BY-2.0}{https://flic.kr/p/7pFsmf}
+        \adjincludegraphics[height=90mm,Clip={0.5\width - 40mm} 0 {0.5\width - 40mm} 0]{forest-rays.jpg}
+        \begin{tikzpicture}[remember picture,overlay]
+            \draw[black, very thick] (current page.north) -- (current page.south);
+        \end{tikzpicture}
+    \end{textblock*}
+    \shadowedtitle{6mm}{80mm}{Index time}
+    \shadowedtitle{154mm - \titlewidth}{80mm}{Query time}
 \end{frame}
 
 
