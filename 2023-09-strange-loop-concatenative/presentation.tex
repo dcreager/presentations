@@ -69,11 +69,80 @@
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Simple stack language
+
+\newdimen\origiwspc
+\origiwspc=\fontdimen2\font
+
+\newcommand<>{\stackex}[2]{%
+    \begin{onlyenv}#3
+    \begin{tabular}[c]{
+        @{\extracolsep{1em}}
+        >{\rule[-0.6\baselineskip]{0pt}{1.8\baselineskip}\raggedleft\arraybackslash\fontdimen2\font=1ex}p{0.3\textwidth}<{\fontdimen2\font=\origiwspc}
+        |
+        >{\strut\raggedright\arraybackslash\leavevmode\color{blue}\ttfamily}p{0.6\textwidth}
+    }
+        \cline{1-1}
+        #1 & #2 \\
+        \cline{1-1}
+    \end{tabular}
+    \end{onlyenv}%
+    \ignorespaces
+}
+
+\newcommand{\sym}[1]{\textcolor{blue}{\texttt{#1}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
 
 \begin{frame}
     \titlepage
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Initial stack language examples
+
+\begin{frame}
+    \frametitle{Programs operate on a stack}
+    \stackex<+>{       }{ 1 2 + }
+    \stackex<+>{      1}{ 2 + }
+    \stackex<+>{    1 2}{ + }
+    \stackex<+>{      3}{ }
+\end{frame}
+
+\begin{frame}
+    \frametitle{The stack doesn't have to start empty}
+    \stackex<+>{    1337 42}{ 1 2 + }
+    \stackex<+>{  1337 42 1}{ 2 + }
+    \stackex<+>{1337 42 1 2}{ + }
+    \stackex<+>{  1337 42 3}{ }
+\end{frame}
+
+\begin{frame}
+    \frametitle{Stack underflow is not fatal}
+    \stackex<+>{         }{ 2 + }
+    \stackex<+>{        2}{ + }
+    \stackex<+>{2 \sym{+}}{ }
+\end{frame}
+
+\begin{frame}
+    \frametitle{Pythagoras}
+    \stackex<+>{       }{ 1 2 + 3 * 2 2 + 7 3 - * + sqrt }
+    \stackex<+>{      1}{ 2 + 3 * 2 2 + 7 3 - * + sqrt }
+    \stackex<+>{    1 2}{ + 3 * 2 2 + 7 3 - * + sqrt }
+    \stackex<+>{      3}{ 3 * 2 2 + 7 3 - * + sqrt }
+    \stackex<+>{    3 3}{ * 2 2 + 7 3 - * + sqrt }
+    \stackex<+>{      9}{ 2 2 + 7 3 - * + sqrt }
+    \stackex<+>{    9 2}{ 2 + 7 3 - * + sqrt }
+    \stackex<+>{  9 2 2}{ + 7 3 - * + sqrt }
+    \stackex<+>{    9 4}{ 7 3 - * + sqrt }
+    \stackex<+>{  9 4 7}{ 3 - * + sqrt }
+    \stackex<+>{9 4 7 3}{ - * + sqrt }
+    \stackex<+>{  9 4 4}{ * + sqrt }
+    \stackex<+>{   9 16}{ + sqrt }
+    \stackex<+>{     25}{ sqrt }
+    \stackex<+>{      5}{ }
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
