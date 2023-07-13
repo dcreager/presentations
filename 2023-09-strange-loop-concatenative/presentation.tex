@@ -7,6 +7,7 @@
 \usepackage{fancyvrb}
 \usepackage{relsize}
 \usepackage{graphicx}
+\usepackage[most]{tcolorbox}
 \usepackage[overlay,absolute]{textpos}
 \usepackage{xcolor}
 
@@ -92,6 +93,18 @@
 
 \newcommand{\sym}[1]{\textcolor{blue}{\texttt{#1}}}
 
+\newcommand{\stacksplit}[2][]{%
+    \tcbox[
+        standard jigsaw,
+        nobeforeafter,
+        size=fbox,
+        boxrule=0pt,
+        sharp corners=all,
+        #1
+    ]{\sym{\strut#2}}%
+    \ignorespaces
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
@@ -143,6 +156,27 @@
     \stackex<+>{   9 16}{ + sqrt }
     \stackex<+>{     25}{ sqrt }
     \stackex<+>{      5}{ }
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Concatenation and composition
+
+\begin{frame}
+    \begin{onlyenv}<+>
+    \begin{center}
+        \stacksplit[opacityback=0]{1 2 + 3 * 2}
+        \stacksplit[opacityback=0]{2 + 7 3 - *}
+        \stacksplit[opacityback=0]{+ sqrt}
+    \end{center}
+    \end{onlyenv}
+
+    \begin{onlyenv}<+>
+    \begin{center}
+        \stacksplit[colback=red!20]{1 2 + 3 * 2}
+        \stacksplit[colback=gray!20]{2 + 7 3 - *}
+        \stacksplit[colback=yellow!20]{+ sqrt}
+    \end{center}
+    \end{onlyenv}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
