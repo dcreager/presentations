@@ -12,6 +12,9 @@
 \usepackage[overlay,absolute]{textpos}
 \usepackage{xcolor}
 
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+
 \graphicspath{{../images}}
 
 \usepackage{fontspec}
@@ -79,6 +82,43 @@
   keepspaces=true,
   escapechar=?,
   extendedchars=true}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Environment frames
+
+% Note that to use beamer overlays to ADD NEW rows to a tikz matrix, you need to
+% put the TRAILING ROW'S closing \\ inside the \only, instead of the NEW ROW'S.
+% c.f. https://tex.stackexchange.com/a/153797
+
+\tikzset{
+    envframe/.style={
+        ampersand replacement=\&,
+        draw=black,
+        thick,
+        rounded corners,
+        fill=white,
+        row sep=-0.5em,
+        every outer matrix/.append style={inner xsep=0.2em,inner ysep=0em},
+        column 1/.style={
+            anchor=base west,
+        },
+        column 2/.style={
+            anchor=base,
+            font=\small,
+        },
+    },
+}
+
+\tikzset{
+    frame name/.style={
+        execute at end node=\strut,
+        font=\ttfamily\footnotesize\bfseries,
+    },
+    frame special/.style={
+        execute at end node=\strut,
+        font=\itshape\scriptsize,
+    },
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Simple stack language
@@ -175,6 +215,48 @@
         \end{lstlisting}
     \end{minipage}%
     \end{onlyenv}%
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Pythagoras}
+    \rule[-30mm]{0pt}{60mm}%
+    \begin{minipage}{80mm}%
+    \begin{tikzpicture}
+        \matrix[envframe] (mod) {
+            \only<1>{\node[inner sep=0.6em]{};}
+            \only<2- >{
+                \node[frame name]{math}; \&
+                \node[frame special]{math module};
+            }
+            \only<4- >{ \\
+                \node[frame name]{pythagoras}; \&
+                \node[frame special]{pythagoras function};
+            }
+            \\
+        };
+        \only<3- >{\matrix[envframe,above=of mod]{
+            \& \node{$\cdots$}; \\
+            \node[frame name]{sqrt}; \&
+            \node[frame special]{sqrt function}; \\
+            \& \node{$\cdots$}; \\
+        }};
+    \end{tikzpicture}
+    \end{minipage}%
+    \rule[-30mm]{0pt}{60mm}%
+    \begin{minipage}{45mm}%
+        \begin{lstlisting}[language=python,gobble=8]
+        import math
+
+        def pythogoras(leg1, leg2):
+            l1sq = leg1 * leg1
+            l2sq = leg2 * leg2
+            hypotsq = l1sq + l2sq
+            return math.sqrt(hypotsq)
+
+        print(pythagoras(3, 4))
+        print(pythagoras(5, 12))
+        \end{lstlisting}
+    \end{minipage}%
 \end{frame}
 
 \begin{frame}
