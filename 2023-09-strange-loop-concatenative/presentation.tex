@@ -5,6 +5,7 @@
 \usepackage{array}
 \usepackage{calc}
 \usepackage{fancyvrb}
+\usepackage{listings}
 \usepackage{relsize}
 \usepackage{graphicx}
 \usepackage[most]{tcolorbox}
@@ -70,6 +71,16 @@
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Program source
+
+\lstset{
+  basicstyle=\small\ttfamily,%
+  columns=fullflexible,
+  keepspaces=true,
+  escapechar=?,
+  extendedchars=true}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Simple stack language
 
 \newdimen\origiwspc
@@ -115,6 +126,56 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Initial stack language examples
+
+\begin{frame}
+    \begin{textblock*}{160mm}(0mm,0mm)
+        \picturecredit{Marco Verch}{Stack of pancakes with berries on a plate}{CC-BY-2.0}{https://flic.kr/p/2jYUh8M}
+        \includegraphics[width=180mm]{pancakes.jpg}
+    \end{textblock*}
+    \flattitle{150mm - \titlewidth}{5mm}{Stack-based languages}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Pythagoras}
+    \begin{onlyenv}<1- >%
+    \rule[-30mm]{0pt}{60mm}%
+    \begin{minipage}{80mm}%
+        \begin{tikzpicture}[baseline={(current bounding box.center)}]
+            \draw[very thick]
+              (0,0) -- node[left] {4}
+              (0,4) -- node[above right] {5}
+              (3,0) -- node[below] {3} cycle;
+            \draw[thin] (0,0.25) -- (0.25,0.25) -- (0.25,0);
+        \end{tikzpicture}
+    \end{minipage}%
+    \end{onlyenv}%
+    \begin{onlyenv}<2>%
+    \rule[-30mm]{0pt}{60mm}%
+    \begin{minipage}{45mm}%
+        \begin{lstlisting}[language=python,gobble=8]
+        import math
+        print(math.sqrt(3*3 + 4*4))
+        \end{lstlisting}
+    \end{minipage}%
+    \end{onlyenv}%
+    \begin{onlyenv}<3>%
+    \rule[-30mm]{0pt}{60mm}%
+    \begin{minipage}{45mm}%
+        \begin{lstlisting}[language=python,gobble=8]
+        import math
+
+        def pythogoras(leg1, leg2):
+            l1sq = leg1 * leg1
+            l2sq = leg2 * leg2
+            hypotsq = l1sq + l2sq
+            return math.sqrt(hypotsq)
+
+        print(pythagoras(3, 4))
+        print(pythagoras(5, 12))
+        \end{lstlisting}
+    \end{minipage}%
+    \end{onlyenv}%
+\end{frame}
 
 \begin{frame}
     \frametitle{Programs operate on a stack}
