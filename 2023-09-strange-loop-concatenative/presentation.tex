@@ -4,6 +4,7 @@
 \usepackage{adjustbox}
 \usepackage{array}
 \usepackage{calc}
+\usepackage{etoolbox}
 \usepackage{fancyvrb}
 \usepackage{listings}
 \usepackage{relsize}
@@ -30,10 +31,9 @@
 
 \definecolor{grayish}{gray}{0.8}
 
-\title{Concatenative programming\\and stack-based languages}
+\title{Concatenative programming and stack-based languages}
 \author{Douglas Creager}
 \institute{Walland Heavy Research}
-\date{Strange Loop\\\textsmaller[1]{September 21–22, 2023 – St. Louis}}
 
 \setbeamercolor{title}{fg=black}
 \setbeamerfont{title}{series=\bfseries,size=\larger[1]}
@@ -52,28 +52,32 @@
     \protected@xappto\picturecredits{
         \textsmaller[3]{Slide \theframenumber} &
         \textsmaller[2]{#1, “#2”} \vspace*{-0.4em} \newline
-        \textsmaller[3]{#3, \url{#4}} \\
+        \ifstrempty{#4}{\textsmaller[3]{#3}}{\textsmaller[3]{#3, \url{#4}}} \\
     }
 }
 \makeatother
 
 \newlength{\titlewidth}
-\newcommand{\flattitle}[3]{
-    \settowidth{\titlewidth}{\textbf{\LARGE #3}}
+\newcommand{\customtitle}[3]{
+    \settowidth{\titlewidth}{#3}
     \begin{textblock*}{\titlewidth}(#1,#2)
-        \textbf{\LARGE #3}
+        #3
     \end{textblock*}
 }
-\newcommand{\shadowedtitle}[3]{
-    \settowidth{\titlewidth}{\textbf{\LARGE #3}}
-    \addtolength{\titlewidth}{0.5mm}
-    \begin{textblock*}{\titlewidth}(#1+0.4mm,#2+0.4mm)
-        \textbf{\LARGE #3}
+\newcommand{\flattitle}[3]{\customtitle{#1}{#2}{\textbf{\LARGE #3}}}
+
+\newcommand{\customshadowedtitle}[4]{
+    \settowidth{\titlewidth}{#4}
+    \addtolength{\titlewidth}{#3}
+    \addtolength{\titlewidth}{0.1mm}
+    \begin{textblock*}{\titlewidth}(#3+#1,#3+#2)
+        #4
     \end{textblock*}
     \begin{textblock*}{\titlewidth}(#1,#2)
-        \textbf{\textcolor{white}{\LARGE #3}}
+        \textcolor{white}{#4}
     \end{textblock*}
 }
+\newcommand{\shadowedtitle}[3]{\customshadowedtitle{#1}{#2}{0.4mm}{\textbf{\LARGE #3}}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Program source
@@ -183,7 +187,15 @@
 \begin{document}
 
 \begin{frame}
-    \titlepage
+    \begin{textblock*}{160mm}(0mm,0mm)
+        \picturecredit{Douglas Creager}{Laurel Valley}{All rights reserved}{}
+        \adjincludegraphics[Trim=13.5in 0.25in 15in 11in, width=160mm]{laurel-valley.jpg}
+    \end{textblock*}
+    \customshadowedtitle{80mm - 0.5\titlewidth}{61mm}{0.2mm}{\textbf{\textlarger[1]{\inserttitle}}}
+    \customshadowedtitle{80mm - 0.5\titlewidth}{69mm}{0.2mm}{\textsmaller[1]{\insertauthor}}
+    \customshadowedtitle{80mm - 0.5\titlewidth}{73mm}{0.2mm}{\textsmaller[2]{\insertinstitute}}
+    \customshadowedtitle{80mm - 0.5\titlewidth}{79mm}{0.2mm}{\textsmaller[2]{Strange Loop – Papers We Love}}
+    \customshadowedtitle{80mm - 0.5\titlewidth}{82.5mm}{0.2mm}{\textsmaller[3]{September 21–22, 2023 – St. Louis}}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
