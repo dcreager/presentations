@@ -13,7 +13,9 @@
 \usepackage{xcolor}
 
 \usepackage{tikz}
+\usetikzlibrary{arrows.meta}
 \usetikzlibrary{positioning}
+\usetikzlibrary{tikzmark}
 
 \graphicspath{{../images}}
 
@@ -83,6 +85,17 @@
   escapechar=?,
   extendedchars=true}
 
+\newcommand{\highlightsrc}[1]{%
+    \tikz[remember picture]{
+      \draw [overlay, draw=none, fill=blue!25]
+        ([xshift=-1pt, yshift=8pt] pic cs:#1_start)
+        rectangle
+        ([xshift=1pt, yshift=-2pt] pic cs:#1_end)
+        ;
+    }%
+    \ignorespaces
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Environment frames
 
@@ -97,9 +110,11 @@
         thick,
         rounded corners,
         fill=white,
-        row sep=-0.5em,
-        every outer matrix/.append style={inner xsep=0.2em,inner ysep=0em},
+        inner ysep=0.1em,
+        row sep=-0.1em,
+        every outer matrix/.append style={inner xsep=0.2em,inner ysep=0.2em},
         column 1/.style={
+            sharp corners,
             anchor=base west,
         },
         column 2/.style={
@@ -118,6 +133,13 @@
         execute at end node=\strut,
         font=\itshape\scriptsize,
     },
+}
+
+\tikzset{
+    highlight node/.style={fill=red!25},
+    highlight node on/.code args={<#1>}{%
+        \alt<#1>{\pgfkeysalso{highlight node}}{}%
+    }
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -169,10 +191,10 @@
 
 \begin{frame}
     \begin{textblock*}{160mm}(0mm,0mm)
-        \picturecredit{Marco Verch}{Stack of pancakes with berries on a plate}{CC-BY-2.0}{https://flic.kr/p/2jYUh8M}
-        \includegraphics[width=180mm]{pancakes.jpg}
+        \picturecredit{peagreengirl}{Very Old payroll Journal}{CC-BY-2.0}{https://flic.kr/p/B2YPU}
+        \adjincludegraphics[Trim=0.25in, width=160mm]{old-ledger.jpg}
     \end{textblock*}
-    \flattitle{150mm - \titlewidth}{5mm}{Stack-based languages}
+    \shadowedtitle{150mm - \titlewidth}{10mm}{Names}
 \end{frame}
 
 \begin{frame}[fragile]
@@ -221,42 +243,117 @@
     \frametitle{Pythagoras}
     \rule[-30mm]{0pt}{60mm}%
     \begin{minipage}{80mm}%
-    \begin{tikzpicture}
+        \only<2-3>  {\highlightsrc{math}}%
+        \only<4>    {\highlightsrc{pyth}}%
+        \only<5>    {\highlightsrc{formals}}%
+        \only<5-9>  {\highlightsrc{actuals1}}%
+        \only<6>    {\highlightsrc{s1}}%
+        \only<7>    {\highlightsrc{s2}}%
+        \only<8>    {\highlightsrc{s3}}%
+        \only<9>    {\highlightsrc{s4}}%
+        \only<11-15>{\highlightsrc{actuals2}}%
+        \only<12>   {\highlightsrc{s1}}%
+        \only<13>   {\highlightsrc{s2}}%
+        \only<14>   {\highlightsrc{s3}}%
+        \only<15>   {\highlightsrc{s4}}%
+        \centering
+        \begin{tikzpicture}[
+            remember picture,
+            every node/.style={node distance=0.5cm},
+        ]
         \matrix[envframe] (mod) {
             \only<1>{\node[inner sep=0.6em]{};}
             \only<2- >{
-                \node[frame name]{math}; \&
-                \node[frame special]{math module};
+                \node[frame name,highlight node on={<9>}]{math}; \&
+                \node[frame special] (math) {math module};
             }
             \only<4- >{ \\
-                \node[frame name]{pythagoras}; \&
+                \node[frame name,highlight node on={<5>}]{pythagoras}; \&
                 \node[frame special]{pythagoras function};
             }
             \\
         };
-        \only<3- >{\matrix[envframe,above=of mod]{
-            \& \node{$\cdots$}; \\
-            \node[frame name]{sqrt}; \&
-            \node[frame special]{sqrt function}; \\
-            \& \node{$\cdots$}; \\
-        }};
+        \only<3- >{
+            \matrix[envframe,above=of mod] (mathframe) {
+                \& \node{$\cdots$}; \\
+                \node[frame name,highlight node on={<9>}]{sqrt}; \&
+                \node[frame special]{sqrt function}; \\
+                \& \node{$\cdots$}; \\
+            };
+        }
+        \only<3>{
+            \draw [overlay, thick, -{Triangle[]}]
+              (math.east) .. controls +(0:1cm) and +(0:1cm) ..
+              (mathframe.east);
+        }
+        \only<4- >{
+            \draw [overlay, thick, -{Triangle[]}]
+              (math.east) .. controls +(0:0.75cm) and +(0:1.25cm) ..
+              (mathframe.east);
+        }
+        \only<5-9>{
+            \matrix[envframe,below=of mod] (call1) {
+                \only<5-9>{
+                    \node[frame name, highlight node on={<6>}]{leg1}; \& \node{3}; \\
+                    \node[frame name, highlight node on={<7>}]{leg2}; \& \node{4};
+                }
+                \only<6-9>{ \\
+                    \node[frame name, highlight node on={<8>}]{l1sq}; \& \node{9};
+                }
+                \only<7-9>{ \\
+                    \node[frame name, highlight node on={<8>}]{l2sq}; \& \node{16};
+                }
+                \only<8-9>{ \\
+                    \node[frame name,highlight node on={<9>}]{hypotsq}; \& \node{25};
+                }
+                \\
+            };
+            \draw[densely dashed, thick, ->] (call1.north) -- (mod.south);
+        }
+        \only<11-15>{
+            \matrix[envframe,below=of mod] (call1) {
+                \only<11-16>{
+                    \node[frame name, highlight node on={<12>}]{leg1}; \& \node{5}; \\
+                    \node[frame name, highlight node on={<13>}]{leg2}; \& \node{12};
+                }
+                \only<12-16>{ \\
+                    \node[frame name, highlight node on={<14>}]{l1sq}; \& \node{25};
+                }
+                \only<13-16>{ \\
+                    \node[frame name, highlight node on={<14>}]{l2sq}; \& \node{144};
+                }
+                \only<14-16>{ \\
+                    \node[frame name,highlight node on={<15>}]{hypotsq}; \& \node{169};
+                }
+                \\
+            };
+            \draw[densely dashed, thick, ->] (call1.north) -- (mod.south);
+        }
     \end{tikzpicture}
     \end{minipage}%
     \rule[-30mm]{0pt}{60mm}%
     \begin{minipage}{45mm}%
         \begin{lstlisting}[language=python,gobble=8]
-        import math
+        ?\tikzmark{math_start}?import math?\tikzmark{math_end}?
 
-        def pythogoras(leg1, leg2):
-            l1sq = leg1 * leg1
-            l2sq = leg2 * leg2
-            hypotsq = l1sq + l2sq
-            return math.sqrt(hypotsq)
+        ?\tikzmark{pyth_start}?def ?\tikzmark{formals_start}?pythogoras(leg1, leg2)?\tikzmark{formals_end}?:
+            ?\tikzmark{s1_start}?l1sq = leg1 * leg1?\tikzmark{s1_end}?
+            ?\tikzmark{s2_start}?l2sq = leg2 * leg2?\tikzmark{s2_end}?
+            ?\tikzmark{s3_start}?hypotsq = l1sq + l2sq?\tikzmark{s3_end}?
+            return ?\tikzmark{s4_start}?math.sqrt(hypotsq)?\tikzmark{pyth_end}\tikzmark{s4_end}?
 
-        print(pythagoras(3, 4))
-        print(pythagoras(5, 12))
+        print(?\tikzmark{actuals1_start}?pythagoras(3, 4)?\tikzmark{actuals1_end}?)
+        print(?\tikzmark{actuals2_start}?pythagoras(5, 12)?\tikzmark{actuals2_end}?)
         \end{lstlisting}
     \end{minipage}%
+\end{frame}
+
+\begin{frame}
+    \begin{textblock*}{160mm}(0mm,0mm)
+        \picturecredit{Marco Verch}{Stack of pancakes with berries on a plate}{CC-BY-2.0}{https://flic.kr/p/2jYUh8M}
+        \includegraphics[width=180mm]{pancakes.jpg}
+    \end{textblock*}
+    \flattitle{150mm - \titlewidth}{5mm}{Stack-based languages}
 \end{frame}
 
 \begin{frame}
