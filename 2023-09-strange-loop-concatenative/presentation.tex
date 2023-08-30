@@ -169,6 +169,7 @@
 }
 
 \newcommand{\sym}[1]{\textcolor{blue}{\texttt{#1}}}
+\newcommand{\eff}[1]{\textcolor{gray}{\texttt{\textit{#1}}}}
 
 \newcommand{\stacksplit}[2][]{%
     \tcbox[
@@ -179,6 +180,40 @@
         sharp corners=all,
         #1
     ]{\sym{\strut#2}}%
+    \ignorespaces
+}
+
+\newcommand{\stackeffect}[2]{%
+    \hspace{\fill}%
+    \begin{tikzpicture}
+        \matrix[
+            anchor=west,
+            execute at begin cell=\node\bgroup,
+            execute at end cell=\egroup;%
+        ]{
+            \eff{#1} \\
+            \sym{#2} \\
+        };
+    \end{tikzpicture}%
+    \hspace*{\fill}%
+    \ignorespaces
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Citations
+
+\newcommand<>{\citepaper}[1]{%
+    \begin{onlyenv}#2%
+    \begin{tikzpicture}[remember picture,overlay]
+        \node[
+            anchor=south, yshift=1em,
+            draw, thick,
+            inner sep=0.6em,
+            text width=90mm,
+            node font={\rmfamily\smaller[2]},
+        ] at (current page.south) {#1};
+    \end{tikzpicture}%
+    \end{onlyenv}%
     \ignorespaces
 }
 
@@ -370,6 +405,7 @@
 
 \begin{frame}
     \frametitle{Programs operate on a stack}
+    \stackex<+>{       }{ }
     \stackex<+>{       }{ 1 2 + }
     \stackex<+>{      1}{ 2 + }
     \stackex<+>{    1 2}{ + }
@@ -378,10 +414,19 @@
 
 \begin{frame}
     \frametitle{The stack doesn't have to start empty}
-    \stackex<+>{    1337 42}{ 1 2 + }
     \stackex<+>{  1337 42 1}{ 2 + }
     \stackex<+>{1337 42 1 2}{ + }
     \stackex<+>{  1337 42 3}{ }
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Stack effects}
+    \stackeffect{i -- result}{2 +}
+    \citepaper<2>{
+        Slava Pestov, Daniel Ehrenberg, Joe Groff.
+        “Factor: A Dynamic Stack-based Programming Language”.
+        ACM SIGPLAN Notices 45:12. December 2010.
+    }
 \end{frame}
 
 \begin{frame}
