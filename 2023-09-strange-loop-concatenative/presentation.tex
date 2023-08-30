@@ -452,8 +452,16 @@
     \stackex<+>{  9 4 4}{ * + sqrt }
     \stackex<+>{   9 16}{ + sqrt }
     \stackex<+>{     25}{ sqrt }
-    \stackex<+>{      5}{ }
+    \stackex<+->{      5}{ }
+    \begin{onlyenv}<+>
+        \begin{tikzpicture}[remember picture,overlay]
+            \node[anchor=center,draw,thick,inner sep=0mm] at (current page.center) {
+                \includegraphics[width=30mm]{hp-calculator.jpg}
+            };
+        \end{tikzpicture}
+    \end{onlyenv}
 \end{frame}
+\picturecredit{striegel}{HP-48GX calculator}{CC-BY-2.0}{https://flic.kr/p/BWttzE}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Concatenation and composition
