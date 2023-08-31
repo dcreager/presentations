@@ -161,7 +161,8 @@
         >{\strut\raggedright\arraybackslash\leavevmode\color{blue}\ttfamily}p{0.5\textwidth}
     }
         \cline{1-1}
-        \clipbox*{{\width - 0.4\textwidth} {-\depth} {\width} {\totalheight}}{#1} & #2 \\
+        \clipbox*{{\width - 0.4\textwidth} {-\depth} {\width} {\totalheight}}{#1} &
+        \clipbox*{0pt {-\depth} {0.5\textwidth} {\totalheight}}{#2} \\
         \cline{1-1}
     \end{tabular}
     \end{onlyenv}%
@@ -179,6 +180,7 @@
         size=fbox,
         boxrule=0pt,
         sharp corners=all,
+        colback=white!0,
         #1
     ]{\sym{\strut#2}}%
     \ignorespaces
@@ -492,23 +494,55 @@
     \stackex<+>{        5}{ }
 \end{frame}
 
+\begin{frame}
+    \frametitle{Applying a quotation more than once}
+
+    \begin{onlyenv}<+-+(3)>
+    \begin{center}
+        \stacksplit[only=<+>{colback=gray!20}]{\quot{dup * swap dup * + sqrt}}
+        \stacksplit[only=<+>{colback=gray!20}]{dup 3 4 dig2 apply drop}
+        \stacksplit[only=<+>{colback=gray!20}]{5 12 dig2 apply drop}
+    \end{center}
+    \end{onlyenv}
+
+    \stackex<+>{}{ \quot{dup * swap dup * + sqrt} dup 3 4 dig2 apply drop 5 12 dig2 apply drop }
+    \stackex<+>{\quot{dup * swap dup * + sqrt}}{ dup 3 4 dig2 apply drop 5 12 dig2 apply drop }
+    \stackex<+>{\quot{dup * swap dup * + sqrt} \quot{dup * swap dup * + sqrt}}{ 3 4 dig2 apply drop 5 12 dig2 apply drop }
+    \stackex<+>{\quot{dup * swap dup * + sqrt} \quot{dup * swap dup * + sqrt} 3}{ 4 dig2 apply drop 5 12 dig2 apply drop }
+    \stackex<+>{\quot{dup * swap dup * + sqrt} \quot{dup * swap dup * + sqrt} 3 4}{ dig2 apply drop 5 12 dig2 apply drop }
+    \stackex<+>{\quot{dup * swap dup * + sqrt} 3 4 \quot{dup * swap dup * + sqrt}}{ apply drop 5 12 dig2 apply drop }
+    \stackex<+>{\quot{dup * swap dup * + sqrt} 3 4}{ dup * swap dup * + sqrt drop 5 12 dig2 apply drop }
+    \stackex<+>{\quot{dup * swap dup * + sqrt} 3 4 4}{ * swap dup * + sqrt drop 5 12 dig2 apply drop }
+    \stackex<+>{\quot{dup * swap dup * + sqrt} 3 16}{ swap dup * + sqrt drop 5 12 dig2 apply drop }
+    \stackex<+>{\quot{dup * swap dup * + sqrt} 16 3}{ dup * + sqrt drop 5 12 dig2 apply drop }
+    \stackex<+>{\quot{dup * swap dup * + sqrt} 16 3 3}{ * + sqrt drop 5 12 dig2 apply drop }
+    \stackex<+>{\quot{dup * swap dup * + sqrt} 16 9}{ + sqrt drop 5 12 dig2 apply drop }
+    \stackex<+>{\quot{dup * swap dup * + sqrt} 25}{ sqrt drop 5 12 dig2 apply drop }
+    \stackex<+>{\quot{dup * swap dup * + sqrt} 5}{ drop 5 12 dig2 apply drop }
+    \stackex<+>{\quot{dup * swap dup * + sqrt}}{ 5 12 dig2 apply drop }
+    \stackex<+>{\quot{dup * swap dup * + sqrt} 5}{ 12 dig2 apply drop }
+    \stackex<+>{\quot{dup * swap dup * + sqrt} 5 12}{ dig2 apply drop }
+    \stackex<+>{5 12 \quot{dup * swap dup * + sqrt}}{ apply drop }
+    \stackex<+>{5 12}{ dup * swap dup * + sqrt drop }
+    \stackex<+>{5 12 12}{ * swap dup * + sqrt drop }
+    \stackex<+>{5 144}{ swap dup * + sqrt drop }
+    \stackex<+>{144 5}{ dup * + sqrt drop }
+    \stackex<+>{144 5 5}{ * + sqrt drop }
+    \stackex<+>{144 25}{ + sqrt drop }
+    \stackex<+>{169}{ sqrt drop }
+    \stackex<+>{13}{ drop }
+    \stackex<+>{}{ }
+\end{frame}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Concatenation and composition
 
 \begin{frame}
-    \begin{onlyenv}<+>
+    \begin{onlyenv}<+-+(1)>
     \begin{center}
-        \stacksplit[opacityback=0]{1 2 + 3 * 2}
-        \stacksplit[opacityback=0]{2 + 7 3 - *}
-        \stacksplit[opacityback=0]{+ sqrt}
-    \end{center}
-    \end{onlyenv}
-
-    \begin{onlyenv}<+>
-    \begin{center}
-        \stacksplit[colback=red!20]{1 2 + 3 * 2}
-        \stacksplit[colback=gray!20]{2 + 7 3 - *}
-        \stacksplit[colback=yellow!20]{+ sqrt}
+        \stacksplit[only=<+>{colback=red!20}]{1 2 + 3 * 2}
+        \stacksplit[only=<.>{colback=gray!20}]{2 + 7 3 - *}
+        \stacksplit[only=<.>{colback=yellow!20}]{+ sqrt}
     \end{center}
     \end{onlyenv}
 \end{frame}
