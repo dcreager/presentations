@@ -156,12 +156,12 @@
     \begin{onlyenv}#3
     \begin{tabular}[c]{
         @{\extracolsep{1em}}
-        >{\rule[-0.6\baselineskip]{0pt}{1.8\baselineskip}\raggedleft\arraybackslash\fontdimen2\font=1ex}p{0.3\textwidth}<{\fontdimen2\font=\origiwspc}
+        >{\rule[-0.6\baselineskip]{0pt}{1.8\baselineskip}\raggedleft\arraybackslash\fontdimen2\font=1ex}p{0.4\textwidth}<{\fontdimen2\font=\origiwspc}
         |
-        >{\strut\raggedright\arraybackslash\leavevmode\color{blue}\ttfamily}p{0.6\textwidth}
+        >{\strut\raggedright\arraybackslash\leavevmode\color{blue}\ttfamily}p{0.5\textwidth}
     }
         \cline{1-1}
-        #1 & #2 \\
+        \clipbox*{{\width - 0.4\textwidth} {-\depth} {\width} {\totalheight}}{#1} & #2 \\
         \cline{1-1}
     \end{tabular}
     \end{onlyenv}%
@@ -169,6 +169,7 @@
 }
 
 \newcommand{\sym}[1]{\textcolor{blue}{\texttt{#1}}}
+\newcommand{\quot}[1]{\textcolor{blue}{\texttt{[#1]}}}
 \newcommand{\eff}[1]{\textcolor{gray}{\texttt{\textit{#1}}}}
 
 \newcommand{\stacksplit}[2][]{%
@@ -462,6 +463,34 @@
     \end{onlyenv}
 \end{frame}
 \picturecredit{striegel}{HP-48GX calculator}{CC-BY-2.0}{https://flic.kr/p/BWttzE}
+
+\begin{frame}
+    \frametitle{Manipulating the stack}
+    \stackex<+>{      3 4}{ dup * swap dup * + sqrt }
+    \stackex<+>{    3 4 4}{ * swap dup * + sqrt }
+    \stackex<+>{     3 16}{ swap dup * + sqrt }
+    \stackex<+>{     16 3}{ dup * + sqrt }
+    \stackex<+>{   16 3 3}{ * + sqrt }
+    \stackex<+>{     16 9}{ + sqrt }
+    \stackex<+>{       25}{ sqrt }
+    \stackex<+>{        5}{ }
+\end{frame}
+
+\begin{frame}
+    \frametitle{Abstraction}
+    \stackex<+>{         }{ 3 4 \quot{dup * swap dup * + sqrt} apply }
+    \stackex<+>{        3}{ 4 \quot{dup * swap dup * + sqrt} apply }
+    \stackex<+>{      3 4}{ \quot{dup * swap dup * + sqrt} apply }
+    \stackex<+>{      3 4 \quot{dup * swap dup * + sqrt}} { apply }
+    \stackex<+>{      3 4}{ dup * swap dup * + sqrt }
+    \stackex<+>{    3 4 4}{ * swap dup * + sqrt }
+    \stackex<+>{     3 16}{ swap dup * + sqrt }
+    \stackex<+>{     16 3}{ dup * + sqrt }
+    \stackex<+>{   16 3 3}{ * + sqrt }
+    \stackex<+>{     16 9}{ + sqrt }
+    \stackex<+>{       25}{ sqrt }
+    \stackex<+>{        5}{ }
+\end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Concatenation and composition
