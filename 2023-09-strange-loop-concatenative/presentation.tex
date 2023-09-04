@@ -519,6 +519,8 @@
 
 \begin{frame}
     \frametitle{Manipulating the stack}
+    \stackex<+>{         }{ 3 4 dup * swap dup * + sqrt }
+    \stackex<+>{        3}{ 4 dup * swap dup * + sqrt }
     \stackex<+>{      3 4}{ dup * swap dup * + sqrt }
     \stackex<+>{    3 4 4}{ * swap dup * + sqrt }
     \stackex<+>{     3 16}{ swap dup * + sqrt }
@@ -531,10 +533,29 @@
 
 \begin{frame}
     \frametitle{Abstraction}
+    \stackex<+>{         }{ 3 4 dup * swap dup * + sqrt }
     \stackex<+>{         }{ 3 4 \quot{dup * swap dup * + sqrt} apply }
     \stackex<+>{        3}{ 4 \quot{dup * swap dup * + sqrt} apply }
     \stackex<+>{      3 4}{ \quot{dup * swap dup * + sqrt} apply }
     \stackex<+>{      3 4 \quot{dup * swap dup * + sqrt}} { apply }
+    \stackex<+>{      3 4}{ dup * swap dup * + sqrt }
+    \stackex<+>{    3 4 4}{ * swap dup * + sqrt }
+    \stackex<+>{     3 16}{ swap dup * + sqrt }
+    \stackex<+>{     16 3}{ dup * + sqrt }
+    \stackex<+>{   16 3 3}{ * + sqrt }
+    \stackex<+>{     16 9}{ + sqrt }
+    \stackex<+>{       25}{ sqrt }
+    \stackex<+>{        5}{ }
+\end{frame}
+
+\begin{frame}
+    \frametitle{Digging for dirt}
+    \stackex<+>{         }{ \quot{dup * swap dup * + sqrt} 3 4 ??? apply }
+    \stackex<+>{\quot{dup * swap dup * + sqrt}}{ 3 4 ??? apply }
+    \stackex<+>{\quot{dup * swap dup * + sqrt} 3}{ 4 ??? apply }
+    \stackex<+>{\quot{dup * swap dup * + sqrt} 3 4}{ ??? apply }
+    \stackex<+>{\quot{dup * swap dup * + sqrt} 3 4}{ dig2 apply }
+    \stackex<+>{3 4 \quot{dup * swap dup * + sqrt}}{ apply }
     \stackex<+>{      3 4}{ dup * swap dup * + sqrt }
     \stackex<+>{    3 4 4}{ * swap dup * + sqrt }
     \stackex<+>{     3 16}{ swap dup * + sqrt }
