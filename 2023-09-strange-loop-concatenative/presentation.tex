@@ -80,6 +80,29 @@
 \newcommand{\shadowedtitle}[3]{\customshadowedtitle{#1}{#2}{0.4mm}{\textbf{\LARGE #3}}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% True centering of beamer slides
+
+\makeatletter
+\define@key{beamerframe}{c}[true]{% centered
+  \beamer@frametopskip=0pt plus 1fill\relax%
+  \beamer@framebottomskip=0pt plus 1fill\relax%
+  \beamer@frametopskipautobreak=0pt plus .4\paperheight\relax%
+  \beamer@framebottomskipautobreak=0pt plus .6\paperheight\relax%
+  \def\beamer@initfirstlineunskip{}%
+}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Explicit control of overlay-style visibility
+
+% cf https://tex.stackexchange.com/a/512131
+
+\makeatletter
+\newcommand\pgfinvisible{\pgfsys@begininvisible}
+\newcommand\pgfshown{\pgfsys@endinvisible}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Program source
 
 \lstset{
@@ -249,9 +272,9 @@
 
 \begin{frame}[fragile]
     \frametitle{Pythagoras}
-    \begin{onlyenv}<1- >%
-    \rule[-30mm]{0pt}{60mm}%
-    \begin{minipage}{80mm}%
+    \begin{columns}[c]
+        \begin{column}{90mm}%
+        \centering%
         \begin{tikzpicture}[baseline={(current bounding box.center)}]
             \draw[very thick]
               (0,0) -- node[left] {4}
@@ -259,20 +282,29 @@
               (3,0) -- node[below] {3} cycle;
             \draw[thin] (0,0.25) -- (0.25,0.25) -- (0.25,0);
         \end{tikzpicture}
-    \end{minipage}%
-    \end{onlyenv}%
-    \begin{onlyenv}<2>%
-    \rule[-30mm]{0pt}{60mm}%
-    \begin{minipage}{45mm}%
+        \end{column}%
+        \begin{column}{70mm}%
+        \begin{onlyenv}<1-2>%
         \begin{lstlisting}[language=python,gobble=8]
         import math
-        print(math.sqrt(3*3 + 4*4))
-        \end{lstlisting}
-    \end{minipage}%
-    \end{onlyenv}%
-    \begin{onlyenv}<3>%
-    \rule[-30mm]{0pt}{60mm}%
-    \begin{minipage}{45mm}%
+
+        leg1 = 3
+        leg2 = 4
+
+        l1sq = leg1 * leg1
+        l2sq = leg2 * leg2
+        hypotsq = l1sq + l2sq
+        result = math.sqrt(hypotsq)
+
+        print(result)
+        \end{lstlisting}%
+        \begin{uncoverenv}<2>%
+        \begin{lstlisting}[gobble=8,basicstyle={\color{blue}\ttfamily\larger[1]}]
+        5
+        \end{lstlisting}%
+        \end{uncoverenv}%
+        \end{onlyenv}%
+        \begin{onlyenv}<3>%
         \begin{lstlisting}[language=python,gobble=8]
         import math
 
@@ -284,15 +316,24 @@
 
         print(pythagoras(3, 4))
         print(pythagoras(5, 12))
-        \end{lstlisting}
-    \end{minipage}%
-    \end{onlyenv}%
+        \end{lstlisting}%
+        \pgfinvisible%
+        \begin{lstlisting}[gobble=8,basicstyle={\color{blue}\ttfamily\larger[1]},belowskip=0pt]
+        5
+        \end{lstlisting}%
+        \begin{lstlisting}[gobble=8,basicstyle={\color{blue}\ttfamily\larger[1]},aboveskip=0pt]
+        13
+        \end{lstlisting}%
+        \pgfshown%
+        \end{onlyenv}%
+        \end{column}%
+    \end{columns}%
 \end{frame}
 
 \begin{frame}[fragile]
     \frametitle{Pythagoras}
-    \rule[-30mm]{0pt}{60mm}%
-    \begin{minipage}{80mm}%
+    \begin{columns}[c]
+        \begin{column}{90mm}%
         \only<2-3>  {\highlightsrc{math}}%
         \only<4>    {\highlightsrc{pyth}}%
         \only<5>    {\highlightsrc{formals}}%
@@ -306,7 +347,7 @@
         \only<13>   {\highlightsrc{s2}}%
         \only<14>   {\highlightsrc{s3}}%
         \only<15>   {\highlightsrc{s4}}%
-        \centering
+        \centering%
         \begin{tikzpicture}[
             remember picture,
             every node/.style={node distance=0.5cm},
@@ -379,10 +420,9 @@
             };
             \draw[densely dashed, thick, ->] (call1.north) -- (mod.south);
         }
-    \end{tikzpicture}
-    \end{minipage}%
-    \rule[-30mm]{0pt}{60mm}%
-    \begin{minipage}{45mm}%
+        \end{tikzpicture}%
+        \end{column}%
+        \begin{column}{70mm}%
         \begin{lstlisting}[language=python,gobble=8]
         ?\tikzmark{math_start}?import math?\tikzmark{math_end}?
 
@@ -394,8 +434,19 @@
 
         print(?\tikzmark{actuals1_start}?pythagoras(3, 4)?\tikzmark{actuals1_end}?)
         print(?\tikzmark{actuals2_start}?pythagoras(5, 12)?\tikzmark{actuals2_end}?)
-        \end{lstlisting}
-    \end{minipage}%
+        \end{lstlisting}%
+        \begin{uncoverenv}<10->%
+        \begin{lstlisting}[gobble=8,basicstyle={\color{blue}\ttfamily\larger[1]},belowskip=0pt]
+        5
+        \end{lstlisting}%
+        \end{uncoverenv}%
+        \begin{uncoverenv}<16->%
+        \begin{lstlisting}[gobble=8,basicstyle={\color{blue}\ttfamily\larger[1]},aboveskip=0pt]
+        13
+        \end{lstlisting}%
+        \end{uncoverenv}%
+        \end{column}%
+    \end{columns}%
 \end{frame}
 
 \begin{frame}
