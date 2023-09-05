@@ -755,7 +755,7 @@
                 \end{array}%
             \end{equation*}
             \end{uncoverenv}
-            \vskip 2ex
+            \vskip 1.5ex
             \begin{uncoverenv}<4->
             \begin{equation*}
                 \begin{array}{l@{\;}c@{\;}l}
@@ -772,7 +772,93 @@
                     \hat{v} \cdot v_1 \cdot v_2
                     &\defeq& \hat{v} \cdot v_2 \cdot v_1 \\
                 \end{array}%
+            \end{equation*}
+            \end{uncoverenv}
+            \vskip 1.5ex
+            \begin{uncoverenv}<5->
+            \begin{equation*}
+                \begin{array}{l@{\;}c@{\;}l}
+                    \llbracket p_1 ~ p_2 \rrbracket\ \hat{v}
+                    &\defeq& \raisebox{-0.2em}{\textsf{\textbf{\larger[2] ?}}} \\
+                \end{array}%
             \end{equation*}%
+            \end{uncoverenv}
+        \end{column}
+    \end{columns}
+    \citepaper{
+        Manfred von Thun.
+        “The mathematical foundations of Joy”.
+        1994.
+        \url{https://hypercubed.github.io/joy/html/j02maf.html}
+    }
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{More mathier}
+    \begin{columns}
+        \begin{column}<+->{60mm}
+            \begin{equation*}
+                \begin{array}{l@{\;\,}c@{\,\;}l}
+                    \llbracket \sym{1 2 +} \rrbracket\ \hat{v} &=&
+                    \only<.-.(4)>{\ldots}
+                    \only<.(5)->{\hat{v} \cdot 3}
+                \end{array}%
+            \end{equation*}
+            \begin{equation*}
+                \begin{array}{l@{\;\,}c@{\,\;}l}
+                    \uncover<.(1)->{\llbracket \sym{1} \rrbracket\ \hat{v} &=&
+                    \hat{v} \cdot 1} \\
+                    \uncover<.(2)->{\llbracket \sym{2} \rrbracket\ \hat{v} \cdot 1 &=&
+                    \hat{v} \cdot 1 \cdot 2} \\
+                    \uncover<.(3)->{\llbracket \sym{+} \rrbracket\ \hat{v} \cdot 1 \cdot 2 &=&
+                    \hat{v} \cdot
+                    \only<.-.(3)>{(1 + 2)}
+                    \only<.(4)->{3\phantom{(1 + {})}}}
+                    \\
+                \end{array}%
+            \end{equation*}
+            \begin{uncoverenv}<.(6)->
+                \begin{center}
+                    \textcolor{gray}{\textit{Push \val{3} onto the stack}}
+                \end{center}
+            \end{uncoverenv}
+        \end{column}
+        \addtocounter{beamerpauses}{6}
+        \begin{column}<+->{60mm}
+            \begin{equation*}
+                \begin{array}{l@{\;\,}c@{\,\;}l}
+                    \llbracket \sym{dup *} \rrbracket\ \hat{v}
+                    \only<.(2)->{\cdot \alt<.(6)->{i}{v}}
+                    &=&
+                    \only<.-.(7)>{\ldots}
+                    \only<.(8)->{\hat{v} \cdot (i \times i)}
+                \end{array}%
+            \end{equation*}
+            \begin{equation*}
+                \begin{array}{l@{\;\,}c@{\,\;}l}
+                    \uncover<.(1)->{
+                    \llbracket \sym{dup} \rrbracket\ \hat{v}
+                    \cdot \alt<.(6)->{i}{v}
+                    &=&
+                    \uncover<.(3)->{
+                    \hat{v}
+                    \cdot \alt<.(6)->{i}{v}
+                    \cdot \alt<.(6)->{i}{v}
+                    }} \\
+                    \uncover<.(4)->{
+                    \llbracket \sym{*} \rrbracket\ \hat{v}
+                    \cdot \alt<.(5)->{i}{v}
+                    \cdot \alt<.(5)->{i}{v}
+                    &=&
+                    \uncover<.(7)->{\hat{v} \cdot (i \times i)}
+                    } \\
+                \end{array}%
+            \end{equation*}
+            \begin{uncoverenv}<.(9)->
+                \begin{center}
+                    \textcolor{gray}{\textit{Pop one value from the stack,
+                    square it, and push the result onto the stack}}
+                \end{center}
             \end{uncoverenv}
         \end{column}
     \end{columns}
