@@ -2,6 +2,7 @@
 \mode<presentation>
 
 \usepackage{adjustbox}
+\usepackage{amsmath}
 \usepackage{array}
 \usepackage{calc}
 \usepackage{etoolbox}
@@ -9,6 +10,7 @@
 \usepackage{listings}
 \usepackage{relsize}
 \usepackage{graphicx}
+\usepackage{stmaryrd}
 \usepackage[most]{tcolorbox}
 \usepackage[overlay,absolute]{textpos}
 \usepackage{xcolor}
@@ -28,6 +30,9 @@
 ]
 \setmonofont{Iosevka Term}
 \newfontface\helvreg{Helvetica Neue}
+
+\renewcommand{\arraystretch}{1.2}
+\renewcommand\UrlFont{\smaller[1]\tt}
 
 \definecolor{grayish}{gray}{0.8}
 
@@ -192,6 +197,7 @@
     \ignorespaces
 }
 
+\newcommand{\val}[1]{\textcolor{black}{\textup{#1}}}
 \newcommand{\sym}[1]{\textcolor{blue}{\texttt{#1}}}
 \newcommand{\quot}[1]{\textcolor{blue}{\texttt{[#1]}}}
 \newcommand{\eff}[1]{\textcolor{gray}{\texttt{\textit{#1}}}}
@@ -209,21 +215,36 @@
     \ignorespaces
 }
 
-\newcommand{\stackeffect}[2]{%
-    \hspace{\fill}%
-    \begin{tikzpicture}
-        \matrix[
-            anchor=west,
-            execute at begin cell=\node\bgroup,
-            execute at end cell=\egroup;%
-        ]{
+\newcommand<>{\stackeffect}[2]{%
+    \begin{onlyenv}#3%
+        \begin{center}
+        \begin{tabular}{l}
             \eff{#1} \\
             \sym{#2} \\
-        };
-    \end{tikzpicture}%
-    \hspace*{\fill}%
+        \end{tabular}%
+        \end{center}%
+    \end{onlyenv}%
     \ignorespaces
 }
+
+\newcommand<>{\interp}[2]{%
+    \begin{onlyenv}#3%
+        \begin{center}
+        \begin{tabular}{ccp{60mm}}
+            \sym{#1} & $\Longrightarrow$ &
+            \textcolor{gray}{\textit{\ignorespaces #2}} \\
+        \end{tabular}%
+        \end{center}%
+    \end{onlyenv}%
+    \ignorespaces
+}
+
+\newcommand\defalt{\mathrel{\:\mid\:}}
+\newcommand\defeq{\mathrel{\,\triangleq\,}}
+\newcommand{\eval}[1]{\ensuremath{\llbracket \sym{#1} \rrbracket}}
+\newcommand\builtin{\textcolor{black}{\textsf{\textit{builtin}}}}
+\newcommand\lit{\textcolor{black}{\textsf{\textit{literal}}}}
+\newcommand\prog{\textcolor{black}{\textsf{\textit{program}}}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Citations
@@ -470,42 +491,12 @@
 \end{frame}
 
 \begin{frame}
-    \frametitle{The stack doesn't have to start empty}
-    \stackex<+>{  1337 42 1}{ 2 + }
-    \stackex<+>{1337 42 1 2}{ + }
-    \stackex<+>{  1337 42 3}{ }
-\end{frame}
-
-\begin{frame}[fragile]
-    \frametitle{Stack effects}
-    \stackeffect{i -- result}{2 +}
-    \citepaper<2>{
-        Slava Pestov, Daniel Ehrenberg, Joe Groff.
-        “Factor: A Dynamic Stack-based Programming Language”.
-        ACM SIGPLAN Notices 45:12. December 2010.
-    }
-\end{frame}
-
-\begin{frame}
-    \frametitle{Stack underflow is not fatal}
-    \stackex<+>{         }{ 2 + }
-    \stackex<+>{        2}{ + }
-    \stackex<+>{2 \sym{+}}{ }
-\end{frame}
-
-\begin{frame}
     \frametitle{Pythagoras}
-    \stackex<+>{       }{ 1 2 + 3 * 2 2 + 7 3 - * + sqrt }
-    \stackex<+>{      1}{ 2 + 3 * 2 2 + 7 3 - * + sqrt }
-    \stackex<+>{    1 2}{ + 3 * 2 2 + 7 3 - * + sqrt }
-    \stackex<+>{      3}{ 3 * 2 2 + 7 3 - * + sqrt }
-    \stackex<+>{    3 3}{ * 2 2 + 7 3 - * + sqrt }
-    \stackex<+>{      9}{ 2 2 + 7 3 - * + sqrt }
-    \stackex<+>{    9 2}{ 2 + 7 3 - * + sqrt }
-    \stackex<+>{  9 2 2}{ + 7 3 - * + sqrt }
-    \stackex<+>{    9 4}{ 7 3 - * + sqrt }
-    \stackex<+>{  9 4 7}{ 3 - * + sqrt }
-    \stackex<+>{9 4 7 3}{ - * + sqrt }
+    \stackex<+>{       }{ 3 3 * 4 4 * + sqrt }
+    \stackex<+>{      3}{ 3 * 4 4 * + sqrt }
+    \stackex<+>{    3 3}{ * 4 4 * + sqrt }
+    \stackex<+>{      9}{ 4 4 * + sqrt }
+    \stackex<+>{    9 4}{ 4 * + sqrt }
     \stackex<+>{  9 4 4}{ * + sqrt }
     \stackex<+>{   9 16}{ + sqrt }
     \stackex<+>{     25}{ sqrt }
@@ -610,9 +601,123 @@
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% § Meaning
+
+\begin{frame}
+    \begin{textblock*}{160mm}(0mm,0mm)
+        \picturecredit{Mustang Joe}{The Thinker}{Public domain}{https://flic.kr/p/a6gTRj}
+        \adjincludegraphics[Trim=0.5in 0in, width=160mm]{thinker.jpg}
+    \end{textblock*}
+    \shadowedtitle{10mm}{10mm}{Meaning}
+\end{frame}
+
+\begin{frame}
+    \frametitle{What is the meaning of a stack program?}
+    \stackex<+>{       }{ }
+    \stackex<+>{       }{ 1 2 + }
+    \stackex<+>{      1}{ 2 + }
+    \stackex<+>{    1 2}{ + }
+    \stackex<+>{      3}{ }
+\end{frame}
+
+\begin{frame}
+    \frametitle{The stack doesn't have to start empty}
+    \stackex<+>{    1337 42}{ 1 2 + }
+    \stackex<+>{  1337 42 1}{ 2 + }
+    \stackex<+>{1337 42 1 2}{ + }
+    \stackex<+>{  1337 42 3}{ }
+\end{frame}
+
+\begin{frame}
+    \interp<+>{1 2 +}{Push \val{3} onto the stack}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Programs can consume existing values}
+    \stackex<+>{  1337 42 3}{ dup * }
+    \stackex<+>{1337 42 3 3}{ * }
+    \stackex<+>{  1337 42 9}{ }
+\end{frame}
+
+\begin{frame}
+    \interp<+>{dup *}{
+        Pop one value from the stack, square it, and push the result onto the
+        stack
+    }
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Stack effects}
+    \citepaper{
+        Slava Pestov, Daniel Ehrenberg, Joe Groff.
+        “Factor: A Dynamic Stack-based Programming Language”.
+        ACM SIGPLAN Notices 45:12. December 2010.
+    }
+    \stackeffect<+>{-- 3}{1 2 +}
+    \stackeffect<+>{x -- x*x}{dup *}
+    \stackeffect<+>{x -- result}{dup *}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{More mathier}
+    \begin{equation*}
+    \begin{array}{c@{\quad}c@{\quad}l}
+        \uncover<7->{i &\in& \mathbb{Z}} \\
+        \uncover<7->{v &\defeq& i \defalt \quot{\prog}} \\
+        \uncover<6->{\hat{v} &\defeq& \epsilon \defalt \hat{v} \cdot v} \\[2ex]
+        \uncover<3->{\lit &\ni& \sym{0}, \sym{1}, \sym{42}, \ldots} \\
+        \uncover<4->{
+            \builtin &\defeq&
+            \sym{+} \defalt \sym{*} \defalt \sym{sqrt} \defalt
+            \sym{apply} \defalt \sym{dig2} \defalt \sym{drop} \defalt
+            \sym{dup} \defalt \sym{swap} \defalt
+            \ldots
+        } \\
+        \uncover<2->{
+            \prog &\defeq&
+            \lit \defalt
+            \builtin \defalt
+            \quot{\prog} \defalt
+            \prog~\prog
+        } \\[2ex]
+        \uncover<5->{
+            \llbracket \prog \rrbracket &\defeq& \hat{v} \rightarrow \hat{v}
+        } \\
+    \end{array}
+    \end{equation*}
+    \vfill\vfill
+    \citepaper{
+        Manfred von Thun.
+        “The mathematical foundations of Joy”.
+        1994.
+        \url{https://hypercubed.github.io/joy/html/j02maf.html}
+    }
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % § Concatenation and composition
 
 \begin{frame}
+    \frametitle{Incomplete programs}
+
+    \begin{onlyenv}<+-+(1)>
+    \begin{center}
+        \stacksplit[only=<+>{colback=gray!20}]{3}
+        \stacksplit{3 *}
+        \stacksplit[only=<.>{colback=gray!50}]{4}
+        \stacksplit[only=<.>{colback=gray!20}]{4}
+        \stacksplit{* + sqrt }
+    \end{center}
+    \end{onlyenv}
+    \begin{onlyenv}<+>
+    \begin{center}
+        \stacksplit[colback=gray!20]{1 2 +}
+        \stacksplit{3 *}
+        \stacksplit[colback=gray!50]{2 2 +}
+        \stacksplit[colback=gray!20]{7 3 -}
+        \stacksplit{* + sqrt }
+    \end{center}
+    \end{onlyenv}
     \begin{onlyenv}<+-+(1)>
     \begin{center}
         \stacksplit[only=<+>{colback=red!20}]{1 2 + 3 * 2}
@@ -620,6 +725,13 @@
         \stacksplit[only=<.>{colback=yellow!20}]{+ sqrt}
     \end{center}
     \end{onlyenv}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Stack underflow is not fatal}
+    \stackex<+>{         }{ 2 + }
+    \stackex<+>{        2}{ + }
+    \stackex<+>{2 \sym{+}}{ }
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
