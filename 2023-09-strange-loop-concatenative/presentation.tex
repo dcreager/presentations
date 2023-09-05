@@ -244,7 +244,23 @@
 \newcommand{\eval}[1]{\ensuremath{\llbracket \sym{#1} \rrbracket}}
 \newcommand\builtin{\textcolor{black}{\textsf{\textit{builtin}}}}
 \newcommand\lit{\textcolor{black}{\textsf{\textit{literal}}}}
+\newcommand\insn{\textcolor{black}{\textsf{\textit{instruction}}}}
 \newcommand\prog{\textcolor{black}{\textsf{\textit{program}}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Math equation spacing
+
+\newcommand{\zerodisplayskips}{%
+  \abovedisplayskip=0pt
+  \belowdisplayskip=0pt
+  \abovedisplayshortskip=0pt
+  \belowdisplayshortskip=0pt
+}
+\newcommand{\removedisplayskips}{%
+  \appto\normalsize{\zerodisplayskips}
+  \appto\small{\zerodisplayskips}
+  \zerodisplayskips
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Citations
@@ -658,34 +674,108 @@
     \stackeffect<+>{x -- result}{dup *}
 \end{frame}
 
-\begin{frame}[fragile]
+\begin{frame}[t,fragile]
     \frametitle{More mathier}
+    \removedisplayskips
     \begin{equation*}
     \begin{array}{c@{\quad}c@{\quad}l}
-        \uncover<7->{i &\in& \mathbb{Z}} \\
-        \uncover<7->{v &\defeq& i \defalt \quot{\prog}} \\
-        \uncover<6->{\hat{v} &\defeq& \epsilon \defalt \hat{v} \cdot v} \\[2ex]
-        \uncover<3->{\lit &\ni& \sym{0}, \sym{1}, \sym{42}, \ldots} \\
-        \uncover<4->{
+        \uncover<8->{i &\in& \mathbb{Z}} \\
+        \uncover<8->{v &\defeq& i \defalt \quot{\prog}} \\
+        \uncover<7->{\hat{v} &\defeq& \epsilon \defalt \hat{v} \cdot v} \\[2ex]
+        \uncover<4->{\lit &\ni& \sym{0}, \sym{1}, \sym{42}, \ldots} \\
+        \uncover<5->{
             \builtin &\defeq&
             \sym{+} \defalt \sym{*} \defalt \sym{sqrt} \defalt
             \sym{apply} \defalt \sym{dig2} \defalt \sym{drop} \defalt
             \sym{dup} \defalt \sym{swap} \defalt
             \ldots
         } \\
-        \uncover<2->{
-            \prog &\defeq&
+        \uncover<3->{
+            \insn &\defeq&
             \lit \defalt
             \builtin \defalt
-            \quot{\prog} \defalt
+            \quot{\prog}
+        } \\
+        \uncover<2->{
+            \prog &\defeq&
+            \insn \defalt
             \prog~\prog
         } \\[2ex]
-        \uncover<5->{
-            \llbracket \prog \rrbracket &\defeq& \hat{v} \rightarrow \hat{v}
+        \uncover<6->{
+            \llbracket \prog \rrbracket &\in& \hat{v} \rightarrow \hat{v}
         } \\
-    \end{array}
-    \end{equation*}
-    \vfill\vfill
+    \end{array}%
+    \end{equation*}%
+    \citepaper{
+        Manfred von Thun.
+        “The mathematical foundations of Joy”.
+        1994.
+        \url{https://hypercubed.github.io/joy/html/j02maf.html}
+    }
+\end{frame}
+
+\begin{frame}[t,fragile]
+    \frametitle{More mathier}
+    \removedisplayskips
+    \begin{columns}[t]
+        \begin{column}{60mm}
+            \begin{uncoverenv}<1->
+            \begin{equation*}
+                \begin{array}{l@{\;\,}c@{\,\;}l}
+                    \llbracket \sym{0} \rrbracket\ \hat{v} &=& \hat{v} \cdot 0 \\
+                    \llbracket \sym{1} \rrbracket\ \hat{v} &=& \hat{v} \cdot 1 \\
+                    \llbracket \sym{42} \rrbracket\ \hat{v} &=& \hat{v} \cdot 42 \\
+                    &\vdots& \\
+                \end{array}%
+            \end{equation*}
+            \end{uncoverenv}
+            \vskip 2ex
+            \begin{uncoverenv}<2->
+            \begin{equation*}
+                \begin{array}{l@{\;}c@{\;}l}
+                    \llbracket \sym{+} \rrbracket\ \hat{v} \cdot i_1 \cdot i_2
+                    &\defeq& \hat{v} \cdot (i_1 + i_2) \\
+                    \llbracket \sym{*} \rrbracket\ \hat{v} \cdot i_1 \cdot i_2
+                    &\defeq& \hat{v} \cdot (i_1 \times i_2) \\
+                    \llbracket \sym{sqrt} \rrbracket\ \hat{v} \cdot i
+                    &\defeq& \hat{v} \cdot \sqrt{i\:} \\
+                \end{array}%
+            \end{equation*}
+            \end{uncoverenv}
+        \end{column}
+        \begin{column}{60mm}
+            \begin{uncoverenv}<3->
+            \begin{equation*}
+                \begin{array}{l@{\;}c@{\;}l}
+                    \llbracket \quot{\textcolor{black}{$p$}} \rrbracket\ \hat{v}
+                    &\defeq& \hat{v} \cdot \quot{\textcolor{black}{$p$}} \\
+                    \llbracket \sym{apply} \rrbracket\
+                    \hat{v} \cdot \quot{\textcolor{black}{$p$}}
+                    &\defeq& \llbracket p \rrbracket\ \hat{v} \\
+                \end{array}%
+            \end{equation*}
+            \end{uncoverenv}
+            \vskip 2ex
+            \begin{uncoverenv}<4->
+            \begin{equation*}
+                \begin{array}{l@{\;}c@{\;}l}
+                    \llbracket \sym{dig2} \rrbracket\
+                    \hat{v} \cdot v_1 \cdot v_2 \cdot v_3
+                    &\defeq& \hat{v} \cdot v_2 \cdot v_3 \cdot v_1 \\
+                    \llbracket \sym{drop} \rrbracket\
+                    \hat{v} \cdot v
+                    &\defeq& \hat{v} \\
+                    \llbracket \sym{dup} \rrbracket\
+                    \hat{v} \cdot v
+                    &\defeq& \hat{v} \cdot v \cdot v \\
+                    \llbracket \sym{swap} \rrbracket\
+                    \hat{v} \cdot v_1 \cdot v_2
+                    &\defeq& \hat{v} \cdot v_2 \cdot v_1 \\
+                \end{array}%
+            \end{equation*}%
+            \end{uncoverenv}
+        \end{column}
+    \end{columns}
     \citepaper{
         Manfred von Thun.
         “The mathematical foundations of Joy”.
