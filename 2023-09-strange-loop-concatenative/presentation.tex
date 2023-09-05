@@ -784,6 +784,35 @@
     }
 \end{frame}
 
+\begin{frame}[fragile]
+    \frametitle{More mathier}
+    \begin{equation*}
+        \begin{array}{l@{\;\,}c@{\,\;}l}
+            \only<1-4>{\llbracket p_1 ~ p_2 \rrbracket\ \hat{v}}
+            \only<5>{\llbracket p_1 ~ p_2 \rrbracket}
+            &\defeq&
+            \only<1>{\ldots}
+            \only<2-3>{
+                \uncover<3>{\llbracket p_2 \rrbracket\ (}
+                \llbracket p_1 \rrbracket\ \hat{v}
+                \uncover<3>{)}
+            }
+            \only<4>{
+                (\llbracket p_2 \rrbracket \circ \llbracket p_1 \rrbracket)\ \hat{v}
+            }
+            \only<5>{
+                \llbracket p_2 \rrbracket \circ \llbracket p_1 \rrbracket
+            }
+        \end{array}%
+    \end{equation*}%
+    \citepaper{
+        Manfred von Thun.
+        “The mathematical foundations of Joy”.
+        1994.
+        \url{https://hypercubed.github.io/joy/html/j02maf.html}
+    }
+\end{frame}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % § Concatenation and composition
 
