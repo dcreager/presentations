@@ -299,6 +299,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % § Names
 
+\section{Names}
+
 \begin{frame}
     \begin{textblock*}{160mm}(0mm,0mm)
         \picturecredit{peagreengirl}{Very Old payroll Journal}{CC-BY-2.0}{https://flic.kr/p/B2YPU}
@@ -306,6 +308,8 @@
     \end{textblock*}
     \shadowedtitle{150mm - \titlewidth}{10mm}{Names}
 \end{frame}
+
+\subsection{Python expression}
 
 \begin{frame}[fragile]
     \frametitle{Pythagoras}
@@ -366,6 +370,8 @@
         \end{column}%
     \end{columns}%
 \end{frame}
+
+\subsection{Python function}
 
 \begin{frame}[fragile]
     \frametitle{Pythagoras}
@@ -489,6 +495,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % § Stack-based languages
 
+\section{Stack-based languages}
+
 \begin{frame}
     \begin{textblock*}{160mm}(0mm,0mm)
         \picturecredit{Marco Verch}{Stack of pancakes with berries on a plate}{CC-BY-2.0}{https://flic.kr/p/2jYUh8M}
@@ -496,6 +504,8 @@
     \end{textblock*}
     \flattitle{150mm - \titlewidth}{5mm}{Stack-based languages}
 \end{frame}
+
+\subsection{Programs operate on a stack}
 
 \begin{frame}
     \frametitle{Programs operate on a stack}
@@ -505,6 +515,8 @@
     \stackex<+>{    1 2}{ + }
     \stackex<+>{      3}{ }
 \end{frame}
+
+\subsection{Stack expression}
 
 \begin{frame}
     \frametitle{Pythagoras}
@@ -527,6 +539,8 @@
 \end{frame}
 \picturecredit{striegel}{HP-48GX calculator}{CC-BY-2.0}{https://flic.kr/p/BWttzE}
 
+\subsection{Manipulating the stack}
+
 \begin{frame}
     \frametitle{Manipulating the stack}
     \stackex<+>{         }{ 3 4 dup * swap dup * + sqrt }
@@ -540,6 +554,8 @@
     \stackex<+>{       25}{ sqrt }
     \stackex<+>{        5}{ }
 \end{frame}
+
+\subsection{Stack abstraction}
 
 \begin{frame}
     \frametitle{Abstraction}
@@ -558,6 +574,8 @@
     \stackex<+>{        5}{ }
 \end{frame}
 
+\subsection{Digging for dirt}
+
 \begin{frame}
     \frametitle{Digging for dirt}
     \stackex<+>{         }{ \quot{dup * swap dup * + sqrt} 3 4 ??? apply }
@@ -575,6 +593,8 @@
     \stackex<+>{       25}{ sqrt }
     \stackex<+>{        5}{ }
 \end{frame}
+
+\subsection{Applying a quotation more than once}
 
 \begin{frame}
     \frametitle{Applying a quotation more than once}
@@ -619,6 +639,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % § Meaning
 
+\section{Meaning}
+
 \begin{frame}
     \begin{textblock*}{160mm}(0mm,0mm)
         \picturecredit{Mustang Joe}{The Thinker}{Public domain}{https://flic.kr/p/a6gTRj}
@@ -626,6 +648,8 @@
     \end{textblock*}
     \shadowedtitle{10mm}{10mm}{Meaning}
 \end{frame}
+
+\subsection{What is the meaning of a stack program?}
 
 \begin{frame}
     \frametitle{What is the meaning of a stack program?}
@@ -648,6 +672,8 @@
     \interp<+>{1 2 +}{Push \val{3} onto the stack}
 \end{frame}
 
+\subsection{Programs can consume existing values}
+
 \begin{frame}
     \frametitle{Programs can consume existing values}
     \stackex<+>{  1337 42 3}{ dup * }
@@ -662,6 +688,8 @@
     }
 \end{frame}
 
+\subsection{Stack effects}
+
 \begin{frame}[fragile]
     \frametitle{Stack effects}
     \citepaper{
@@ -673,6 +701,8 @@
     \stackeffect<+>{x -- x*x}{dup *}
     \stackeffect<+>{x -- result}{dup *}
 \end{frame}
+
+\subsection{Stack transformers}
 
 \begin{frame}[t,fragile]
     \frametitle{More mathier}
@@ -713,6 +743,8 @@
         \url{https://hypercubed.github.io/joy/html/j02maf.html}
     }
 \end{frame}
+
+\subsection{Interpreting instructions}
 
 \begin{frame}[t,fragile]
     \frametitle{More mathier}
@@ -793,6 +825,8 @@
     }
 \end{frame}
 
+\subsection{Interpreting example programs by hand}
+
 \begin{frame}[fragile]
     \frametitle{More mathier}
     \begin{columns}
@@ -869,6 +903,8 @@
         \url{https://hypercubed.github.io/joy/html/j02maf.html}
     }
 \end{frame}
+
+\subsection{Interpreting programs}
 
 \begin{frame}[fragile]
     \frametitle{More mathier}
