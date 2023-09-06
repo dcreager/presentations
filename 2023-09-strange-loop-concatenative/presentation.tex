@@ -746,10 +746,10 @@
 
 \subsection{Interpreting instructions}
 
-\begin{frame}[t,fragile]
+\begin{frame}[fragile]
     \frametitle{More mathier}
     \removedisplayskips
-    \begin{columns}[t]
+    \begin{columns}
         \begin{column}{60mm}
             \begin{uncoverenv}<1->
             \begin{equation*}
@@ -806,15 +806,6 @@
                 \end{array}%
             \end{equation*}
             \end{uncoverenv}
-            \vskip 1.5ex
-            \begin{uncoverenv}<5->
-            \begin{equation*}
-                \begin{array}{l@{\;}c@{\;}l}
-                    \llbracket p_1 ~ p_2 \rrbracket\ \hat{v}
-                    &\defeq& \raisebox{-0.2em}{\textsf{\textbf{\larger[2] ?}}} \\
-                \end{array}%
-            \end{equation*}%
-            \end{uncoverenv}
         \end{column}
     \end{columns}
     \citepaper{
@@ -825,7 +816,38 @@
     }
 \end{frame}
 
-\subsection{Interpreting example programs by hand}
+\subsection{Interpreting programs}
+
+\begin{frame}[fragile]
+    \frametitle{More mathier}
+    \begin{equation*}
+        \begin{array}{l@{\;\,}c@{\,\;}l}
+            \only<1-4>{\llbracket p_1 ~ p_2 \rrbracket\ \hat{v}}
+            \only<5>{\llbracket p_1 ~ p_2 \rrbracket}
+            &\defeq&
+            \only<1>{\raisebox{-0.2em}{\textsf{\textbf{\larger[2] ?}}}}
+            \only<2-3>{
+                \uncover<3>{\llbracket p_2 \rrbracket\ (}
+                \llbracket p_1 \rrbracket\ \hat{v}
+                \uncover<3>{)}
+            }
+            \only<4>{
+                (\llbracket p_2 \rrbracket \circ \llbracket p_1 \rrbracket)\ \hat{v}
+            }
+            \only<5>{
+                \llbracket p_2 \rrbracket \circ \llbracket p_1 \rrbracket
+            }
+        \end{array}%
+    \end{equation*}%
+    \citepaper{
+        Manfred von Thun.
+        “The mathematical foundations of Joy”.
+        1994.
+        \url{https://hypercubed.github.io/joy/html/j02maf.html}
+    }
+\end{frame}
+
+\subsection{Interpreting the example programs}
 
 \begin{frame}[fragile]
     \frametitle{More mathier}
@@ -896,37 +918,6 @@
             \end{uncoverenv}
         \end{column}
     \end{columns}
-    \citepaper{
-        Manfred von Thun.
-        “The mathematical foundations of Joy”.
-        1994.
-        \url{https://hypercubed.github.io/joy/html/j02maf.html}
-    }
-\end{frame}
-
-\subsection{Interpreting programs}
-
-\begin{frame}[fragile]
-    \frametitle{More mathier}
-    \begin{equation*}
-        \begin{array}{l@{\;\,}c@{\,\;}l}
-            \only<1-4>{\llbracket p_1 ~ p_2 \rrbracket\ \hat{v}}
-            \only<5>{\llbracket p_1 ~ p_2 \rrbracket}
-            &\defeq&
-            \only<1>{\ldots}
-            \only<2-3>{
-                \uncover<3>{\llbracket p_2 \rrbracket\ (}
-                \llbracket p_1 \rrbracket\ \hat{v}
-                \uncover<3>{)}
-            }
-            \only<4>{
-                (\llbracket p_2 \rrbracket \circ \llbracket p_1 \rrbracket)\ \hat{v}
-            }
-            \only<5>{
-                \llbracket p_2 \rrbracket \circ \llbracket p_1 \rrbracket
-            }
-        \end{array}%
-    \end{equation*}%
     \citepaper{
         Manfred von Thun.
         “The mathematical foundations of Joy”.
