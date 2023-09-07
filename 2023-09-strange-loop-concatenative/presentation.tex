@@ -239,13 +239,30 @@
     \ignorespaces
 }
 
+\newcommand{\highlightmath}[1]{%
+    \tikz[remember picture]{
+      \draw [overlay, draw=none, fill=blue!25]
+        ([xshift=-1pt, yshift=12pt] pic cs:#1_start)
+        rectangle
+        ([xshift=1pt, yshift=-6pt] pic cs:#1_end)
+        ;
+    }%
+    \ignorespaces
+}
+
 \newcommand\defalt{\mathrel{\:\mid\:}}
 \newcommand\defeq{\mathrel{\,\triangleq\,}}
+\newcommand\qeq{\mathrel{\stackrel{\mathrm{?}}{=}}}
+\newcommand\yeq{\mathrel{\stackrel{\checkmark}{=}}}
+\newcommand\withsub[1]{{\scriptscriptstyle #1}}
+
 \newcommand{\eval}[1]{\ensuremath{\llbracket \sym{#1} \rrbracket}}
 \newcommand\builtin{\textcolor{black}{\textsf{\textit{builtin}}}}
 \newcommand\lit{\textcolor{black}{\textsf{\textit{literal}}}}
 \newcommand\insn{\textcolor{black}{\textsf{\textit{instruction}}}}
 \newcommand\prog{\textcolor{black}{\textsf{\textit{program}}}}
+
+\newcommand\qqq{\raisebox{-0.2em}{\textsf{\textbf{\larger[2] ?}}}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Math equation spacing
@@ -754,9 +771,9 @@
             \begin{uncoverenv}<1->
             \begin{equation*}
                 \begin{array}{l@{\;\,}c@{\,\;}l}
-                    \llbracket \sym{0} \rrbracket\ \hat{v} &=& \hat{v} \cdot 0 \\
-                    \llbracket \sym{1} \rrbracket\ \hat{v} &=& \hat{v} \cdot 1 \\
-                    \llbracket \sym{42} \rrbracket\ \hat{v} &=& \hat{v} \cdot 42 \\
+                    \llbracket \sym{0} \rrbracket\ \hat{v} &=& \hat{v} \cdot \val{0} \\
+                    \llbracket \sym{1} \rrbracket\ \hat{v} &=& \hat{v} \cdot \val{1} \\
+                    \llbracket \sym{42} \rrbracket\ \hat{v} &=& \hat{v} \cdot \val{42} \\
                     &\vdots& \\
                 \end{array}%
             \end{equation*}
@@ -825,7 +842,7 @@
             \only<1-4>{\llbracket p_1 ~ p_2 \rrbracket\ \hat{v}}
             \only<5>{\llbracket p_1 ~ p_2 \rrbracket}
             &\defeq&
-            \only<1>{\raisebox{-0.2em}{\textsf{\textbf{\larger[2] ?}}}}
+            \only<1>{\qqq}
             \only<2-3>{
                 \uncover<3>{\llbracket p_2 \rrbracket\ (}
                 \llbracket p_1 \rrbracket\ \hat{v}
@@ -847,7 +864,122 @@
     }
 \end{frame}
 
-\subsection{Interpreting the example programs}
+\subsection{Interpreting an example program}
+
+\begin{frame}[t,fragile]
+    \frametitle{Interpreting an example program}
+    \removedisplayskips
+    \begin{columns}[t]
+        \begin{column}<+->{80mm}
+            \begin{equation*}
+                \begin{array}{l@{\;\,}c@{\,\;}l@{\quad}l}
+                    \llbracket
+                    \only<.-.(3)>{\sym{1 2 +}}
+                    \only<.(4)->{\sym{1}\ (\sym{2}\ (\sym{+}))}
+                    \rrbracket\ \hat{v}
+                    \only<.-.(1)>{&=\vphantom{\qeq}& \qqq}
+                    \only<.(2)-.(10)>{&\qeq& \hat{v} \cdot \val{3}}
+                    \only<.(11)>{&\yeq& \hat{v} \cdot \val{3}}
+                    \only<.(5)->{
+                        \\ &=&
+                        \llbracket \sym{2}\ (\sym{+}) \rrbracket\ (
+                        \llbracket \sym{1} \rrbracket\ %
+                        \hat{v})
+                        & \withsub{
+                            p_1 = \sym{1},~
+                            p_2 = \sym{2}\ (\sym{+}),~
+                            \hat{v}_4 = \hat{v}
+                        }
+                    }
+                    \only<.(6)->{
+                        \\ &=&
+                        \llbracket \sym{2}\ (\sym{+}) \rrbracket\ (
+                        \hat{v} \cdot \val{1})
+                        & \withsub{
+                            \hat{v}_1 = \hat{v}
+                        }
+                    }
+                    \only<.(7)->{
+                        \\ &=&
+                        \llbracket \sym{+} \rrbracket\ (
+                        \llbracket \sym{2} \rrbracket\ (%
+                        \hat{v} \cdot \val{1}))
+                        & \withsub{
+                            p_1 = \sym{2},~
+                            p_2 = \sym{+},~
+                            \hat{v}_4 = \hat{v} \cdot \val{1}
+                        }
+                    }
+                    \only<.(8)->{
+                        \\ &=&
+                        \llbracket \sym{+} \rrbracket\ (
+                        \hat{v} \cdot \val{1} \cdot \val{2})
+                        & \withsub{
+                            \hat{v}_2 = \hat{v} \cdot \val{1}
+                        }
+                    }
+                    \only<.(9)->{
+                        \\ &=&
+                        \hat{v} \cdot (\val{1} + \val{2})
+                        & \withsub{
+                            \hat{v}_3 = \hat{v},~
+                            i_1 = 1,~
+                            i_2 = 2
+                        }
+                    }
+                    \only<.(10)->{
+                        \\ &=&
+                        \hat{v} \cdot \val{3}
+                    }
+                \end{array}%
+            \end{equation*}
+            \begin{onlyenv}<.(1)-.(2)>
+                \begin{center}
+                    \textcolor{gray}{\textit{Push \val{3} onto the stack}}
+                \end{center}
+            \end{onlyenv}
+        \end{column}
+        \begin{onlyenv}<.(3)->
+        \begin{column}{50mm}
+            \only<.(5)>{\highlightmath{subprog}}%
+            \only<.(6)>{\highlightmath{sub1}}%
+            \only<.(7)>{\highlightmath{subprog}}%
+            \only<.(8)>{\highlightmath{sub2}}%
+            \only<.(9)>{\highlightmath{subplus}}%
+            \begin{equation*}
+                \begin{array}{l@{\;\,}c@{\,\;}l@{\quad}l}
+                    \tikzmark{sub1_start}
+                    \llbracket \sym{1} \rrbracket\ \hat{v}_1 &=&
+                    \hat{v}_1 \cdot \val{1}
+                    \tikzmark{sub1_end}
+                    \\[1ex]
+                    \tikzmark{sub2_start}
+                    \llbracket \sym{2} \rrbracket\ \hat{v}_2 &=&
+                    \hat{v}_2 \cdot \val{2}
+                    \tikzmark{sub2_end}
+                    \\[1ex]
+                    \tikzmark{subplus_start}
+                    \llbracket \sym{+} \rrbracket\ %
+                    \hat{v}_3 \cdot i_1 \cdot i_2 &=&
+                    \hat{v}_3 \cdot (i_1 + i_2)
+                    \tikzmark{subplus_end}
+                    \\[1ex]
+                    \tikzmark{subprog_start}
+                    \llbracket p_1 ~ p_2 \rrbracket\ \hat{v}_4 &=&
+                    \llbracket p_2 \rrbracket\ (\llbracket p_1 \rrbracket\ \hat{v}_4)
+                    \tikzmark{subprog_end}
+                \end{array}%
+            \end{equation*}
+        \end{column}
+        \end{onlyenv}
+    \end{columns}
+    \citepaper{
+        Manfred von Thun.
+        “The mathematical foundations of Joy”.
+        1994.
+        \url{https://hypercubed.github.io/joy/html/j02maf.html}
+    }
+\end{frame}
 
 \begin{frame}[fragile]
     \frametitle{More mathier}
