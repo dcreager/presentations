@@ -17,6 +17,7 @@
 
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta}
+\usetikzlibrary{calc}
 \usetikzlibrary{positioning}
 \usetikzlibrary{tikzmark}
 
@@ -761,14 +762,14 @@
     }
 \end{frame}
 
-\subsection{Interpreting instructions}
+\subsection{Evaluating stack programs}
 
-\begin{frame}[fragile]
-    \frametitle{More mathier}
+\begin{frame}[t,fragile]
+    \frametitle{Evaluating stack programs}
     \removedisplayskips
-    \begin{columns}
-        \begin{column}{60mm}
-            \begin{uncoverenv}<1->
+    \begin{columns}[t]
+        \begin{column}<+->{60mm}
+            \begin{uncoverenv}<+->
             \begin{equation*}
                 \begin{array}{l@{\;\,}c@{\,\;}l}
                     \llbracket \sym{0} \rrbracket\ \hat{v} &=& \hat{v} \cdot \val{0} \\
@@ -779,7 +780,7 @@
             \end{equation*}
             \end{uncoverenv}
             \vskip 2ex
-            \begin{uncoverenv}<2->
+            \begin{uncoverenv}<+->
             \begin{equation*}
                 \begin{array}{l@{\;}c@{\;}l}
                     \llbracket \sym{+} \rrbracket\ \hat{v} \cdot i_1 \cdot i_2
@@ -793,7 +794,7 @@
             \end{uncoverenv}
         \end{column}
         \begin{column}{60mm}
-            \begin{uncoverenv}<3->
+            \begin{uncoverenv}<+->
             \begin{equation*}
                 \begin{array}{l@{\;}c@{\;}l}
                     \llbracket \quot{\textcolor{black}{$p$}} \rrbracket\ \hat{v}
@@ -805,7 +806,7 @@
             \end{equation*}
             \end{uncoverenv}
             \vskip 1.5ex
-            \begin{uncoverenv}<4->
+            \begin{uncoverenv}<+->
             \begin{equation*}
                 \begin{array}{l@{\;}c@{\;}l}
                     \llbracket \sym{dig2} \rrbracket\
@@ -823,6 +824,21 @@
                 \end{array}%
             \end{equation*}
             \end{uncoverenv}
+            \vskip 1.5ex
+            \begin{uncoverenv}<+->
+            \begin{equation*}
+                \begin{array}{l@{\;}c@{\;}l}
+                    \llbracket p_1 ~ p_2 \rrbracket\ \hat{v}
+                    &\defeq&
+                    \only<.>{\qqq}
+                    \only<.(1)->{
+                        \uncover<.(2)->{\llbracket p_2 \rrbracket\ (}
+                        \llbracket p_1 \rrbracket\ \hat{v}
+                        \uncover<.(2)->{)}
+                    }
+                \end{array}%
+            \end{equation*}
+            \end{uncoverenv}
         \end{column}
     \end{columns}
     \citepaper{
@@ -833,41 +849,10 @@
     }
 \end{frame}
 
-\subsection{Interpreting programs}
-
-\begin{frame}[fragile]
-    \frametitle{More mathier}
-    \begin{equation*}
-        \begin{array}{l@{\;\,}c@{\,\;}l}
-            \only<1-4>{\llbracket p_1 ~ p_2 \rrbracket\ \hat{v}}
-            \only<5>{\llbracket p_1 ~ p_2 \rrbracket}
-            &\defeq&
-            \only<1>{\qqq}
-            \only<2-3>{
-                \uncover<3>{\llbracket p_2 \rrbracket\ (}
-                \llbracket p_1 \rrbracket\ \hat{v}
-                \uncover<3>{)}
-            }
-            \only<4>{
-                (\llbracket p_2 \rrbracket \circ \llbracket p_1 \rrbracket)\ \hat{v}
-            }
-            \only<5>{
-                \llbracket p_2 \rrbracket \circ \llbracket p_1 \rrbracket
-            }
-        \end{array}%
-    \end{equation*}%
-    \citepaper{
-        Manfred von Thun.
-        “The mathematical foundations of Joy”.
-        1994.
-        \url{https://hypercubed.github.io/joy/html/j02maf.html}
-    }
-\end{frame}
-
-\subsection{Interpreting an example program}
+\subsection{Evaluating an example program}
 
 \begin{frame}[t,fragile]
-    \frametitle{Interpreting an example program}
+    \frametitle{Evaluating an example program}
     \removedisplayskips
     \begin{columns}[t]
         \begin{column}<+->{80mm}
@@ -982,7 +967,7 @@
 \end{frame}
 
 \begin{frame}[t,fragile]
-    \frametitle{Interpreting an example program}
+    \frametitle{Evaluating an example program}
     \removedisplayskips
     \begin{columns}[t]
         \begin{column}<+->{80mm}
@@ -1077,6 +1062,132 @@
             \end{equation*}
         \end{column}
     \end{columns}
+    \citepaper{
+        Manfred von Thun.
+        “The mathematical foundations of Joy”.
+        1994.
+        \url{https://hypercubed.github.io/joy/html/j02maf.html}
+    }
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% § Associativity
+
+\section{Associativity}
+
+\begin{frame}
+    \flattitle{10mm}{10mm}{Associativity}
+    todo: insert picture
+\end{frame}
+
+\subsection{Concatenation revisited}
+
+\begin{frame}[fragile]
+    \frametitle{Concatenation revisited}
+    \begin{onlyenv}<+->
+    \begin{equation*}
+        \begin{array}{l@{\;\,}c@{\,\;}l}
+            \only<.-.(1)>{\llbracket p_1 ~ p_2 \rrbracket\ \hat{v}}
+            \only<.(2)->{\tikzmark{concat_start}\llbracket p_1 ~ p_2 \rrbracket\tikzmark{concat_end}}
+            &\defeq&
+            \only<.>{
+                \llbracket p_2 \rrbracket\ (\llbracket p_1 \rrbracket\ \hat{v})
+            }
+            \only<.(1)>{
+                (\llbracket p_2 \rrbracket \circ \llbracket p_1 \rrbracket)\ \hat{v}
+            }
+            \only<.(2)->{
+                \tikzmark{comp_start}\llbracket p_2 \rrbracket \circ \llbracket p_1 \rrbracket\tikzmark{comp_end}
+            }
+        \end{array}%
+    \end{equation*}%
+    \end{onlyenv}%
+    \addtocounter{beamerpauses}{2}
+    \begin{uncoverenv}<+-+(1)>
+        \vskip 2em
+        \begin{center}
+            \uncover<.(1)>{\adjincludegraphics[width=8mm,raise=-1.5ex]{flashing-light.png}}
+            \textbf{\textcolor{cyan}{
+                \tikzmark{syn_start}Syntactic concatenation\tikzmark{syn_end}
+                is
+                \tikzmark{sem_start}semantic composition\tikzmark{sem_end}
+            }}
+            \uncover<.(1)>{\adjincludegraphics[width=8mm,raise=-1.5ex]{flashing-light.png}}
+        \end{center}
+        \begin{tikzpicture}[remember picture, overlay, thick, ->, color=cyan, -{Triangle[]}]
+            \draw
+              ($([yshift=8pt] pic cs:syn_start)!0.5!([yshift=8pt] pic cs:syn_end)$)
+              --
+              ($([yshift=-4pt] pic cs:concat_start)!0.5!([yshift=-4pt] pic cs:concat_end)$)
+              ;
+            \draw
+              ($([yshift=8pt] pic cs:sem_start)!0.5!([yshift=8pt] pic cs:sem_end)$)
+              --
+              ($([yshift=-4pt] pic cs:comp_start)!0.5!([yshift=-4pt] pic cs:comp_end)$)
+              ;
+        \end{tikzpicture}
+    \end{uncoverenv}%
+    \citepaper{
+        Manfred von Thun.
+        “The mathematical foundations of Joy”.
+        1994.
+        \url{https://hypercubed.github.io/joy/html/j02maf.html}
+    }
+\end{frame}
+
+\subsection{Associativity of stack transformers}
+
+\begin{frame}[fragile]
+    \frametitle{Concatenation revisited}
+    \begin{onlyenv}<+->
+    \begin{equation*}
+        \only<.(7)->{\left.}
+        \begin{array}{c@{\;\,}c@{\,\;}c}
+            \only<.>{\llbracket p_1 ~ p_2 ~ p_3 ~ p_4 \rrbracket}
+            \only<.(1)->{\llbracket (p_1 ~ p_2) ~ (p_3 ~ p_4)) \rrbracket}
+            &=&
+            \only<.-.(1)>{\qqq}
+            \only<.(2)>{
+                \llbracket p_3 ~ p_4 \rrbracket \circ
+                \llbracket p_2 ~ p_1 \rrbracket
+            }
+            \only<.(3)->{
+                (\llbracket p_4 \rrbracket \circ \llbracket p_3 \rrbracket) \circ
+                (\llbracket p_2 \rrbracket \circ \llbracket p_1 \rrbracket)
+            }
+            \only<.(4)->{
+                \\
+                \llbracket p_1 ~ (p_2 ~ (p_3 ~ p_4)) \rrbracket &=&
+                ((\llbracket p_4 \rrbracket \circ \llbracket p_3 \rrbracket) \circ
+                \llbracket p_2 \rrbracket) \circ \llbracket p_1 \rrbracket
+            }
+            \only<.(5)->{
+                \\
+                \llbracket ((p_1 ~ p_2) ~ p_3) ~ p_4) \rrbracket &=&
+                \llbracket p_4 \rrbracket \circ (\llbracket p_3 \rrbracket \circ
+                (\llbracket p_2 \rrbracket \circ \llbracket p_1 \rrbracket))
+            }
+            \only<.(6)->{
+                \\
+                \llbracket (p_1 ~ (p_2 ~ p_3)) ~ p_4 \rrbracket &=&
+                \llbracket p_4 \rrbracket \circ ((\llbracket p_3 \rrbracket \circ
+                \llbracket p_2 \rrbracket) \circ \llbracket p_1 \rrbracket)
+            }
+        \end{array}%
+        \only<.(7)->{
+            \right\} =
+            \llbracket p_4 \rrbracket \circ \llbracket p_3 \rrbracket \circ
+            \llbracket p_2 \rrbracket \circ \llbracket p_1 \rrbracket
+        }
+    \end{equation*}%
+    \end{onlyenv}%
+    \addtocounter{beamerpauses}{7}
+    \begin{onlyenv}<+->
+        \vskip 2em
+        \begin{center}
+            \textbf{\textcolor{cyan}{Associativity $\Rightarrow$ parallelism}}
+        \end{center}
+    \end{onlyenv}%
     \citepaper{
         Manfred von Thun.
         “The mathematical foundations of Joy”.
