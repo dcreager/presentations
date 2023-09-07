@@ -266,6 +266,18 @@
 \newcommand\qqq{\raisebox{-0.2em}{\textsf{\textbf{\larger[2] ?}}}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Compiling
+
+\newcommand\lcompile{\mathopen{{\langle}\mkern-3.5mu{|}}}
+\newcommand\rcompile{\mathclose{{|}\mkern-3.5mu{\rangle}}}
+\newcommand\concat{\mathbin{+\mkern-10mu+}}
+
+\newcommand\compiled[2][bgcolor=lightgray,minipage=20mm]{%
+    \adjustbox{#1,margin=2pt}{\ttfamily\smaller[3]\begin{tabular}{@{~}l@{~}}#2\end{tabular}}%
+    \ignorespaces
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Math equation spacing
 
 \newcommand{\zerodisplayskips}{%
@@ -1194,6 +1206,83 @@
         1994.
         \url{https://hypercubed.github.io/joy/html/j02maf.html}
     }
+\end{frame}
+
+\subsection{Compiling stack programs}
+
+\begin{frame}[t,fragile]
+    \frametitle{Compiling stack programs}
+    \removedisplayskips
+    \begin{columns}[t]
+        \begin{column}<+->{60mm}
+            \begin{equation*}
+                \begin{array}{l@{\;\,}c@{\,\;}l}
+                    \lcompile \sym{0} \rcompile &\defeq& \compiled{
+                        mov \%ax, 0 \\
+                        push \%ax \\
+                    } \\
+                    \lcompile \sym{1} \rcompile &\defeq& \compiled{
+                        mov \%ax, 1 \\
+                        push \%ax \\
+                    } \\
+                    \lcompile \sym{42} \rcompile &\defeq& \compiled{
+                        mov \%ax, 42 \\
+                        push \%ax \\
+                    } \\
+                    &\vdots& \\
+                \end{array}%
+            \end{equation*}
+            \vskip 2ex
+            \begin{equation*}
+                \begin{array}{l@{\;}c@{\;}l}
+                    \lcompile \sym{+} \rcompile &\defeq& \compiled{
+                        pop \%ax \\
+                        pop \%bx \\
+                        add \%ax, \%bx \\
+                        push \%ax \\
+                    } \\
+                    \lcompile \sym{*} \rcompile &\defeq& \compiled{
+                        pop \%ax \\
+                        pop \%bx \\
+                        mul \%bx \\
+                        push \%ax \\
+                    } \\
+                \end{array}%
+            \end{equation*}
+        \end{column}
+        \begin{column}{60mm}
+            \begin{equation*}
+                \begin{array}{l@{\;\,}c@{\,\;}l}
+                    \lcompile \sym{dup} \rcompile &\defeq& \compiled{
+                        pop \%ax \\
+                        push \%ax \\
+                        push \%ax \\
+                    } \\
+                    \lcompile \sym{drop} \rcompile &\defeq& \compiled{
+                        pop \%ax \\
+                    } \\
+                    \lcompile \sym{swap} \rcompile &\defeq& \compiled{
+                        pop \%ax \\
+                        pop \%bx \\
+                        push \%ax \\
+                        push \%bx \\
+                    } \\
+                \end{array}%
+            \end{equation*}
+            \begin{uncoverenv}<+->
+            \vskip 2ex
+            \begin{equation*}
+                \begin{array}{l@{\;}c@{\;}l}
+                    \lcompile p_1 ~ p_2 \rcompile
+                    &\defeq&
+                    \lcompile p_1 \rcompile
+                    \concat
+                    \lcompile p_2 \rcompile
+                \end{array}%
+            \end{equation*}
+            \end{uncoverenv}
+        \end{column}
+    \end{columns}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
