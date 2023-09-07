@@ -981,6 +981,110 @@
     }
 \end{frame}
 
+\begin{frame}[t,fragile]
+    \frametitle{Interpreting an example program}
+    \removedisplayskips
+    \begin{columns}[t]
+        \begin{column}<+->{80mm}
+            \begin{equation*}
+                \begin{array}{l@{\;\,}c@{\,\;}l@{\quad}l}
+                    \llbracket
+                    \sym{dup *}
+                    \rrbracket\ %
+                    \hat{v}\only<.(2)->{ \cdot i}
+                    \only<.-.(1)>{&=\vphantom{\qeq}& \qqq}
+                    \only<.(2)-.(6)>{&\qeq& \hat{v} \cdot (i \times i)}
+                    \only<.(7)>{&\yeq& \hat{v} \cdot (i \times i)}
+                    \only<.(4)->{
+                        \\ &=&
+                        \llbracket \sym{*} \rrbracket\ (
+                            \llbracket \sym{dup} \rrbracket\ %
+                            \hat{v} \cdot i
+                        )
+                        & \withsub{
+                            p_1 = \sym{dup},~
+                            p_2 = \sym{*},~
+                            \hat{v}_4 = \hat{v} \cdot i
+                        }
+                    }
+                    \only<.(5)->{
+                        \\ &=&
+                        \llbracket \sym{*} \rrbracket\ (
+                            \hat{v} \cdot i \cdot i
+                        )
+                        & \withsub{
+                            \hat{v}_6 = \hat{v},~
+                            v = i
+                        }
+                    }
+                    \only<.(6)->{
+                        \\ &=&
+                        \hat{v} \cdot (i \times i)
+                        & \withsub{
+                            \hat{v}_5 = \hat{v},~
+                            i_1 = i,~
+                            i_2 = i
+                        }
+                    }
+                \end{array}%
+            \end{equation*}
+            \begin{onlyenv}<.(1)-.(2)>
+                \begin{center}
+                    \textcolor{gray}{\textit{Pop one value from the stack,
+                    square it, and push the result onto the stack}}
+                \end{center}
+            \end{onlyenv}
+        \end{column}
+        \begin{column}{50mm}
+            \only<.(4)>{\highlightmath{subprog}}%
+            \only<.(5)>{\highlightmath{subdup}}%
+            \only<.(6)>{\highlightmath{subtimes}}%
+            \begin{equation*}
+                \begin{array}{l@{\;\,}c@{\,\;}l@{\quad}l}
+                    \tikzmark{sub1_start}
+                    \llbracket \sym{1} \rrbracket\ \hat{v}_1 &=&
+                    \hat{v}_1 \cdot \val{1}
+                    \tikzmark{sub1_end}
+                    \\[1ex]
+                    \tikzmark{sub2_start}
+                    \llbracket \sym{2} \rrbracket\ \hat{v}_2 &=&
+                    \hat{v}_2 \cdot \val{2}
+                    \tikzmark{sub2_end}
+                    \\[1ex]
+                    \tikzmark{subplus_start}
+                    \llbracket \sym{+} \rrbracket\ %
+                    \hat{v}_3 \cdot i_1 \cdot i_2 &=&
+                    \hat{v}_3 \cdot (i_1 + i_2)
+                    \tikzmark{subplus_end}
+                    \\[1ex]
+                    \tikzmark{subprog_start}
+                    \llbracket p_1 ~ p_2 \rrbracket\ \hat{v}_4 &=&
+                    \llbracket p_2 \rrbracket\ (\llbracket p_1 \rrbracket\ \hat{v}_4)
+                    \tikzmark{subprog_end}
+                    \only<.(3)->{
+                        \\[1ex]
+                        \tikzmark{subtimes_start}
+                        \llbracket \sym{*} \rrbracket\ \hat{v}_5 \cdot i_1 \cdot i_2 &=&
+                        \hat{v}_5 \cdot (i_1 \times i_2)
+                        \tikzmark{subtimes_end}
+                        \\[1ex]
+                        \tikzmark{subdup_start}
+                        \llbracket \sym{dup} \rrbracket\ \hat{v}_6 \cdot v &=&
+                        \hat{v}_6 \cdot v \cdot v
+                        \tikzmark{subdup_end}
+                    }
+                \end{array}%
+            \end{equation*}
+        \end{column}
+    \end{columns}
+    \citepaper{
+        Manfred von Thun.
+        “The mathematical foundations of Joy”.
+        1994.
+        \url{https://hypercubed.github.io/joy/html/j02maf.html}
+    }
+\end{frame}
+
 \begin{frame}[fragile]
     \frametitle{More mathier}
     \begin{columns}
