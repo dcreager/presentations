@@ -216,6 +216,10 @@
     \ignorespaces
 }
 
+\newcommand{\compilestack}[1]{
+    \lcompile \text{\raisebox{-0.75em}{\ignorespaces #1}} \rcompile
+}
+
 \newcommand<>{\stackeffect}[2]{%
     \begin{onlyenv}#3%
         \begin{center}
@@ -254,6 +258,7 @@
 \newcommand\defalt{\mathrel{\:\mid\:}}
 \newcommand\defeq{\mathrel{\,\triangleq\,}}
 \newcommand\qeq{\mathrel{\stackrel{\mathrm{?}}{=}}}
+\newcommand\veq{\mathrel{\rotatebox{90}{$=$}}}
 \newcommand\yeq{\mathrel{\stackrel{\checkmark}{=}}}
 \newcommand\withsub[1]{{\scriptscriptstyle #1}}
 
@@ -272,8 +277,8 @@
 \newcommand\rcompile{\mathclose{{|}\mkern-3.5mu{\rangle}}}
 \newcommand\concat{\mathbin{+\mkern-10mu+}}
 
-\newcommand\compiled[2][bgcolor=lightgray,minipage=20mm]{%
-    \adjustbox{#1,margin=2pt}{\ttfamily\smaller[3]\begin{tabular}{@{~}l@{~}}#2\end{tabular}}%
+\newcommand\compiled[2][lightgray]{%
+    \adjustbox{bgcolor=#1,minipage=20mm,margin=2pt}{\ttfamily\smaller[3]\begin{tabular}{@{~}l@{~}}#2\end{tabular}}%
     \ignorespaces
 }
 
@@ -1218,6 +1223,8 @@
     \end{columns}
 \end{frame}
 
+\section{Associativity ⇒ parallelism}
+
 \begin{frame}
     \flattitle{10mm}{10mm}{Associativity $\Rightarrow$ parallelism}
     todo: insert picture
@@ -1229,7 +1236,7 @@
     \frametitle{Compiling stack programs}
     \removedisplayskips
     \begin{columns}[t]
-        \begin{column}<+->{60mm}
+        \begin{column}<+->{40mm}
             \begin{equation*}
                 \begin{array}{l@{\;\,}c@{\,\;}l}
                     \lcompile \sym{0} \rcompile &\defeq& \compiled{
@@ -1247,9 +1254,10 @@
                     &\vdots& \\
                 \end{array}%
             \end{equation*}
-            \vskip 2ex
+        \end{column}
+        \begin{column}{40mm}
             \begin{equation*}
-                \begin{array}{l@{\;}c@{\;}l}
+                \begin{array}{l@{\;\,}c@{\,\;}l}
                     \lcompile \sym{+} \rcompile &\defeq& \compiled{
                         pop \%ax \\
                         pop \%bx \\
@@ -1262,10 +1270,27 @@
                         mul \%bx \\
                         push \%ax \\
                     } \\
+                    \lcompile \sym{sqrt} \rcompile &\defeq& \compiled{
+                        fild [\%sp] \\
+                        fsqrt \\
+                        fisstp [\%sp] \\
+                    } \\
                 \end{array}%
             \end{equation*}
+            \begin{uncoverenv}<+->
+            \vskip 2ex
+            \begin{equation*}
+                \begin{array}{l@{\;}c@{\;}l}
+                    \lcompile p_1 ~ p_2 \rcompile
+                    &\defeq&
+                    \lcompile p_1 \rcompile
+                    \concat
+                    \lcompile p_2 \rcompile
+                \end{array}%
+            \end{equation*}
+            \end{uncoverenv}
         \end{column}
-        \begin{column}{60mm}
+        \begin{column}{40mm}
             \begin{equation*}
                 \begin{array}{l@{\;\,}c@{\,\;}l}
                     \lcompile \sym{dup} \rcompile &\defeq& \compiled{
@@ -1284,60 +1309,153 @@
                     } \\
                 \end{array}%
             \end{equation*}
-            \begin{uncoverenv}<+->
-            \vskip 2ex
-            \begin{equation*}
-                \begin{array}{l@{\;}c@{\;}l}
-                    \lcompile p_1 ~ p_2 \rcompile
-                    &\defeq&
-                    \lcompile p_1 \rcompile
-                    \concat
-                    \lcompile p_2 \rcompile
-                \end{array}%
-            \end{equation*}
-            \end{uncoverenv}
         \end{column}
     \end{columns}
 \end{frame}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% § Concatenation and composition
+\subsection{Compiling our example expression}
 
 \begin{frame}
-    \frametitle{Incomplete programs}
+    \frametitle{Compiling our example expression}
 
     \begin{onlyenv}<+-+(1)>
     \begin{center}
         \stacksplit[only=<+>{colback=gray!20}]{3}
-        \stacksplit{3 *}
         \stacksplit[only=<.>{colback=gray!50}]{4}
-        \stacksplit[only=<.>{colback=gray!20}]{4}
-        \stacksplit{* + sqrt }
+        \stacksplit{dup * swap dup * + sqrt }
     \end{center}
     \end{onlyenv}
     \begin{onlyenv}<+>
     \begin{center}
         \stacksplit[colback=gray!20]{1 2 +}
-        \stacksplit{3 *}
-        \stacksplit[colback=gray!50]{2 2 +}
-        \stacksplit[colback=gray!20]{7 3 -}
-        \stacksplit{* + sqrt }
+        \stacksplit[colback=gray!50]{2 2 *}
+        \stacksplit{dup * swap dup * + sqrt }
     \end{center}
     \end{onlyenv}
     \begin{onlyenv}<+-+(1)>
     \begin{center}
-        \stacksplit[only=<+>{colback=red!20}]{1 2 + 3 * 2}
-        \stacksplit[only=<.>{colback=gray!20}]{2 + 7 3 - *}
-        \stacksplit[only=<.>{colback=yellow!20}]{+ sqrt}
+        \stacksplit[only=<+>{colback=red!20}]{1 2 + 2}
+        \stacksplit[only=<.>{colback=gray!20}]{2 * dup * swap}
+        \stacksplit[only=<.>{colback=yellow!20}]{dup * + sqrt}
     \end{center}
     \end{onlyenv}
-\end{frame}
 
-\begin{frame}
-    \frametitle{Stack underflow is not fatal}
-    \stackex<+>{         }{ 2 + }
-    \stackex<+>{        2}{ + }
-    \stackex<+>{2 \sym{+}}{ }
+    \begin{onlyenv}<+>
+    \begin{equation*}
+    \begin{array}{ccc}
+        \compilestack{\stacksplit[colback=red!20]{1 2 + 2}} &
+        \compilestack{\stacksplit[colback=gray!20]{2 * dup * swap}} &
+        \compilestack{\stacksplit[colback=yellow!20]{dup * + sqrt}} \\
+        \veq & \veq & \veq \\
+        \compiled[red!20]{
+            mov \%ax, 1 \\
+            push \%ax \\
+            mov \%ax, 2 \\
+            push \%ax \\
+            pop \%ax \\
+            pop \%bx \\
+            add \%ax, \%bx \\
+            push \%ax \\
+            mov \%ax, 2 \\
+            push \%ax \\
+        } &
+        \compiled[gray!20]{
+            mov \%ax, 2 \\
+            push \%ax \\
+            pop \%ax \\
+            pop \%bx \\
+            mul \%bx \\
+            push \%ax \\
+            pop \%ax \\
+            push \%ax \\
+            push \%ax \\
+            pop \%ax \\
+            pop \%bx \\
+            mul \%bx \\
+            push \%ax \\
+            pop \%ax \\
+            pop \%bx \\
+            push \%ax \\
+            push \%bx \\
+        } &
+        \compiled[yellow!20]{
+            pop \%ax \\
+            push \%ax \\
+            push \%ax \\
+            pop \%ax \\
+            pop \%bx \\
+            mul \%bx \\
+            push \%ax \\
+            pop \%ax \\
+            pop \%bx \\
+            add \%ax, \%bx \\
+            push \%ax \\
+            fild [\%sp] \\
+            fsqrt \\
+            fisstp [\%sp] \\
+        } \\
+    \end{array}
+    \end{equation*}
+    \end{onlyenv}
+
+    \begin{onlyenv}<+>
+    \begin{equation*}
+        \compilestack{
+            \stacksplit[colback=red!20]{1 2 + 2}
+            \stacksplit[colback=gray!20]{2 * dup * swap}
+            \stacksplit[colback=yellow!20]{dup * + sqrt}
+        } =
+        \adjustbox{totalheight=70mm,minipage=21mm}{
+            \compiled[red!20]{
+                mov \%ax, 1 \\
+                push \%ax \\
+                mov \%ax, 2 \\
+                push \%ax \\
+                pop \%ax \\
+                pop \%bx \\
+                add \%ax, \%bx \\
+                push \%ax \\
+                mov \%ax, 2 \\
+                push \%ax \\
+            } \\[-0.9ex]
+            \compiled[gray!20]{
+                mov \%ax, 2 \\
+                push \%ax \\
+                pop \%ax \\
+                pop \%bx \\
+                mul \%bx \\
+                push \%ax \\
+                pop \%ax \\
+                push \%ax \\
+                push \%ax \\
+                pop \%ax \\
+                pop \%bx \\
+                mul \%bx \\
+                push \%ax \\
+                pop \%ax \\
+                pop \%bx \\
+                push \%ax \\
+                push \%bx \\
+            } \\[-0.9ex]
+            \compiled[yellow!20]{
+                pop \%ax \\
+                push \%ax \\
+                push \%ax \\
+                pop \%ax \\
+                pop \%bx \\
+                mul \%bx \\
+                push \%ax \\
+                pop \%ax \\
+                pop \%bx \\
+                add \%ax, \%bx \\
+                push \%ax \\
+                fild [\%sp] \\
+                fsqrt \\
+                fisstp [\%sp] \\
+            }
+        }
+    \end{equation*}
+    \end{onlyenv}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
