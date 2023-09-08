@@ -296,6 +296,7 @@
 % Citations
 
 \newcommand<>{\citepaper}[1]{%
+    \begin{textblock*}{0pt}(0pt,0pt)
     \begin{onlyenv}#2%
     \begin{tikzpicture}[remember picture,overlay]
         \node[
@@ -307,6 +308,7 @@
         ] at (current page.south) {#1};
     \end{tikzpicture}%
     \end{onlyenv}%
+    \end{textblock*}%
     \ignorespaces
 }
 
@@ -1150,62 +1152,75 @@
 \subsection{Associativity of stack transformers}
 
 \begin{frame}[fragile]
-    \frametitle{Concatenation revisited}
-    \begin{onlyenv}<+->
+    \frametitle{Associativity of stack transformers}
+    \removedisplayskips
+    \begin{columns}
+    \begin{column}<+->{\paperwidth}
     \begin{equation*}
-        \only<.(7)->{\left.}
-        \begin{array}{c@{\;\,}c@{\,\;}c}
-            \only<.>{\llbracket p_1 ~ p_2 ~ p_3 ~ p_4 \rrbracket}
-            \only<.(1)->{\llbracket (p_1 ~ p_2) ~ (p_3 ~ p_4)) \rrbracket}
+        \uncover<.(7)->{
+            \llbracket a ~ b ~ c ~ d \rrbracket
+            = \left\{
+        }
+        \begin{array}{@{}c@{\,}c@{\,}c@{}}
+            \only<.>{\llbracket a ~ b ~ c ~ d \rrbracket}
+            \only<.(1)->{\llbracket (a ~ b) ~ (c ~ d)) \rrbracket}
             &=&
             \only<.-.(1)>{\qqq}
             \only<.(2)>{
-                \llbracket p_3 ~ p_4 \rrbracket \circ
-                \llbracket p_2 ~ p_1 \rrbracket
+                \llbracket c ~ d \rrbracket \circ
+                \llbracket a ~ b \rrbracket
             }
             \only<.(3)->{
-                (\llbracket p_4 \rrbracket \circ \llbracket p_3 \rrbracket) \circ
-                (\llbracket p_2 \rrbracket \circ \llbracket p_1 \rrbracket)
+                (\llbracket d \rrbracket \circ \llbracket c \rrbracket) \circ
+                (\llbracket b \rrbracket \circ \llbracket a \rrbracket)
             }
+            \\
             \only<.(4)->{
+                \llbracket a ~ (b ~ (c ~ d)) \rrbracket &=&
+                ((\llbracket d \rrbracket \circ \llbracket c \rrbracket) \circ
+                \llbracket b \rrbracket) \circ \llbracket a \rrbracket
                 \\
-                \llbracket p_1 ~ (p_2 ~ (p_3 ~ p_4)) \rrbracket &=&
-                ((\llbracket p_4 \rrbracket \circ \llbracket p_3 \rrbracket) \circ
-                \llbracket p_2 \rrbracket) \circ \llbracket p_1 \rrbracket
             }
             \only<.(5)->{
+                \llbracket ((a ~ b) ~ c) ~ d) \rrbracket &=&
+                \llbracket d \rrbracket \circ (\llbracket c \rrbracket \circ
+                (\llbracket b \rrbracket \circ \llbracket a \rrbracket))
                 \\
-                \llbracket ((p_1 ~ p_2) ~ p_3) ~ p_4) \rrbracket &=&
-                \llbracket p_4 \rrbracket \circ (\llbracket p_3 \rrbracket \circ
-                (\llbracket p_2 \rrbracket \circ \llbracket p_1 \rrbracket))
             }
             \only<.(6)->{
+                \llbracket (a ~ (b ~ c)) ~ d \rrbracket &=&
+                \llbracket d \rrbracket \circ ((\llbracket c \rrbracket \circ
+                \llbracket b \rrbracket) \circ \llbracket a \rrbracket)
                 \\
-                \llbracket (p_1 ~ (p_2 ~ p_3)) ~ p_4 \rrbracket &=&
-                \llbracket p_4 \rrbracket \circ ((\llbracket p_3 \rrbracket \circ
-                \llbracket p_2 \rrbracket) \circ \llbracket p_1 \rrbracket)
             }
         \end{array}%
-        \only<.(7)->{
+        \uncover<.(7)->{
             \right\} =
-            \llbracket p_4 \rrbracket \circ \llbracket p_3 \rrbracket \circ
-            \llbracket p_2 \rrbracket \circ \llbracket p_1 \rrbracket
+            \llbracket d \rrbracket \circ \llbracket c \rrbracket \circ
+            \llbracket b \rrbracket \circ \llbracket a \rrbracket
         }
     \end{equation*}%
-    \end{onlyenv}%
     \addtocounter{beamerpauses}{7}
-    \begin{onlyenv}<+->
-        \vskip 2em
-        \begin{center}
-            \textbf{\textcolor{cyan}{Associativity $\Rightarrow$ parallelism}}
-        \end{center}
-    \end{onlyenv}%
-    \citepaper{
-        Manfred von Thun.
-        “The mathematical foundations of Joy”.
-        1994.
-        \url{https://hypercubed.github.io/joy/html/j02maf.html}
+    \begin{center}
+        \vskip 5ex
+        \uncover<+->{\textbf{\textcolor{cyan}{
+            This is \textit{not} changing the order that we execute
+            instructions! \\
+            This is \textit{not} the associativity of $+$ and $\times$!
+        }}}
+    \end{center}%
+    \citepaper<.->{
+        Jeremy Gibbons.
+        “Continuation-Passing Style, Defunctionalization, Accumulations, and Associativity”.
+        The Art, Science, and Engineering of Programming, 2022, Vol. 6, Issue 2, Article 7.
     }
+    \end{column}
+    \end{columns}
+\end{frame}
+
+\begin{frame}
+    \flattitle{10mm}{10mm}{Associativity $\Rightarrow$ parallelism}
+    todo: insert picture
 \end{frame}
 
 \subsection{Compiling stack programs}
