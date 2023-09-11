@@ -8,6 +8,7 @@
 \usepackage{etoolbox}
 \usepackage{fancyvrb}
 \usepackage{listings}
+\usepackage[framemethod=tikz]{mdframed}
 \usepackage{relsize}
 \usepackage{graphicx}
 \usepackage{stmaryrd}
@@ -281,6 +282,11 @@
     \adjustbox{bgcolor=#1,minipage=20mm,margin=2pt}{\ttfamily\smaller[3]\begin{tabular}{@{~}l@{~}}#2\end{tabular}}%
     \ignorespaces
 }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Lambda calculus
+
+\newcommand\ldot{\mathop{\text{.}}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Math equation spacing
@@ -1087,6 +1093,90 @@
         1994.
         \url{https://hypercubed.github.io/joy/html/j02maf.html}
     }
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% § Completeness
+
+\section{Completeness}
+
+\begin{frame}
+    \begin{textblock*}{160mm}(0mm,0mm)
+        \picturecredit{Seattle Municipal Archives}{West Seattle Bridge under construction, circa 1983}{CC-BY-2.0}{https://flic.kr/p/7jKWYi}
+        \includegraphics[width=160mm]{bridge.jpg}
+    \end{textblock*}
+    \shadowedtitle{157mm - \titlewidth}{7mm}{Completeness}
+\end{frame}
+
+\subsection{The lambda calculus is Turing-complete}
+
+\begin{frame}
+    \frametitle{The lambda calculus is Turing-complete}
+
+    \begin{uncoverenv}<+->
+    \begin{equation*}
+        \lambda x \ldot \lambda y \ldot x~y
+    \end{equation*}
+    \end{uncoverenv}
+
+    \begin{uncoverenv}<+->
+    \begin{equation*}
+        \begin{array}{l@{\;\,}c@{\,\;}l}
+            0 &\defeq& \lambda f \ldot \lambda x \ldot x \\
+            1 &\defeq& \lambda f \ldot \lambda x \ldot f ~ x \\
+            2 &\defeq& \lambda f \ldot \lambda x \ldot f ~ (f ~ x) \\
+            &\vdots& \\
+        \end{array}
+    \end{equation*}
+    \begin{equation*}
+        \begin{array}{l@{\;\,}c@{\,\;}l}
+            \textsf{succ} &\defeq& \lambda n \ldot
+            (\lambda f \ldot \lambda x \ldot f ~ (n ~ f ~ x)) \\
+        \end{array}
+    \end{equation*}
+    \end{uncoverenv}
+\end{frame}
+
+\subsection{Yes, really}
+
+\begin{frame}
+    \frametitle{Yes, really}
+
+    \begin{center}
+        \href{https://github.com/woodrush/lambda-8cc}{\texttt{woodrush/lambda-8cc}} \\[2ex]
+
+        \includegraphics[width=50mm]{lambda-8cc.png} \\[2ex]
+
+        \begin{minipage}{90mm}
+        \begin{mdframed}[
+            linewidth=4pt,
+            linecolor=blue!50!gray,
+            bottomline=false,topline=false,rightline=false,
+            innertopmargin=4pt, innerbottommargin=4pt,
+            innerleftmargin=0.6em, innerrightmargin=0pt,
+        ]
+            \raggedright \itshape
+            It has long been known in computer science that lambda calculus is
+            Turing-complete. lambda-8cc demonstrates this in a rather
+            straightforward way by showing that C programs can directly be
+            compiled into lambda calculus terms.
+        \end{mdframed}
+        \end{minipage}
+    \end{center}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Yes, really}
+
+    \begin{onlyenv}<+>
+    \begin{center}
+        \adjustbox{totalheight=70mm}{\lstinputlisting[language=c]{rot13.c}}
+    \end{center}
+    \end{onlyenv}
+
+    \begin{onlyenv}<+>
+        \adjustbox{totalheight=70mm}{\lstinputlisting[lastline=27]{rot13.lam}}
+    \end{onlyenv}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
