@@ -289,6 +289,13 @@
 \newcommand\ldot{\mathop{\text{.}}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SKI calculus
+
+\newcommand\Sc{\textbf{S}}
+\newcommand\Kc{\textbf{K}}
+\newcommand\Ic{\textbf{I}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Math equation spacing
 
 \newcommand{\zerodisplayskips}{%
@@ -1115,7 +1122,7 @@
 
     \begin{uncoverenv}<+->
     \begin{equation*}
-        \lambda x \ldot \lambda y \ldot x~y
+        \lambda x \ldot \lambda y \ldot y~x
     \end{equation*}
     \end{uncoverenv}
 
@@ -1177,6 +1184,62 @@
     \begin{onlyenv}<+>
         \adjustbox{totalheight=70mm}{\lstinputlisting[lastline=27]{rot13.lam}}
     \end{onlyenv}
+\end{frame}
+
+\subsection{Those pesky names}
+
+\begin{frame}
+    \frametitle{Those pesky names}
+    \removedisplayskips
+
+    \begin{uncoverenv}<+->
+    \begin{uncoverenv}<+->
+    \begin{equation*}
+        \begin{array}{c@{\;\,}c@{\,\;}l}
+            \Sc &\defeq&
+            \lambda x \ldot \lambda y \ldot \lambda z \ldot x~z~(y~z) \\
+            \Kc &\defeq&
+            \lambda x \ldot \lambda y \ldot x \\
+            \Ic &\defeq&
+            \lambda x \ldot x \\
+        \end{array}
+    \end{equation*}
+    \vskip 2ex
+    \end{uncoverenv}
+
+    \begin{equation*}
+        \only<.(-1)-.>{\lambda x \ldot \lambda y \ldot y~x}
+        \only<+>{\underline{\lambda x \ldot \lambda y \ldot y~x}}
+        \only<+>{\underline{\lambda x \ldot \underline{\lambda y \ldot y~x}}}
+        \only<+>{\underline{\lambda x \ldot (\Sc ~
+        \underline{\lambda y \ldot y} ~
+        \underline{\lambda y \ldot x})}}
+        \only<+>{\underline{\lambda x \ldot (\Sc ~ \Ic ~
+        \underline{\lambda y \ldot x})}}
+        \only<+>{\underline{\lambda x \ldot (\Sc ~ \Ic ~
+        (\Kc ~ \underline{x}))}}
+        \only<+>{\underline{\lambda x \ldot (\Sc ~ \Ic ~
+        (\Kc ~ x))}}
+        \only<+>{(\Sc ~ \underline{\lambda x \ldot (\Sc ~ \Ic)} ~
+        \underline{\lambda x \ldot (\Kc ~ x)})}
+        \only<+>{(\Sc ~ (\Kc ~ (\Sc ~ \Ic)) ~
+        \underline{\lambda x \ldot (\Kc ~ x)})}
+        \only<+>{(\Sc ~ (\Kc ~ (\Sc ~ \Ic)) ~
+        (\Sc ~ \underline{\lambda x \ldot \Kc} ~
+        \underline{\lambda x \ldot x}))}
+        \only<+>{(\Sc ~ (\Kc ~ (\Sc ~ \Ic)) ~
+        (\Sc ~ (\Kc ~ \Kc) ~
+        \underline{\lambda x \ldot x}))}
+        \only<+->{(\Sc ~ (\Kc ~ (\Sc ~ \Ic)) ~
+        (\Sc ~ (\Kc ~ \Kc) ~ \Ic))}
+    \end{equation*}
+    \end{uncoverenv}
+
+    \citepaper<+->{
+        Smullyan, Raymond.
+        \textit{To Mock a Mockingbird}.
+        Alfred A. Knopf: New York, 1985.
+    }
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
