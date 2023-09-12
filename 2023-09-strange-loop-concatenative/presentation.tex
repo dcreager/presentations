@@ -5,6 +5,7 @@
 \usepackage{amsmath}
 \usepackage{array}
 \usepackage{calc}
+\usepackage{cancel}
 \usepackage{etoolbox}
 \usepackage{fancyvrb}
 \usepackage{listings}
@@ -1193,7 +1194,7 @@
     \removedisplayskips
 
     \begin{uncoverenv}<+->
-    \begin{uncoverenv}<+->
+    \begin{uncoverenv}<.(1)->
     \begin{equation*}
         \begin{array}{c@{\;\,}c@{\,\;}l}
             \Sc &\defeq&
@@ -1201,41 +1202,45 @@
             \Kc &\defeq&
             \lambda x \ldot \lambda y \ldot x \\
             \Ic &\defeq&
-            \lambda x \ldot x \\
+            \only<.(1)-.(12)>{\lambda x \ldot x}
+            \only<.(13)->{\xcancel{\lambda x \ldot x} \quad \Sc ~ \Kc ~ \Kc}
+            \\
         \end{array}
     \end{equation*}
     \vskip 2ex
     \end{uncoverenv}
 
     \begin{equation*}
-        \only<.(-1)-.>{\lambda x \ldot \lambda y \ldot y~x}
-        \only<+>{\underline{\lambda x \ldot \lambda y \ldot y~x}}
-        \only<+>{\underline{\lambda x \ldot \underline{\lambda y \ldot y~x}}}
-        \only<+>{\underline{\lambda x \ldot (\Sc ~
+        \only<.-.(1)>{\lambda x \ldot \lambda y \ldot y~x}
+        \only<.(2)>{\underline{\lambda x \ldot \lambda y \ldot y~x}}
+        \only<.(3)>{\underline{\lambda x \ldot \underline{\lambda y \ldot y~x}}}
+        \only<.(4)>{\underline{\lambda x \ldot (\Sc ~
         \underline{\lambda y \ldot y} ~
         \underline{\lambda y \ldot x})}}
-        \only<+>{\underline{\lambda x \ldot (\Sc ~ \Ic ~
+        \only<.(5)>{\underline{\lambda x \ldot (\Sc ~ \Ic ~
         \underline{\lambda y \ldot x})}}
-        \only<+>{\underline{\lambda x \ldot (\Sc ~ \Ic ~
+        \only<.(6)>{\underline{\lambda x \ldot (\Sc ~ \Ic ~
         (\Kc ~ \underline{x}))}}
-        \only<+>{\underline{\lambda x \ldot (\Sc ~ \Ic ~
+        \only<.(7)>{\underline{\lambda x \ldot (\Sc ~ \Ic ~
         (\Kc ~ x))}}
-        \only<+>{(\Sc ~ \underline{\lambda x \ldot (\Sc ~ \Ic)} ~
+        \only<.(8)>{(\Sc ~ \underline{\lambda x \ldot (\Sc ~ \Ic)} ~
         \underline{\lambda x \ldot (\Kc ~ x)})}
-        \only<+>{(\Sc ~ (\Kc ~ (\Sc ~ \Ic)) ~
+        \only<.(9)>{(\Sc ~ (\Kc ~ (\Sc ~ \Ic)) ~
         \underline{\lambda x \ldot (\Kc ~ x)})}
-        \only<+>{(\Sc ~ (\Kc ~ (\Sc ~ \Ic)) ~
+        \only<.(10)>{(\Sc ~ (\Kc ~ (\Sc ~ \Ic)) ~
         (\Sc ~ \underline{\lambda x \ldot \Kc} ~
         \underline{\lambda x \ldot x}))}
-        \only<+>{(\Sc ~ (\Kc ~ (\Sc ~ \Ic)) ~
+        \only<.(11)>{(\Sc ~ (\Kc ~ (\Sc ~ \Ic)) ~
         (\Sc ~ (\Kc ~ \Kc) ~
         \underline{\lambda x \ldot x}))}
-        \only<+->{(\Sc ~ (\Kc ~ (\Sc ~ \Ic)) ~
+        \only<.(12)-.(13)>{(\Sc ~ (\Kc ~ (\Sc ~ \Ic)) ~
         (\Sc ~ (\Kc ~ \Kc) ~ \Ic))}
+        \only<.(14)->{(\Sc ~ (\Kc ~ (\Sc ~ (\Sc ~ \Kc ~ \Kc))) ~
+        (\Sc ~ (\Kc ~ \Kc) ~ (\Sc ~ \Kc ~ \Kc)))}
     \end{equation*}
     \end{uncoverenv}
 
-    \citepaper<+->{
+    \citepaper<.(1)->{
         Smullyan, Raymond.
         \textit{To Mock a Mockingbird}.
         Alfred A. Knopf: New York, 1985.
