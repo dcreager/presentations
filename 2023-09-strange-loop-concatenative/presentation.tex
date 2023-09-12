@@ -323,6 +323,7 @@
             draw, thick,
             inner sep=0.6em,
             text width=90mm,
+            align=flush left,
             node font={\rmfamily\smaller[2]},
         ] at (current page.south) {#1};
     \end{tikzpicture}%
@@ -1211,7 +1212,8 @@
     \end{uncoverenv}
 
     \begin{equation*}
-        \only<.-.(1)>{\lambda x \ldot \lambda y \ldot y~x}
+        \lambda x \ldot \lambda y \ldot y~x
+        \only<.(2)->{=}
         \only<.(2)>{\underline{\lambda x \ldot \lambda y \ldot y~x}}
         \only<.(3)>{\underline{\lambda x \ldot \underline{\lambda y \ldot y~x}}}
         \only<.(4)>{\underline{\lambda x \ldot (\Sc ~
@@ -1244,7 +1246,116 @@
         Smullyan, Raymond.
         \textit{To Mock a Mockingbird}.
         Alfred A. Knopf: New York, 1985.
+     }
+\end{frame}
+
+\subsection{The stack language is Turing-complete}
+
+\begin{frame}[t]
+    \frametitle{The stack language is\only<2-5>{ (almost)} Turing-complete}
+    \removedisplayskips
+    \setcounter{beamerpauses}{3}
+
+    \begin{onlyenv}<+-+(1)>
+    \begin{equation*}
+    \begin{array}{c@{\quad}c@{\quad}l}
+        \uncover<.>{\lit &\ni& \sym{0}, \sym{1}, \sym{42}, \ldots} \\
+        \builtin &\defeq&
+            \uncover<.>{\sym{+} \defalt \sym{*} \defalt \sym{sqrt} \defalt}
+            \sym{apply} \defalt \sym{dig2} \defalt \sym{drop} \defalt
+            \sym{dup} \defalt \sym{swap} \defalt
+            \ldots \\
+        \insn &\defeq&
+            \uncover<.>{\lit \defalt}
+            \builtin \defalt
+            \quot{\prog} \\
+        \prog &\defeq&
+            \insn \defalt
+            \prog~\prog \\
+    \end{array}%
+    \end{equation*}%
+    \end{onlyenv}
+    \addtocounter{beamerpauses}{1}
+
+    \begin{onlyenv}<+->
+    \begin{columns}[t]
+        \begin{column}{70mm}
+            \begin{equation*}
+                \begin{array}{l@{\;}c@{\;}l}
+                    \llbracket \quot{\textcolor{black}{$p$}} \rrbracket\ \hat{v}
+                    &\defeq& \hat{v} \cdot \quot{\textcolor{black}{$p$}} \\
+                    \llbracket \sym{apply} \rrbracket\
+                    \hat{v} \cdot \quot{\textcolor{black}{$p$}}
+                    &\defeq& \llbracket p \rrbracket\ \hat{v} \\
+                    \llbracket \sym{dig2} \rrbracket\
+                    \hat{v} \cdot v_1 \cdot v_2 \cdot v_3
+                    &\defeq& \hat{v} \cdot v_2 \cdot v_3 \cdot v_1 \\
+                    \llbracket \sym{drop} \rrbracket\
+                    \hat{v} \cdot v
+                    &\defeq& \hat{v} \\
+                    \llbracket \sym{dup} \rrbracket\
+                    \hat{v} \cdot v
+                    &\defeq& \hat{v} \cdot v \cdot v \\
+                    \llbracket \sym{swap} \rrbracket\
+                    \hat{v} \cdot v_1 \cdot v_2
+                    &\defeq& \hat{v} \cdot v_2 \cdot v_1 \\
+                \end{array}%
+            \end{equation*}
+        \end{column}
+        \begin{column}{70mm}
+            \begin{uncoverenv}<.(1)->
+            \begin{equation*}
+                \begin{array}{l@{\;}c@{\;}l}
+                    \llbracket \sym{compose} \rrbracket\
+                    \hat{v} \cdot \quot{\textcolor{black}{$p_1$}}
+                    \cdot \quot{\textcolor{black}{$p_2$}}
+                    &\defeq&
+                    \hat{v} \cdot \quot{\textcolor{black}{$p_1 ~ p_2$}} \\
+                    \llbracket \sym{cons} \rrbracket\
+                    \hat{v} \cdot \quot{\textcolor{black}{$p_1$}}
+                    \cdot \quot{\textcolor{black}{$p_2$}}
+                    &\defeq&
+                    \hat{v} \cdot \quot{\quot{\textcolor{black}{$p_1$}}
+                    \textcolor{black}{$p_2$}} \\
+                    \llbracket \sym{dip} \rrbracket\
+                    \hat{v} \cdot \quot{\textcolor{black}{$p_1$}}
+                    \cdot \quot{\textcolor{black}{$p_2$}}
+                    &\defeq&
+                    \llbracket p_2 ~ \quot{\textcolor{black}{$p_1$}} \rrbracket\
+                    \hat{v} \\
+                    \llbracket \sym{quote} \rrbracket\
+                    \hat{v} \cdot v
+                    &\defeq&
+                    \hat{v} \cdot \quot{\textcolor{black}{$v$}} \\
+                \end{array}%
+            \end{equation*}
+            \end{uncoverenv}
+        \end{column}
+    \end{columns}
+    \citepaper<.(1)>{
+        Brent Kirby.
+        “The theory of concatenative combinators”.
+        \url{http://tunes.org/~iepos/joy.html}
     }
+    \addtocounter{beamerpauses}{1}
+
+    \begin{uncoverenv}<+->
+    \vskip 2ex
+    \begin{equation*}
+        \begin{array}{l@{\;\,}c@{\,\;}l}
+            0 &\defeq& \sym{[drop]} \\
+            \textsf{succ} &\defeq&
+            \sym{quote [apply] compose [[dup]] swap dup [[compose]]} \\
+            && \sym{swap [apply] compose compose compose compose} \\
+        \end{array}%
+    \end{equation*}%
+    \end{uncoverenv}
+    \citepaper<.>{
+        Scott J Maddox.
+        “Foundations of Dawn: The Untyped Concatenative Calculus”.
+        \url{https://www.dawn-lang.org/posts/foundations-ucc/}
+    }
+    \end{onlyenv}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
