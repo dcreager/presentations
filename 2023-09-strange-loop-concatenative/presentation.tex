@@ -203,6 +203,7 @@
 \newcommand{\val}[1]{\textcolor{black}{\textup{#1}}}
 \newcommand{\sym}[1]{\textcolor{blue}{\texttt{#1}}}
 \newcommand{\quot}[1]{\textcolor{blue}{\texttt{[#1]}}}
+\newcommand{\mquot}[1]{\quot{\textcolor{black}{$#1$}}}
 \newcommand{\eff}[1]{\textcolor{gray}{\texttt{\textit{#1}}}}
 
 \newcommand{\stacksplit}[2][]{%
@@ -292,9 +293,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % SKI calculus
 
-\newcommand\Sc{\textbf{S}}
-\newcommand\Kc{\textbf{K}}
-\newcommand\Ic{\textbf{I}}
+\newcommand\Sc{\textsf{\textbf{S}}}
+\newcommand\Kc{\textsf{\textbf{K}}}
+\newcommand\Ic{\textsf{\textbf{I}}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Math equation spacing
@@ -831,10 +832,10 @@
             \begin{uncoverenv}<+->
             \begin{equation*}
                 \begin{array}{l@{\;}c@{\;}l}
-                    \llbracket \quot{\textcolor{black}{$p$}} \rrbracket\ \hat{v}
-                    &\defeq& \hat{v} \cdot \quot{\textcolor{black}{$p$}} \\
+                    \llbracket \mquot{p} \rrbracket\ \hat{v}
+                    &\defeq& \hat{v} \cdot \mquot{p} \\
                     \llbracket \sym{apply} \rrbracket\
-                    \hat{v} \cdot \quot{\textcolor{black}{$p$}}
+                    \hat{v} \cdot \mquot{p}
                     &\defeq& \llbracket p \rrbracket\ \hat{v} \\
                 \end{array}%
             \end{equation*}
@@ -1282,10 +1283,10 @@
         \begin{column}{70mm}
             \begin{equation*}
                 \begin{array}{l@{\;}c@{\;}l}
-                    \llbracket \quot{\textcolor{black}{$p$}} \rrbracket\ \hat{v}
-                    &\defeq& \hat{v} \cdot \quot{\textcolor{black}{$p$}} \\
+                    \llbracket \mquot{p} \rrbracket\ \hat{v}
+                    &\defeq& \hat{v} \cdot \mquot{p} \\
                     \llbracket \sym{apply} \rrbracket\
-                    \hat{v} \cdot \quot{\textcolor{black}{$p$}}
+                    \hat{v} \cdot \mquot{p}
                     &\defeq& \llbracket p \rrbracket\ \hat{v} \\
                     \llbracket \sym{dig2} \rrbracket\
                     \hat{v} \cdot v_1 \cdot v_2 \cdot v_3
@@ -1307,26 +1308,26 @@
             \begin{equation*}
                 \begin{array}{l@{\;}c@{\;}l}
                     \llbracket \sym{compose} \rrbracket\
-                    \hat{v} \cdot \quot{\textcolor{black}{$p_1$}}
-                    \cdot \quot{\textcolor{black}{$p_2$}}
+                    \hat{v} \cdot \mquot{p_1}
+                    \cdot \mquot{p_2}
                     &\defeq&
-                    \hat{v} \cdot \quot{\textcolor{black}{$p_1 ~ p_2$}} \\
+                    \hat{v} \cdot \mquot{p_1 ~ p_2} \\
                     \llbracket \sym{cons} \rrbracket\
-                    \hat{v} \cdot \quot{\textcolor{black}{$p_1$}}
-                    \cdot \quot{\textcolor{black}{$p_2$}}
+                    \hat{v} \cdot \mquot{p_1}
+                    \cdot \mquot{p_2}
                     &\defeq&
-                    \hat{v} \cdot \quot{\quot{\textcolor{black}{$p_1$}}
+                    \hat{v} \cdot \quot{\mquot{p_1}
                     \textcolor{black}{$p_2$}} \\
                     \llbracket \sym{dip} \rrbracket\
-                    \hat{v} \cdot \quot{\textcolor{black}{$p_1$}}
-                    \cdot \quot{\textcolor{black}{$p_2$}}
+                    \hat{v} \cdot \mquot{p_1}
+                    \cdot \mquot{p_2}
                     &\defeq&
-                    \llbracket p_2 ~ \quot{\textcolor{black}{$p_1$}} \rrbracket\
+                    \llbracket p_2 ~ \mquot{p_1} \rrbracket\
                     \hat{v} \\
                     \llbracket \sym{quote} \rrbracket\
                     \hat{v} \cdot v
                     &\defeq&
-                    \hat{v} \cdot \quot{\textcolor{black}{$v$}} \\
+                    \hat{v} \cdot \mquot{v} \\
                 \end{array}%
             \end{equation*}
             \end{uncoverenv}
@@ -1356,6 +1357,148 @@
         \url{https://www.dawn-lang.org/posts/foundations-ucc/}
     }
     \end{onlyenv}
+\end{frame}
+
+\subsection{No, really}
+
+\begin{frame}[t]
+    \frametitle{No, really}
+    \removedisplayskips
+
+    \begin{uncoverenv}<+->
+    \begin{equation*}
+        \begin{array}{c@{\;\,}c@{\,\;}l}
+            \Sc &\defeq&
+            \sym{swap dig2 dup dig2 cons swap dig2 apply} \\
+            \Kc &\defeq&
+            \sym{swap drop apply} \\
+            (M ~ N) &\defeq&
+            \mquot{N} ~ M \\
+        \end{array}
+    \end{equation*}
+    \vskip 2ex
+    \end{uncoverenv}
+
+    \begin{uncoverenv}<+->
+    \begin{equation*}
+        \begin{array}{c@{\;\,}c@{\,\;}l}
+            \lambda x \ldot \lambda y \ldot y~x &=&
+            \only<.>{
+                (\Sc ~ (\Kc ~ (\Sc ~ (\Sc ~ \Kc ~ \Kc))) ~
+                (\Sc ~ (\Kc ~ \Kc) ~ (\Sc ~ \Kc ~ \Kc)))
+            }
+            \only<+>{
+                (\Sc ~ (\Kc ~ (\Sc ~ \underline{(\Sc ~ \Kc ~ \Kc)})) ~
+                (\Sc ~ (\Kc ~ \Kc) ~ (\Sc ~ \Kc ~ \Kc)))
+            }
+            \only<+>{
+                (\Sc ~ (\Kc ~ (\Sc ~ \underline{(\mquot{\Kc} ~ (\Sc ~ \Kc))})) ~
+                (\Sc ~ (\Kc ~ \Kc) ~ (\Sc ~ \Kc ~ \Kc)))
+            }
+            \only<+>{
+                (\Sc ~ (\Kc ~ (\Sc ~ (\mquot{\Kc} ~ \underline{(\Sc ~ \Kc)}))) ~
+                (\Sc ~ (\Kc ~ \Kc) ~ (\Sc ~ \Kc ~ \Kc)))
+            }
+            \only<+>{
+                (\Sc ~ (\Kc ~ (\Sc ~ (\mquot{\Kc} ~ \underline{\mquot{\Kc} ~ \Sc}))) ~
+                (\Sc ~ (\Kc ~ \Kc) ~ (\Sc ~ \Kc ~ \Kc)))
+            }
+            \only<+>{
+                (\Sc ~ (\Kc ~ \underline{(\Sc ~ (\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc))}) ~
+                (\Sc ~ (\Kc ~ \Kc) ~ (\Sc ~ \Kc ~ \Kc)))
+            }
+            \only<+>{
+                (\Sc ~ (\Kc ~ \underline{(\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \Sc)}) ~
+                (\Sc ~ (\Kc ~ \Kc) ~ (\Sc ~ \Kc ~ \Kc)))
+            }
+            \only<+>{
+                (\Sc ~ \underline{(\Kc ~ (\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \Sc))} ~
+                (\Sc ~ (\Kc ~ \Kc) ~ (\Sc ~ \Kc ~ \Kc)))
+            }
+            \only<+>{
+                (\Sc ~ \underline{(\mquot{\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \Sc} ~ \Kc)} ~
+                (\Sc ~ (\Kc ~ \Kc) ~ (\Sc ~ \Kc ~ \Kc)))
+            }
+            \only<+>{
+                (\Sc ~ (\mquot{\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \Sc} ~ \Kc) ~
+                (\Sc ~ \underline{(\Kc ~ \Kc)} ~ (\Sc ~ \Kc ~ \Kc)))
+            }
+            \only<+>{
+                (\Sc ~ (\mquot{\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \Sc} ~ \Kc) ~
+                (\Sc ~ \underline{(\mquot{\Kc} ~ \Kc)} ~ (\Sc ~ \Kc ~ \Kc)))
+            }
+            \only<+>{
+                (\Sc ~ (\mquot{\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \Sc} ~ \Kc) ~
+                (\Sc ~ (\mquot{\Kc} ~ \Kc) ~ \underline{(\Sc ~ \Kc ~ \Kc)}))
+            }
+            \only<+>{
+                (\Sc ~ (\mquot{\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \Sc} ~ \Kc) ~
+                (\Sc ~ (\mquot{\Kc} ~ \Kc) ~ \underline{(\mquot{\Kc} ~ (\Sc ~ \Kc))}))
+            }
+            \only<+>{
+                (\Sc ~ (\mquot{\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \Sc} ~ \Kc) ~
+                (\Sc ~ (\mquot{\Kc} ~ \Kc) ~ (\mquot{\Kc} ~ \underline{(\Sc ~ \Kc)})))
+            }
+            \only<+>{
+                (\Sc ~ (\mquot{\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \Sc} ~ \Kc) ~
+                (\Sc ~ (\mquot{\Kc} ~ \Kc) ~ (\mquot{\Kc} ~ \underline{\mquot{\Kc} ~ \Sc})))
+            }
+            \only<+>{
+                (\Sc ~ (\mquot{\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \Sc} ~ \Kc) ~
+                \underline{(\Sc ~ (\mquot{\Kc} ~ \Kc) ~ (\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc))})
+            }
+            \only<+>{
+                (\Sc ~ (\mquot{\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \Sc} ~ \Kc) ~
+                \underline{(\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ (\Sc ~ (\mquot{\Kc} ~ \Kc)))})
+            }
+            \only<+>{
+                (\Sc ~ (\mquot{\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \Sc} ~ \Kc) ~
+                (\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \underline{(\Sc ~ (\mquot{\Kc} ~ \Kc))}))
+            }
+            \only<+>{
+                (\Sc ~ (\mquot{\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \Sc} ~ \Kc) ~
+                (\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \underline{(\mquot{\mquot{\Kc} ~ \Kc} ~ \Sc)}))
+            }
+            \only<+>{
+                (\Sc ~ (\mquot{\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \Sc} ~ \Kc) ~
+                \underline{(\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ (\mquot{\mquot{\Kc} ~ \Kc} ~ \Sc))})
+            }
+            \only<+>{
+                (\Sc ~ (\mquot{\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \Sc} ~ \Kc) ~
+                \underline{(\mquot{\mquot{\mquot{\Kc} ~ \Kc} ~ \Sc} ~ \mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc})})
+            }
+            \only<+>{
+                \underline{(\Sc ~ (\mquot{\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \Sc} ~ \Kc) ~
+                (\mquot{\mquot{\mquot{\Kc} ~ \Kc} ~ \Sc} ~ \mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc}))}
+            }
+            \only<+>{
+                \underline{\mquot{\mquot{\mquot{\mquot{\Kc} ~ \Kc} ~ \Sc} ~ \mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc}} ~
+                    (\Sc ~ (\mquot{\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \Sc} ~ \Kc))
+                }
+            }
+            \only<+>{
+                \mquot{\mquot{\mquot{\mquot{\Kc} ~ \Kc} ~ \Sc} ~ \mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc}} ~
+                    \underline{(\Sc ~ (\mquot{\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \Sc} ~ \Kc))}
+            }
+            \only<+>{
+                \mquot{\mquot{\mquot{\mquot{\Kc} ~ \Kc} ~ \Sc} ~ \mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc}} ~
+                    \underline{\mquot{\mquot{\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \Sc} ~ \Kc} ~ \Sc}
+            }
+            \only<+>{
+                \mquot{\mquot{\mquot{\mquot{\Kc} ~ \Kc} ~ \Sc} ~ \mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc}} ~
+                \mquot{\mquot{\mquot{\mquot{\Kc} ~ \mquot{\Kc} ~ \Sc} ~ \Sc} ~ \Kc} ~ \Sc
+            }
+            \only<+>{
+                   \sym{[[[[swap drop apply] swap drop apply] swap dig2 dup dig2} \\
+                && \sym{cons swap dig2 apply] [[swap drop apply] [swap drop apply]} \\
+                && \sym{swap dig2 dup dig2 cons swap dig2 apply]] [[[[swap drop apply]} \\
+                && \sym{[swap drop apply] swap dig2 dup dig2 cons swap dig2 apply]} \\
+                && \sym{swap dig2 dup dig2 cons swap dig2 apply] swap drop apply]} \\
+                && \sym{swap dig2 dup dig2 cons swap dig2 apply}
+            }
+        \end{array}
+    \end{equation*}
+    \end{uncoverenv}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
