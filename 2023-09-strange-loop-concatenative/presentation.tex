@@ -1313,17 +1313,13 @@
                     &\defeq&
                     \hat{v} \cdot \mquot{p_1 ~ p_2} \\
                     \llbracket \sym{cons} \rrbracket\
-                    \hat{v} \cdot \mquot{p_1}
-                    \cdot \mquot{p_2}
+                    \hat{v} \cdot v \cdot \mquot{p}
                     &\defeq&
-                    \hat{v} \cdot \quot{\mquot{p_1}
-                    \textcolor{black}{$p_2$}} \\
+                    \hat{v} \cdot \mquot{v ~ p} \\
                     \llbracket \sym{dip} \rrbracket\
-                    \hat{v} \cdot \mquot{p_1}
-                    \cdot \mquot{p_2}
+                    \hat{v} \cdot v \cdot \mquot{p}
                     &\defeq&
-                    \llbracket p_2 ~ \mquot{p_1} \rrbracket\
-                    \hat{v} \\
+                    (\llbracket p ~ \rrbracket\ \hat{v}) \cdot v \\
                     \llbracket \sym{quote} \rrbracket\
                     \hat{v} \cdot v
                     &\defeq&
@@ -1520,13 +1516,255 @@
 % § Minimalism
 
 \section{Minimalism}
-
+ \cdot \mquot{v ~ p_1} \cdot v
 \begin{frame}
     \begin{textblock*}{160mm}(0mm,0mm)
         \picturecredit{Tom Driggers}{Two Planters in Puerto Vallarta}{CC-BY-2.0}{https://flic.kr/p/NeHcZ6}
         \adjincludegraphics[Trim=0pt 1.5in, width=160mm]{minimalism.jpg}
     \end{textblock*}
     \shadowedtitle{10mm}{10mm}{Minimalism}
+\end{frame}
+
+\begin{frame}[t]
+    \frametitle{Minimalism}
+    \removedisplayskips
+
+    \only<2>{\highlightmath{apply}}%
+    \only<4>{\highlightmath{compose}}%
+    \only<3,4>{\highlightmath{cons}}%
+    \only<5>{\highlightmath{dig2}}%
+    \only<2>{\highlightmath{dip}}%
+    \only<6>{\highlightmath{drop}}%
+    \only<7>{\highlightmath{dup}}%
+    \only<3>{\highlightmath{quote}}%
+    \only<5>{\highlightmath{swap}}%
+    \begin{onlyenv}<1-7>
+        \begin{equation*}
+            \begin{array}{l@{\;}c@{\;}l}
+                \tikzmark{apply_start}
+                \llbracket \sym{apply} \rrbracket\
+                \hat{v} \cdot \mquot{p}
+                &\defeq& \llbracket p \rrbracket\ \hat{v}
+                \tikzmark{apply_end}
+                \\
+                \tikzmark{compose_start}
+                \llbracket \sym{compose} \rrbracket\
+                \hat{v} \cdot \mquot{p_1}
+                \cdot \mquot{p_2}
+                &\defeq&
+                \hat{v} \cdot \mquot{p_1 ~ p_2}
+                \tikzmark{compose_end}
+                \\
+                \tikzmark{cons_start}
+                \llbracket \sym{cons} \rrbracket\
+                \hat{v} \cdot v \cdot \mquot{p}
+                &\defeq&
+                \hat{v} \cdot \mquot{v ~ p}
+                \tikzmark{cons_end}
+                \\
+                \tikzmark{dig2_start}
+                \llbracket \sym{dig2} \rrbracket\
+                \hat{v} \cdot v_1 \cdot v_2 \cdot v_3
+                &\defeq& \hat{v} \cdot v_2 \cdot v_3 \cdot v_1
+                \tikzmark{dig2_end}
+                \\
+                \tikzmark{dip_start}
+                \llbracket \sym{dip} \rrbracket\
+                \hat{v} \cdot v \cdot \mquot{p}
+                &\defeq&
+                (\llbracket p ~ \rrbracket\ \hat{v}) \cdot v
+                \tikzmark{dip_end}
+                \\
+                \tikzmark{drop_start}
+                \llbracket \sym{drop} \rrbracket\
+                \hat{v} \cdot v
+                &\defeq& \hat{v}
+                \tikzmark{drop_end}
+                \\
+                \tikzmark{dup_start}
+                \llbracket \sym{dup} \rrbracket\
+                \hat{v} \cdot v
+                &\defeq& \hat{v} \cdot v \cdot v
+                \tikzmark{dup_end}
+                \\
+                \only<8->{
+                    \tikzmark{k_start}
+                    \llbracket \sym{k} \rrbracket\
+                    \hat{v} \cdot v \cdot \mquot{p}
+                    &\defeq&
+                    \llbracket p \rrbracket\ \hat{v}
+                    \tikzmark{k_end}
+                    \\
+                }
+                \tikzmark{quote_start}
+                \llbracket \sym{quote} \rrbracket\
+                \hat{v} \cdot v
+                &\defeq&
+                \hat{v} \cdot \mquot{v}
+                \tikzmark{quote_end}
+                \\
+                \only<8->{
+                    \tikzmark{s_start}
+                    \llbracket \sym{s} \rrbracket\
+                    \hat{v} \cdot v \cdot \mquot{p_1} \cdot \mquot{p_2}
+                    &\defeq&
+                    \llbracket p_2 \rrbracket\ %
+                    \hat{v} \cdot \mquot{v ~ p_1} \cdot v
+                    \tikzmark{s_end}
+                    \\
+                    \tikzmark{sip_start}
+                    \llbracket \sym{sip} \rrbracket\
+                    \hat{v} \cdot v \cdot \mquot{p}
+                    &\defeq&
+                    (\llbracket p \rrbracket\ \hat{v} \cdot v) \cdot v
+                    \tikzmark{sip_end}
+                    \\
+                }
+                \tikzmark{swap_start}
+                \llbracket \sym{swap} \rrbracket\
+                \hat{v} \cdot v_1 \cdot v_2
+                &\defeq& \hat{v} \cdot v_2 \cdot v_1
+                \tikzmark{swap_end}
+                \\
+            \end{array}%
+        \end{equation*}
+        \begin{center}
+            \bfseries \color{teal} \strut%
+            \only<2>{unquote}%
+            \only<3>{quote}%
+            \only<4>{concatenate}%
+            \only<5>{reorder}%
+            \only<6>{destroy}%
+            \only<7>{copy}%
+        \end{center}%
+    \end{onlyenv}%
+
+    \begin{onlyenv}<8-11>%
+    \begin{columns}[t]%
+        \begin{column}{75mm}%
+        \only<10>{\highlightmath{cake}}%
+        \only<9> {\highlightmath{drop}}%
+        \only<10>{\highlightmath{dup}}%
+        \only<9> {\highlightmath{k}}%
+        \only<10>{\highlightmath{s}}%
+        \begin{equation*}
+            \begin{array}{l@{\;}c@{\;}l}
+                \tikzmark{apply_start}
+                \llbracket \sym{apply} \rrbracket\
+                \hat{v} \cdot \mquot{p}
+                &\defeq& \llbracket p \rrbracket\ \hat{v}
+                \tikzmark{apply_end}
+                \\
+                \tikzmark{cake_start}
+                \llbracket \sym{cake} \rrbracket\
+                \hat{v} \cdot v \cdot \mquot{p}
+                &\defeq&
+                \hat{v} \cdot \mquot{v ~ p} \cdot \mquot{p ~ v}
+                \tikzmark{cake_end}
+                \\
+                \tikzmark{compose_start}
+                \llbracket \sym{compose} \rrbracket\
+                \hat{v} \cdot \mquot{p_1}
+                \cdot \mquot{p_2}
+                &\defeq&
+                \hat{v} \cdot \mquot{p_1 ~ p_2}
+                \tikzmark{compose_end}
+                \\
+                \tikzmark{cons_start}
+                \llbracket \sym{cons} \rrbracket\
+                \hat{v} \cdot v \cdot \mquot{p}
+                &\defeq&
+                \hat{v} \cdot \mquot{v ~ p}
+                \tikzmark{cons_end}
+                \\
+                \tikzmark{dig2_start}
+                \llbracket \sym{dig2} \rrbracket\
+                \hat{v} \cdot v_1 \cdot v_2 \cdot v_3
+                &\defeq& \hat{v} \cdot v_2 \cdot v_3 \cdot v_1
+                \tikzmark{dig2_end}
+                \\
+                \tikzmark{dip_start}
+                \llbracket \sym{dip} \rrbracket\
+                \hat{v} \cdot v \cdot \mquot{p}
+                &\defeq&
+                (\llbracket p ~ \rrbracket\ \hat{v}) \cdot v
+                \tikzmark{dip_end}
+                \\
+                \tikzmark{drop_start}
+                \llbracket \sym{drop} \rrbracket\
+                \hat{v} \cdot v
+                &\defeq& \hat{v}
+                \tikzmark{drop_end}
+                \end{array}%
+            \end{equation*}
+        \end{column}
+        \begin{column}{75mm}%
+            \begin{equation*}
+                \begin{array}{l@{\;}c@{\;}l}
+                \tikzmark{dup_start}
+                \llbracket \sym{dup} \rrbracket\
+                \hat{v} \cdot v
+                &\defeq& \hat{v} \cdot v \cdot v
+                \tikzmark{dup_end}
+                \\
+                \tikzmark{k_start}
+                \llbracket \sym{k} \rrbracket\
+                \hat{v} \cdot v \cdot \mquot{p}
+                &\defeq&
+                \llbracket p \rrbracket\ \hat{v}
+                \tikzmark{k_end}
+                \\
+                \tikzmark{quote_start}
+                \llbracket \sym{quote} \rrbracket\
+                \hat{v} \cdot v
+                &\defeq&
+                \hat{v} \cdot \mquot{v}
+                \tikzmark{quote_end}
+                \\
+                \tikzmark{s_start}
+                \llbracket \sym{s} \rrbracket\
+                \hat{v} \cdot v \cdot \mquot{p_1} \cdot \mquot{p_2}
+                &\defeq&
+                \llbracket p_2 \rrbracket\ %
+                \hat{v} \cdot \mquot{v ~ p_1} \cdot v
+                \tikzmark{s_end}
+                \\
+                \tikzmark{sip_start}
+                \llbracket \sym{sip} \rrbracket\
+                \hat{v} \cdot v \cdot \mquot{p}
+                &\defeq&
+                (\llbracket p \rrbracket\ \hat{v} \cdot v) \cdot v
+                \tikzmark{sip_end}
+                \\
+                \tikzmark{swap_start}
+                \llbracket \sym{swap} \rrbracket\
+                \hat{v} \cdot v_1 \cdot v_2
+                &\defeq& \hat{v} \cdot v_2 \cdot v_1
+                \tikzmark{swap_end}
+                \\
+                \tikzmark{take_start}
+                \llbracket \sym{take} \rrbracket\
+                \hat{v} \cdot v \cdot \mquot{p}
+                &\defeq&
+                \hat{v} \cdot \mquot{p ~ v}
+                \tikzmark{take_end}
+                \\
+            \end{array}%
+        \end{equation*}
+        \end{column}
+    \end{columns}
+    \begin{center}
+        \bfseries \color{teal} \strut%
+        \only<9>{destroy}%
+        \only<10>{copy}%
+    \end{center}
+    \end{onlyenv}
+
+    \citepaper{
+        Brent Kirby.
+        “The theory of concatenative combinators”.
+        \url{http://tunes.org/~iepos/joy.html}
+    }
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
