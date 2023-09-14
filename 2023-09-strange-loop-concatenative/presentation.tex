@@ -206,6 +206,9 @@
 \newcommand{\mquot}[1]{\quot{\textcolor{black}{$#1$}}}
 \newcommand{\eff}[1]{\textcolor{gray}{\texttt{\textit{#1}}}}
 
+\newcommand{\ssym}[1]{\sym{\textsmaller[1]{#1}}}
+\newcommand{\combwhy}[1]{\textcolor{teal}{\textsf{\textbf{#1}}}}
+
 \newcommand{\stacksplit}[2][]{%
     \tcbox[
         standard jigsaw,
@@ -1572,7 +1575,7 @@
                 \llbracket \sym{dip} \rrbracket\
                 \hat{v} \cdot v \cdot \mquot{p}
                 &\defeq&
-                (\llbracket p ~ \rrbracket\ \hat{v}) \cdot v
+                (\llbracket p \rrbracket\ \hat{v}) \cdot v
                 \tikzmark{dip_end}
                 \\
                 \tikzmark{drop_start}
@@ -1629,13 +1632,15 @@
             \end{array}%
         \end{equation*}
         \begin{center}
-            \bfseries \color{teal} \strut%
-            \only<2>{unquote}%
-            \only<3>{quote}%
-            \only<4>{concatenate}%
-            \only<5>{reorder}%
-            \only<6>{destroy}%
-            \only<7>{copy}%
+            \combwhy{
+                \strut%
+                \only<2>{unquote}%
+                \only<3>{quote}%
+                \only<4>{concatenate}%
+                \only<5>{reorder}%
+                \only<6>{destroy}%
+                \only<7>{copy}%
+            }
         \end{center}%
     \end{onlyenv}%
 
@@ -1687,7 +1692,7 @@
                 \llbracket \sym{dip} \rrbracket\
                 \hat{v} \cdot v \cdot \mquot{p}
                 &\defeq&
-                (\llbracket p ~ \rrbracket\ \hat{v}) \cdot v
+                (\llbracket p \rrbracket\ \hat{v}) \cdot v
                 \tikzmark{dip_end}
                 \\
                 \tikzmark{drop_start}
@@ -1754,11 +1759,155 @@
         \end{column}
     \end{columns}
     \begin{center}
-        \bfseries \color{teal} \strut%
-        \only<9>{destroy}%
-        \only<10>{copy}%
+        \combwhy{
+            \strut%
+            \only<9>{destroy}%
+            \only<10>{copy}%
+        }
     \end{center}
     \end{onlyenv}
+
+    \citepaper{
+        Brent Kirby.
+        “The theory of concatenative combinators”.
+        \url{http://tunes.org/~iepos/joy.html}
+    }
+\end{frame}
+
+\begin{frame}[t]
+    \frametitle{Minimalism}
+    \removedisplayskips
+
+    \begin{columns}[t]%
+        \begin{column}{75mm}%
+        \only<2>{\highlightmath{qapply}}%
+        \only<2>{\highlightmath{qcompose}}%
+        \only<2>{\highlightmath{qdrop}}%
+        \only<2>{\highlightmath{qdup}}%
+        \only<2>{\highlightmath{qquote}}%
+        \only<2>{\highlightmath{qswap}}%
+        \only<3>{\highlightmath{qcons}}%
+        \only<3>{\highlightmath{qsip}}%
+        \only<3,4>{\highlightmath{qk}}%
+        \only<4>{\highlightmath{qcake}}%
+        \begin{equation*}
+            \begin{array}{l@{\;}c@{\;}l}
+                \tikzmark{qapply_start}
+                \ssym{apply}
+                \tikzmark{qapply_end}
+                \alt<2>{&& \combwhy{\textsmaller[1]{unquote}}}{
+                    &=&
+                    \ssym{[[]] dip k}
+                }
+                \\
+                \tikzmark{qcake_start}
+                \ssym{cake}
+                \tikzmark{qcake_end}
+                \alt<4>{&& \combwhy{\textsmaller[1]{concatenate, copy, reorder, quote}}}{
+                    &=&
+                    \ssym{cons [cons sip] dup apply take}
+                }
+                \\
+                \tikzmark{qcompose_start}
+                \ssym{compose}
+                \tikzmark{qcompose_end}
+                \alt<2>{&& \combwhy{\textsmaller[1]{concatenate}}}{
+                    &=&
+                    \ssym{[[i] dip i] cons cons}
+                }
+                \\
+                \tikzmark{qcons_start}
+                \ssym{cons}
+                \tikzmark{qcons_end}
+                \alt<3>{&& \combwhy{\textsmaller[1]{concatenate, quote}}}{
+                    &=&
+                    \ssym{cake [] k}
+                }
+                \\
+                \tikzmark{qdig2_start}
+                \ssym{dig2}
+                \tikzmark{qdig2_end}
+                &=&
+                \ssym{[] cons cons dip}
+                \\
+                \tikzmark{qdip_start}
+                \ssym{dip}
+                \tikzmark{qdip_end}
+                &=&
+                \ssym{cake k}
+                \\
+                \tikzmark{qdrop_start}
+                \ssym{drop}
+                \tikzmark{qdrop_end}
+                \alt<2>{&& \combwhy{\textsmaller[1]{destroy}}}{
+                    &=&
+                    \ssym{[] k}
+                }
+                \\
+                && \hphantom{\combwhy{\textsmaller[1]{concatenate, copy, reorder, quote}}}
+                \end{array}%
+            \end{equation*}
+        \end{column}
+        \begin{column}{75mm}%
+            \begin{equation*}
+                \begin{array}{l@{\;}c@{\;}l}
+                \tikzmark{qdup_start}
+                \ssym{dup}
+                \tikzmark{qdup_end}
+                \alt<2>{&& \combwhy{\textsmaller[1]{copy}}}{
+                    &=&
+                    \ssym{[] cake dip dip}
+                }
+                \\
+                \tikzmark{qk_start}
+                \ssym{k}
+                \tikzmark{qk_end}
+                \alt<3,4>{&& \combwhy{\textsmaller[1]{destroy, unquote}}}{
+                    &=&
+                    \ssym{[drop] dip i}
+                }
+                \\
+                \tikzmark{qquote_start}
+                \ssym{quote}
+                \tikzmark{qquote_end}
+                \alt<2>{&& \combwhy{\textsmaller[1]{quote}}}{
+                    &=&
+                    \ssym{[] cons}
+                }
+                \\
+                \tikzmark{qs_start}
+                \ssym{s}
+                \tikzmark{qs_end}
+                &=&
+                \ssym{dig2 [dig2 cons] sip dig2 apply}
+                \\
+                \tikzmark{qsip_start}
+                \ssym{sip}
+                \tikzmark{qsip_end}
+                \alt<3>{&& \combwhy{\textsmaller[1]{copy, reorder, unquote}}}{
+                    &=&
+                    \ssym{[quote compose] s apply}
+                }
+                \\
+                \tikzmark{qswap_start}
+                \ssym{swap}
+                \tikzmark{qswap_end}
+                \alt<2>{&& \combwhy{\textsmaller[1]{reorder}}}{
+                    &=&
+                    \ssym{quote dip}
+                }
+                \\
+                \tikzmark{qtake_start}
+                \ssym{take}
+                \tikzmark{qtake_end}
+                &=&
+                \ssym{[dip] cons cons}
+                \\
+                && \hphantom{dig2 [dig2 cons] sip dig2 apply}
+            \end{array}%
+        \end{equation*}
+        \end{column}
+    \end{columns}
 
     \citepaper{
         Brent Kirby.
