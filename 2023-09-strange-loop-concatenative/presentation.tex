@@ -250,12 +250,12 @@
     \ignorespaces
 }
 
-\newcommand{\highlightmath}[1]{%
+\newcommand{\highlightmath}[2][blue!25]{%
     \tikz[remember picture]{
-      \draw [overlay, draw=none, fill=blue!25]
-        ([xshift=-1pt, yshift=12pt] pic cs:#1_start)
+      \draw [overlay, draw=none, fill=#1]
+        ([xshift=-1pt, yshift=12pt] pic cs:#2_start)
         rectangle
-        ([xshift=1pt, yshift=-6pt] pic cs:#1_end)
+        ([xshift=1pt, yshift=-6pt] pic cs:#2_end)
         ;
     }%
     \ignorespaces
@@ -1552,11 +1552,17 @@
     \begin{onlyenv}<8-11>%
     \begin{columns}[t]%
         \begin{column}{75mm}%
+        \only<8> {\highlightmath[gray!25]{cake}}%
+        \only<8> {\highlightmath[gray!25]{k}}%
+        \only<8> {\highlightmath[gray!25]{s}}%
+        \only<8> {\highlightmath[gray!25]{sip}}%
+        \only<8> {\highlightmath[gray!25]{take}}%
         \only<10>{\highlightmath{cake}}%
         \only<9> {\highlightmath{drop}}%
         \only<10>{\highlightmath{dup}}%
         \only<9> {\highlightmath{k}}%
         \only<10>{\highlightmath{s}}%
+        \only<10>{\highlightmath{sip}}%
         \begin{equation*}
             \begin{array}{l@{\;}c@{\;}l}
                 \tikzmark{apply_start}
