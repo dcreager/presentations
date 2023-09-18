@@ -58,9 +58,9 @@
 \def\picturecredits{}
 \newcommand{\picturecredit}[4]{
     \protected@xappto\picturecredits{
-        \textsmaller[3]{Slide \theframenumber} &
-        \textsmaller[2]{#1, “#2”} \vspace*{-0.4em} \newline
-        \ifstrempty{#4}{\textsmaller[3]{#3}}{\textsmaller[3]{#3, \url{#4}}} \\
+        \textsmaller[4]{Slide \theframenumber} &
+        \textsmaller[3]{#1, “#2”} \vspace*{-0.6em} \newline
+        \ifstrempty{#4}{\textsmaller[4]{#3}}{\textsmaller[4]{#3, \url{#4}}} \\[-0.4em]
     }
 }
 \makeatother
