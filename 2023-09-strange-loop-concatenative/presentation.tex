@@ -1827,6 +1827,65 @@
     }
 \end{frame}
 
+\subsection{Apologies in advance}
+
+\begin{frame}[t]
+    \frametitle{Apologies in advance}
+    \removedisplayskips
+
+    \begin{equation*}
+        \begin{array}{c@{\;\,}c@{\,\;}l}
+            \lambda x \ldot \lambda y \ldot y~x &=&
+            \only<+>{
+                   \sym{[[[[swap drop apply] swap drop apply] swap dig2 dup dig2} \\
+                && \sym{cons swap dig2 apply] [[swap drop apply] [swap drop apply]} \\
+                && \sym{swap dig2 dup dig2 cons swap dig2 apply]] [[[[swap drop apply]} \\
+                && \sym{[swap drop apply] swap dig2 dup dig2 cons swap dig2 apply]} \\
+                && \sym{swap dig2 dup dig2 cons swap dig2 apply] swap drop apply]} \\
+                && \sym{swap dig2 dup dig2 cons swap dig2 apply}
+            }
+            \only<+>{
+                   \ssym{[[[[k] k] [] cake [] k cake k [] cake [] k cake [] k cake k [] cake cake k} \\[-0.5em]
+                && \ssym{cake k [] cake [] k cake [] k cake k cake [] k [] cake [] k cake k [] cake} \\[-0.5em]
+                && \ssym{[] k cake [] k cake k [[]] cake k k] [[k] [k] [] cake [] k cake k [] cake} \\[-0.5em]
+                && \ssym{[] k cake [] k cake k [] cake cake k cake k [] cake [] k cake [] k cake k} \\[-0.5em]
+                && \ssym{cake [] k [] cake [] k cake k [] cake [] k cake [] k cake k [[]] cake k k]]} \\[-0.5em]
+                && \ssym{[[[[k] [k] [] cake [] k cake k [] cake [] k cake [] k cake k [] cake cake} \\[-0.5em]
+                && \ssym{k cake k [] cake [] k cake [] k cake k cake [] k [] cake [] k cake k []} \\[-0.5em]
+                && \ssym{cake [] k cake [] k cake k [[]] cake k k] [] cake [] k cake k [] cake [] k} \\[-0.5em]
+                && \ssym{cake [] k cake k [] cake cake k cake k [] cake [] k cake [] k cake k cake} \\[-0.5em]
+                && \ssym{[] k [] cake [] k cake k [] cake [] k cake [] k cake k [[]] cake k k] k]} \\[-0.5em]
+                && \ssym{[] cake [] k cake k [] cake [] k cake [] k cake k [] cake cake k cake k []} \\[-0.5em]
+                && \ssym{cake [] k cake [] k cake k cake [] k [] cake [] k cake k [] cake [] k cake} \\[-0.5em]
+                && \ssym{[] k cake k [[]] cake k k}
+            }
+        \end{array}
+    \end{equation*}
+
+    \citepaper{
+        Brent Kirby.
+        “The theory of concatenative combinators”.
+        \url{http://tunes.org/~iepos/joy.html}
+    }
+\end{frame}
+
+\begin{frame}
+    \begin{center}
+        \begin{tabular}{ccccccccc}
+            \adjincludegraphics[width=15mm,valign=m]{languages/c.png}
+            &\textlarger[3]{\textrm{\textbf{→}}}&
+            \adjustbox{totalheight=12mm,valign=m}{\textbf{λ}}
+            &\textlarger[3]{\textrm{\textbf{→}}}&
+            \adjustbox{totalheight=11mm,valign=m}{\textbf{SK}}
+            &\textlarger[3]{\textrm{\textbf{→}}}&
+            \adjincludegraphics[width=15mm,valign=m]{pancakes-icon.png}
+            &\textlarger[3]{\textrm{\textbf{→}}}&
+            \adjincludegraphics[width=15mm,valign=m]{cake-slice-icon.png}
+        \end{tabular}
+    \end{center}
+    \picturecredit{monkik}{Cake slice icon}{Flaticon Free License (with attribution)}{https://www.flaticon.com/free-icon/cake-slice_992754}
+\end{frame}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % § Associativity
 
