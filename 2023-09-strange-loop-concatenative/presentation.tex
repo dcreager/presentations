@@ -1263,11 +1263,11 @@
 \subsection{The stack language is Turing-complete}
 
 \begin{frame}[t]
-    \frametitle{The stack language is\only<2-5>{ (almost)} Turing-complete}
+    \frametitle{The stack language is\only<2-6>{ (almost)} Turing-complete}
     \removedisplayskips
     \setcounter{beamerpauses}{3}
 
-    \begin{onlyenv}<+-+(1)>
+    \begin{onlyenv}<+-+(2)>
     \begin{equation*}
     \begin{array}{c@{\quad}c@{\quad}l}
         \uncover<.>{\lit &\ni& \sym{0}, \sym{1}, \sym{42}, \ldots} \\
@@ -1285,8 +1285,25 @@
             \prog~\prog \\
     \end{array}%
     \end{equation*}%
+
+    \begin{uncoverenv}<.(2)>
+    \vskip 2ex
+    \begin{equation*}
+        \begin{array}{l@{\;\,}c@{\,\;}l}
+            0 &\defeq& \sym{[drop]} \\
+            \textsf{succ} &\defeq&
+            \sym{quote [apply] compose [[dup]] swap dup [[compose]]} \\
+            && \sym{swap [apply] compose compose compose compose} \\
+        \end{array}%
+    \end{equation*}%
+    \end{uncoverenv}
+    \citepaper<.(2)>{
+        Scott J Maddox.
+        “Foundations of Dawn: The Untyped Concatenative Calculus”.
+        \url{https://www.dawn-lang.org/posts/foundations-ucc/}
+    }
     \end{onlyenv}
-    \addtocounter{beamerpauses}{1}
+    \addtocounter{beamerpauses}{2}
 
     \begin{onlyenv}<+->
     \begin{columns}[t]
@@ -1339,29 +1356,7 @@
             \end{uncoverenv}
         \end{column}
     \end{columns}
-    \citepaper<.(1)>{
-        Brent Kirby.
-        “The theory of concatenative combinators”.
-        \url{http://tunes.org/~iepos/joy.html}
-    }
     \addtocounter{beamerpauses}{1}
-
-    \begin{uncoverenv}<+->
-    \vskip 2ex
-    \begin{equation*}
-        \begin{array}{l@{\;\,}c@{\,\;}l}
-            0 &\defeq& \sym{[drop]} \\
-            \textsf{succ} &\defeq&
-            \sym{quote [apply] compose [[dup]] swap dup [[compose]]} \\
-            && \sym{swap [apply] compose compose compose compose} \\
-        \end{array}%
-    \end{equation*}%
-    \end{uncoverenv}
-    \citepaper<.>{
-        Scott J Maddox.
-        “Foundations of Dawn: The Untyped Concatenative Calculus”.
-        \url{https://www.dawn-lang.org/posts/foundations-ucc/}
-    }
     \end{onlyenv}
 \end{frame}
 
