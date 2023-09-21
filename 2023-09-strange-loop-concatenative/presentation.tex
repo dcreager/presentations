@@ -600,6 +600,7 @@
 
 \begin{frame}
     \frametitle{Manipulating the stack}
+    \stackex<+>{         }{ 3 3 * 4 4 * + sqrt }
     \stackex<+>{         }{ 3 4 dup * swap dup * + sqrt }
     \stackex<+>{        3}{ 4 dup * swap dup * + sqrt }
     \stackex<+>{      3 4}{ dup * swap dup * + sqrt }
@@ -635,6 +636,7 @@
 
 \begin{frame}
     \frametitle{Digging for dirt}
+    \stackex<+>{         }{ 3 4 \quot{dup * swap dup * + sqrt} apply }
     \stackex<+>{         }{ \quot{dup * swap dup * + sqrt} 3 4 ??? apply }
     \stackex<+>{\quot{dup * swap dup * + sqrt}}{ 3 4 ??? apply }
     \stackex<+>{\quot{dup * swap dup * + sqrt} 3}{ 4 ??? apply }
@@ -898,36 +900,35 @@
             \begin{equation*}
                 \begin{array}{l@{\;\,}c@{\,\;}l@{\quad}l}
                     \llbracket
-                    \only<.-.(3)>{\sym{1 2 +}}
-                    \only<.(4)->{\sym{1}\ (\sym{2}\ (\sym{+}))}
+                    \only<.->{\sym{1 2 +}}
                     \rrbracket\ \hat{v}
                     \only<.-.(1)>{&=\vphantom{\qeq}& \qqq}
-                    \only<.(2)-.(10)>{&\qeq& \hat{v} \cdot \val{3}}
-                    \only<.(11)>{&\yeq& \hat{v} \cdot \val{3}}
-                    \only<.(5)->{
+                    \only<.(2)-.(9)>{&\qeq& \hat{v} \cdot \val{3}}
+                    \only<.(10)>{&\yeq& \hat{v} \cdot \val{3}}
+                    \only<.(4)->{
                         \\ && \hphantom{%
                             \llbracket \sym{+} \rrbracket\ (
                             \llbracket \sym{2} \rrbracket\ (%
                             \hat{v} \cdot \val{1}))}
                         \\[-1.5em] &=&
-                        \llbracket \sym{2}\ (\sym{+}) \rrbracket\ (
+                        \llbracket \sym{2 +} \rrbracket\ (
                         \llbracket \sym{1} \rrbracket\ %
                         \hat{v})
                         & \withsub{
                             p_1 = \sym{1},~
-                            p_2 = \sym{2}\ (\sym{+}),~
+                            p_2 = \sym{2 +},~
                             \hat{v}_4 = \hat{v}
                         }
                     }
-                    \only<.(6)->{
+                    \only<.(5)->{
                         \\ &=&
-                        \llbracket \sym{2}\ (\sym{+}) \rrbracket\ (
+                        \llbracket \sym{2 +} \rrbracket\ (
                         \hat{v} \cdot \val{1})
                         & \withsub{
                             \hat{v}_1 = \hat{v}
                         }
                     }
-                    \only<.(7)->{
+                    \only<.(6)->{
                         \\ &=&
                         \llbracket \sym{+} \rrbracket\ (
                         \llbracket \sym{2} \rrbracket\ (%
@@ -938,7 +939,7 @@
                             \hat{v}_4 = \hat{v} \cdot \val{1}
                         }
                     }
-                    \only<.(8)->{
+                    \only<.(7)->{
                         \\ &=&
                         \llbracket \sym{+} \rrbracket\ (
                         \hat{v} \cdot \val{1} \cdot \val{2})
@@ -946,7 +947,7 @@
                             \hat{v}_2 = \hat{v} \cdot \val{1}
                         }
                     }
-                    \only<.(9)->{
+                    \only<.(8)->{
                         \\ &=&
                         \hat{v} \cdot (\val{1} + \val{2})
                         & \withsub{
@@ -955,7 +956,7 @@
                             i_2 = 2
                         }
                     }
-                    \only<.(10)->{
+                    \only<.(9)->{
                         \\ &=&
                         \hat{v} \cdot \val{3}
                     }
@@ -969,11 +970,11 @@
         \end{column}
         \begin{onlyenv}<.(3)->
         \begin{column}{50mm}
-            \only<.(5)>{\highlightmath{subprog}}%
-            \only<.(6)>{\highlightmath{sub1}}%
-            \only<.(7)>{\highlightmath{subprog}}%
-            \only<.(8)>{\highlightmath{sub2}}%
-            \only<.(9)>{\highlightmath{subplus}}%
+            \only<.(4)>{\highlightmath{subprog}}%
+            \only<.(5)>{\highlightmath{sub1}}%
+            \only<.(6)>{\highlightmath{subprog}}%
+            \only<.(7)>{\highlightmath{sub2}}%
+            \only<.(8)>{\highlightmath{subplus}}%
             \begin{equation*}
                 \begin{array}{l@{\;\,}c@{\,\;}l@{\quad}l}
                     \tikzmark{sub1_start}
@@ -1123,7 +1124,7 @@
         \picturecredit{Seattle Municipal Archives}{West Seattle Bridge under construction, circa 1983}{CC-BY-2.0}{https://flic.kr/p/7jKWYi}
         \includegraphics[width=160mm]{bridge.jpg}
     \end{textblock*}
-    \shadowedtitle{157mm - \titlewidth}{7mm}{Completeness}
+    \shadowedtitle{155mm - \titlewidth}{7mm}{Completeness}
 \end{frame}
 
 \subsection{The lambda calculus is Turing-complete}
@@ -1724,7 +1725,7 @@
                 \tikzmark{qcompose_end}
                 \alt<2>{&& \combwhy{\textsmaller[1]{concatenate}}}{
                     &=&
-                    \ssym{[[i] dip i] cons cons}
+                    \ssym{[[apply] dip apply] cons cons}
                 }
                 \\
                 \tikzmark{qcons_start}
@@ -1775,7 +1776,7 @@
                 \tikzmark{qk_end}
                 \alt<3,4>{&& \combwhy{\textsmaller[1]{destroy, unquote}}}{
                     &=&
-                    \ssym{[drop] dip i}
+                    \ssym{[drop] dip apply}
                 }
                 \\
                 \tikzmark{qquote_start}
