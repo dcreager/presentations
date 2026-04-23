@@ -1,7 +1,12 @@
 \documentclass[aspectratio=169]{beamer}
 \mode<presentation>
 
+\usepackage{calc}
 \usepackage{relsize}
+\usepackage[overlay,absolute]{textpos}
+
+\usepackage{tikz}
+\usetikzlibrary{tikzmark}
 
 \graphicspath{{../images}}
 
@@ -11,7 +16,7 @@
     BoldItalicFont={Helvetica Neue Bold Italic},
     ItalicFont={Helvetica Neue Light Italic}
 ]
-\setmonofont{Iosevka Term}
+\setmonofont[Contextuals=Alternate]{Iosevka Term}
 \newfontface\helvreg{Helvetica Neue}
 
 \title{Constraint sets in ty}
@@ -61,7 +66,23 @@
 
 \usepackage{minted}
 \usemintedstyle{colorful}
-\setminted{autogobble,fontsize=\relscale{0.8},frame=single,framesep=6pt,escapeinside=??}
+\setminted{autogobble,fontsize=\relscale{0.8},escapeinside=??}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% tikz stuff
+
+\makeatletter
+\tikzset{tikzmark suffix=-\theframenumber-\the\beamer@slideinframe}
+\makeatother
+
+\newcommand{\highlightcode}[2]{%
+    \tikz[remember picture]
+      \draw [overlay, draw=none, fill=#1]
+        ([xshift=-1pt, yshift=8pt] pic cs:#2_start)
+        rectangle
+        ([xshift=1pt, yshift=-2pt] pic cs:#2_end)
+        ;%
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Front matter
@@ -70,6 +91,39 @@
 
 \begin{frame}
     \titlepage
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Pop quiz
+
+\begin{frame}
+    \flattitle{80mm - 0.5\titlewidth}{40mm}{Pop quiz!}
+\end{frame}
+
+\begin{frame}[fragile]
+    \uncover<2-3>{\highlightcode{yellow!25}{quiz}}
+    \begin{textblock*}{80mm}[0,0.5](10mm,45mm)
+    \begin{minted}{python}
+        def f(x: int) -> int: ...
+
+        ?\tikzmark{quiz_start}?f(1)?\tikzmark{quiz_end}?
+    \end{minted}
+    \end{textblock*}
+
+    \begin{textblock*}{60mm}[1,0.5](150mm,45mm)
+    \begin{onlyenv}<2>
+        \begin{center}
+            Is this allowed? \\
+            What is its type?
+        \end{center}
+    \end{onlyenv}
+    \end{textblock*}
+
+    \begin{textblock*}{60mm}[1,0.5](150mm,45mm)
+    \begin{center}
+        \uncover<3>{\texttt{int}}
+    \end{center}
+    \end{textblock*}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
