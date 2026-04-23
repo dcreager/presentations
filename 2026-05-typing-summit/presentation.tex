@@ -4,6 +4,7 @@
 \usepackage{calc}
 \usepackage{relsize}
 \usepackage[overlay,absolute]{textpos}
+\usepackage{ulem}
 
 \usepackage{tikz}
 \usetikzlibrary{tikzmark}
@@ -104,9 +105,9 @@
     \uncover<2-3>{\highlightcode{yellow!25}{quiz}}
     \begin{textblock*}{80mm}[0,0.5](10mm,45mm)
     \begin{minted}{python}
-        def f(x: int) -> int: ...
+        def takes_bool(x: bool) -> bool: ...
 
-        ?\tikzmark{quiz_start}?f(1)?\tikzmark{quiz_end}?
+        ?\tikzmark{quiz_start}?takes_bool(True)?\tikzmark{quiz_end}?
     \end{minted}
     \end{textblock*}
 
@@ -121,7 +122,68 @@
 
     \begin{textblock*}{60mm}[1,0.5](150mm,45mm)
     \begin{center}
-        \uncover<3>{\texttt{int}}
+        \uncover<3>{\texttt{bool}}
+    \end{center}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \highlightcode{yellow!25}{quiz}
+    \begin{textblock*}{80mm}[0,0.5](10mm,45mm)
+    \begin{minted}{python}
+        def takes_bool(x: bool) -> bool: ...
+
+        ?\tikzmark{quiz_start}?takes_bool(1)?\tikzmark{quiz_end}?
+    \end{minted}
+    \end{textblock*}
+
+    \begin{textblock*}{60mm}[1,0.5](150mm,45mm)
+    \begin{center}
+        \uncover<2>{\textcolor{red}{\texttt{[invalid-argument-type]}}}
+    \end{center}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \highlightcode{yellow!25}{quiz}
+    \begin{textblock*}{80mm}[0,0.5](10mm,45mm)
+    \begin{minted}{python}
+        def identity[T](x: T) -> T: ...
+
+        ?\tikzmark{quiz_start}?identity(True)?\tikzmark{quiz_end}?
+    \end{minted}
+    \end{textblock*}
+
+    \begin{textblock*}{60mm}[1,0.5](150mm,45mm)
+    \begin{center}
+        \only<2->{\texttt{bool} \\}
+        \only<3->{\texttt{Literal[True]} \\}
+        \only<4->{\texttt{int} \\}
+        \only<5->{\texttt{object} \\}
+        \only<6->{\texttt{SupportsIndex} \\}
+        \only<6->{$\vdots$}
+    \end{center}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \highlightcode{yellow!25}{quiz}
+    \begin{textblock*}{80mm}[0,0.5](10mm,45mm)
+    \begin{minted}{python}
+        def identity[T](x: T) -> T: ...
+
+        result: bool = ?\tikzmark{quiz_start}?identity(True)?\tikzmark{quiz_end}?
+    \end{minted}
+    \end{textblock*}
+
+    \begin{textblock*}{60mm}[1,0.5](150mm,45mm)
+    \begin{center}
+        \only<2>{\texttt{bool} \\}
+        \only<2>{\texttt{Literal[True]} \\}
+        \only<2>{\textcolor{gray!50}{\sout{\texttt{int}}} \\}
+        \only<2>{\textcolor{gray!50}{\sout{\texttt{object}}} \\}
+        \only<2>{\textcolor{gray!50}{\sout{\texttt{SupportsIndex}}} \\}
+        \only<2>{\textcolor{gray!50}{$\vdots$}}
     \end{center}
     \end{textblock*}
 \end{frame}
