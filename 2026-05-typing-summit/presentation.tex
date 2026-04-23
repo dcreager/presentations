@@ -1,0 +1,86 @@
+\documentclass[aspectratio=169]{beamer}
+\mode<presentation>
+
+\usepackage{relsize}
+
+\graphicspath{{../images}}
+
+\usepackage{fontspec}
+\setsansfont{Helvetica Neue Light}[
+    BoldFont={Helvetica Neue Bold},
+    BoldItalicFont={Helvetica Neue Bold Italic},
+    ItalicFont={Helvetica Neue Light Italic}
+]
+\setmonofont{Iosevka Term}
+\newfontface\helvreg{Helvetica Neue}
+
+\title{Constraint sets in ty}
+\author{Douglas Creager}
+\institute{Astral\vspace{2em}}
+\date{PyCon Typing Summit\\\textsmaller[1]{May 14, 2026 – Long Beach, CA}}
+
+\setbeamercolor{title}{fg=black}
+\setbeamerfont{title}{series=\bfseries,size=\larger[1]}
+\setbeamerfont{subtitle}{series=\mdseries,size=\smaller[2]}
+\setbeamerfont{author}{size=\smaller[1]}
+\setbeamerfont{institute}{size=\normalsize}
+\setbeamertemplate{navigation symbols}{}
+\setbeamercolor{frametitle}{fg=black}
+\setbeamerfont{frametitle}{series=\bfseries}
+
+% Picture credits
+
+\makeatletter
+\def\picturecredits{}
+\newcommand{\picturecredit}[4]{
+    \protected@xappto\picturecredits{
+        \textsmaller[3]{Slide \theframenumber} &
+        \textsmaller[2]{#1, “#2”} \vspace*{-0.4em} \newline
+        \textsmaller[3]{#3, \url{#4}} \\
+    }
+}
+\makeatother
+
+\newlength{\titlewidth}
+\newcommand{\flattitle}[3]{
+    \settowidth{\titlewidth}{\textbf{\LARGE #3}}
+    \begin{textblock*}{\titlewidth}(#1,#2)
+        \textbf{\LARGE #3}
+    \end{textblock*}
+}
+\newcommand{\shadowedtitle}[3]{
+    \settowidth{\titlewidth}{\textbf{\LARGE #3}}
+    \addtolength{\titlewidth}{0.5mm}
+    \begin{textblock*}{\titlewidth}(#1+0.4mm,#2+0.4mm)
+        \textbf{\LARGE #3}
+    \end{textblock*}
+    \begin{textblock*}{\titlewidth}(#1,#2)
+        \textbf{\textcolor{white}{\LARGE #3}}
+    \end{textblock*}
+}
+
+\usepackage{minted}
+\usemintedstyle{colorful}
+\setminted{autogobble,fontsize=\relscale{0.8},frame=single,framesep=6pt,escapeinside=??}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Front matter
+
+\begin{document}
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% End matter
+
+\begin{frame}[t]
+    \frametitle{Picture credits}
+    \begin{tabular}{lp{0.75\textwidth}}
+    \picturecredits
+    \end{tabular}
+\end{frame}
+
+
+\end{document}
