@@ -204,6 +204,42 @@
     \end{center}
 \end{frame}
 
+\begin{frame}[fragile]
+    \frametitle{Constraint sets are sets of typevar assignments}
+
+    \begin{uncoverenv}<2->
+    \begin{displaymath}
+        \textcolor{DodgerBlue3}{\texttt{Literal[True]} \preceq \texttt{T}} =
+        \left\{
+            \begin{array}{l}
+                \texttt{T = bool} \\
+                \texttt{T = Literal[True]} \\
+                \texttt{T = int} \\
+                \texttt{T = object} \\
+                \texttt{T = SupportsIndex} \\
+                \multicolumn{1}{c}{\vdots} \\
+            \end{array}
+        \right\}
+    \end{displaymath}
+    \end{uncoverenv}
+
+    \vskip 4ex
+
+    \begin{uncoverenv}<3->
+    \begin{displaymath}
+        \textcolor{DodgerBlue3}{
+            (\texttt{Literal[True]} \preceq \texttt{T}) \wedge (\texttt{T} \preceq \texttt{bool})
+        } =
+        \left\{
+            \begin{array}{l}
+                \texttt{T = bool} \\
+                \texttt{T = Literal[True]} \\
+            \end{array}
+        \right\}
+    \end{displaymath}
+    \end{uncoverenv}
+\end{frame}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % End matter
 
