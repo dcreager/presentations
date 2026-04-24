@@ -5,6 +5,7 @@
 \usepackage{relsize}
 \usepackage[overlay,absolute]{textpos}
 \usepackage{ulem}
+\usepackage[x11names]{xcolor}
 
 \usepackage{tikz}
 \usetikzlibrary{tikzmark}
@@ -67,7 +68,7 @@
 
 \usepackage{minted}
 \usemintedstyle{colorful}
-\setminted{autogobble,fontsize=\relscale{0.8},escapeinside=??}
+\setminted{autogobble,fontsize=\relscale{0.8},framesep=0mm,escapeinside=??}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % tikz stuff
@@ -101,8 +102,13 @@
     \flattitle{80mm - 0.5\titlewidth}{40mm}{Pop quiz!}
 \end{frame}
 
+\begin{frame}
+    \frametitle{Is this expression valid? What is its type?}
+\end{frame}
+
 \begin{frame}[fragile]
-    \uncover<2-3>{\highlightcode{yellow!25}{quiz}}
+    \frametitle{Is this expression valid? What is its type?}
+    \highlightcode{yellow!25}{quiz}
     \begin{textblock*}{80mm}[0,0.5](10mm,45mm)
     \begin{minted}{python}
         def takes_bool(x: bool) -> bool: ...
@@ -112,22 +118,14 @@
     \end{textblock*}
 
     \begin{textblock*}{60mm}[1,0.5](150mm,45mm)
-    \begin{onlyenv}<2>
-        \begin{center}
-            Is this allowed? \\
-            What is its type?
-        \end{center}
-    \end{onlyenv}
-    \end{textblock*}
-
-    \begin{textblock*}{60mm}[1,0.5](150mm,45mm)
     \begin{center}
-        \uncover<3>{\texttt{bool}}
+        \uncover<2>{\texttt{bool}}
     \end{center}
     \end{textblock*}
 \end{frame}
 
 \begin{frame}[fragile]
+    \frametitle{Is this expression valid? What is its type?}
     \highlightcode{yellow!25}{quiz}
     \begin{textblock*}{80mm}[0,0.5](10mm,45mm)
     \begin{minted}{python}
@@ -145,6 +143,7 @@
 \end{frame}
 
 \begin{frame}[fragile]
+    \frametitle{Is this expression valid? What is its type?}
     \highlightcode{yellow!25}{quiz}
     \begin{textblock*}{80mm}[0,0.5](10mm,45mm)
     \begin{minted}{python}
@@ -167,6 +166,7 @@
 \end{frame}
 
 \begin{frame}[fragile]
+    \frametitle{Is this expression valid? What is its type?}
     \highlightcode{yellow!25}{quiz}
     \begin{textblock*}{80mm}[0,0.5](10mm,45mm)
     \begin{minted}{python}
@@ -186,6 +186,22 @@
         \only<2>{\textcolor{gray!50}{$\vdots$}}
     \end{center}
     \end{textblock*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{\textit{When} is this expression valid?}
+    \begin{center}
+    \begin{tabular}{p{60mm}p{60mm}}
+        \verb|takes_bool(True)|
+        & \textcolor{DodgerBlue3}{$\hphantom{(} \texttt{always}$} \\
+        \verb|takes_bool(1)|
+        & \textcolor{DodgerBlue3}{$\hphantom{(} \texttt{never}$} \\
+        \verb|identity(True)|
+        & \textcolor{DodgerBlue3}{$\hphantom{(} \texttt{Literal[True]} \preceq \texttt{T}$} \\
+        \verb|result: bool = identity(True)|
+        & \textcolor{DodgerBlue3}{$(\texttt{Literal[True]} \preceq \texttt{T}) \wedge (\texttt{T} \preceq \texttt{bool})$} \\
+    \end{tabular}
+    \end{center}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
