@@ -86,6 +86,15 @@
         ;%
 }
 
+\newcommand{\highlightmath}[2]{%
+    \tikz[remember picture]
+      \draw [overlay, draw=none, fill=#1]
+        ([xshift=-1pt, yshift=10pt] pic cs:#2_start)
+        rectangle
+        ([xshift=1pt, yshift=-4pt] pic cs:#2_end)
+        ;%
+}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Math equation spacing
 
@@ -215,6 +224,120 @@
         \only<2>{\textcolor{gray!50}{\sout{\texttt{object}}} \\}
         \only<2>{\textcolor{gray!50}{\sout{\texttt{SupportsIndex}}} \\}
         \only<2>{\textcolor{gray!50}{$\vdots$}}
+    \end{center}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{\textit{When} is this expression valid?}
+    \only<2>{\highlightcode{red!15}{a1}}
+    \only<2>{\highlightmath{red!15}{a2}}
+    \only<2>{\highlightcode{blue!15}{p1}}
+    \only<2>{\highlightmath{blue!15}{p2}}
+    \begin{textblock*}{80mm}[0.5,0](80mm,30mm)
+    \begin{minted}{python}
+        def takes_bool(?\tikzmark{p1_start}?x: bool?\tikzmark{p1_end}?) -> bool: ...
+
+        takes_bool(?\tikzmark{a1_start}?True?\tikzmark{a1_end}?)
+    \end{minted}
+    \end{textblock*}
+
+    \begin{textblock*}{120mm}[0.5,0](80mm,55mm)
+    \begin{center}
+        \only<2>{\cset{
+            \tikzmark{a2_start}\pytype{Literal[True]}\tikzmark{a2_end}
+            \preceq
+            \tikzmark{p2_start}\pytype{bool}\tikzmark{p2_end}
+        }}
+        \only<3>{\cset{\always}}
+    \end{center}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{\textit{When} is this expression valid?}
+    \only<2>{\highlightcode{red!15}{a1}}
+    \only<2>{\highlightmath{red!15}{a2}}
+    \only<2>{\highlightcode{blue!15}{p1}}
+    \only<2>{\highlightmath{blue!15}{p2}}
+    \begin{textblock*}{80mm}[0.5,0](80mm,30mm)
+    \begin{minted}{python}
+        def takes_bool(?\tikzmark{p1_start}?x: bool?\tikzmark{p1_end}?) -> bool: ...
+
+        takes_bool(?\tikzmark{a1_start}?1?\tikzmark{a1_end}?)
+    \end{minted}
+    \end{textblock*}
+
+    \begin{textblock*}{120mm}[0.5,0](80mm,55mm)
+    \begin{center}
+        \only<2>{\cset{
+            \tikzmark{a2_start}\pytype{Literal[1]}\tikzmark{a2_end}
+            \preceq
+            \tikzmark{p2_start}\pytype{bool}\tikzmark{p2_end}
+        }}
+        \only<3>{\cset{\never}}
+    \end{center}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{\textit{When} is this expression valid?}
+    \only<2>{\highlightcode{red!15}{a1}}
+    \only<2>{\highlightmath{red!15}{a2}}
+    \only<2>{\highlightcode{blue!15}{p1}}
+    \only<2>{\highlightmath{blue!15}{p2}}
+    \begin{textblock*}{80mm}[0.5,0](80mm,30mm)
+    \begin{minted}{python}
+        def identity[T](?\tikzmark{p1_start}?x: T?\tikzmark{p1_end}?) -> T: ...
+
+        identity(?\tikzmark{a1_start}?True?\tikzmark{a1_end}?)
+    \end{minted}
+    \end{textblock*}
+
+    \begin{textblock*}{120mm}[0.5,0](80mm,55mm)
+    \begin{center}
+        \only<2-3>{\cset{
+            \tikzmark{a2_start}\pytype{Literal[True]}\tikzmark{a2_end}
+            \preceq
+            \tikzmark{p2_start}\typevar{T}\tikzmark{p2_end}
+        }}
+    \end{center}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{\textit{When} is this expression valid?}
+    \only<2>{\highlightcode{red!15}{a1}}
+    \only<2>{\highlightmath{red!15}{a2}}
+    \only<3>{\highlightcode{red!15}{a3}}
+    \only<3>{\highlightmath{red!15}{a4}}
+    \only<2>{\highlightcode{blue!15}{p1}}
+    \only<2>{\highlightmath{blue!15}{p2}}
+    \only<3>{\highlightcode{blue!15}{p3}}
+    \only<3>{\highlightmath{blue!15}{p4}}
+    \begin{textblock*}{80mm}[0.5,0](80mm,30mm)
+    \begin{minted}{python}
+        def identity[T](?\tikzmark{p1_start}?x: T?\tikzmark{p1_end}?) -> ?\tikzmark{p3_start}?T?\tikzmark{p3_end}?: ...
+
+        ?\tikzmark{a3_start}?result: bool?\tikzmark{a3_end}? = identity(?\tikzmark{a1_start}?True?\tikzmark{a1_end}?)
+    \end{minted}
+    \end{textblock*}
+
+    \begin{textblock*}{120mm}[0.5,0](80mm,55mm)
+    \begin{center}
+        \cset{
+        \only<3-4>{(}
+        \only<2-4>{
+            \tikzmark{a2_start}\pytype{Literal[True]}\tikzmark{a2_end}
+            \preceq
+            \tikzmark{p2_start}\typevar{T}\tikzmark{p2_end}
+        }
+        \only<3-4>{) \wedge (
+            \tikzmark{p4_start}\typevar{T}\tikzmark{p4_end}
+            \preceq
+            \tikzmark{a4_start}\pytype{bool}\tikzmark{a4_end}
+        )}
+        }
     \end{center}
     \end{textblock*}
 \end{frame}
