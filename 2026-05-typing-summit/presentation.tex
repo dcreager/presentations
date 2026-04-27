@@ -77,6 +77,10 @@
 \tikzset{tikzmark suffix=-\theframenumber-\the\beamer@slideinframe}
 \makeatother
 
+\newcommand{\tms}[1]{\tikzmark{#1_start}}
+\newcommand{\tme}[1]{\tikzmark{#1_end}}
+\newcommand{\tmm}[2]{\tms{#1}#2\tme{#1}}
+
 \newcommand{\highlightcode}[2]{%
     \tikz[remember picture]
       \draw [overlay, draw=none, fill=#1]
@@ -153,7 +157,7 @@
     \begin{minted}{python}
         def takes_bool(x: bool) -> bool: ...
 
-        ?\tikzmark{quiz_start}?takes_bool(True)?\tikzmark{quiz_end}?
+        ?\tms{quiz}?takes_bool(True)?\tme{quiz}?
     \end{minted}
     \end{textblock*}
 
@@ -171,7 +175,7 @@
     \begin{minted}{python}
         def takes_bool(x: bool) -> bool: ...
 
-        ?\tikzmark{quiz_start}?takes_bool(1)?\tikzmark{quiz_end}?
+        ?\tms{quiz}?takes_bool(1)?\tme{quiz}?
     \end{minted}
     \end{textblock*}
 
@@ -189,7 +193,7 @@
     \begin{minted}{python}
         def identity[T](x: T) -> T: ...
 
-        ?\tikzmark{quiz_start}?identity(True)?\tikzmark{quiz_end}?
+        ?\tms{quiz}?identity(True)?\tme{quiz}?
     \end{minted}
     \end{textblock*}
 
@@ -212,7 +216,7 @@
     \begin{minted}{python}
         def identity[T](x: T) -> T: ...
 
-        result: bool = ?\tikzmark{quiz_start}?identity(True)?\tikzmark{quiz_end}?
+        result: bool = ?\tms{quiz}?identity(True)?\tme{quiz}?
     \end{minted}
     \end{textblock*}
 
@@ -236,18 +240,18 @@
     \only<2>{\highlightmath{blue!15}{p2}}
     \begin{textblock*}{80mm}[0.5,0](80mm,30mm)
     \begin{minted}{python}
-        def takes_bool(?\tikzmark{p1_start}?x: bool?\tikzmark{p1_end}?) -> bool: ...
+        def takes_bool(?\tms{p1}?x: bool?\tme{p1}?) -> bool: ...
 
-        takes_bool(?\tikzmark{a1_start}?True?\tikzmark{a1_end}?)
+        takes_bool(?\tms{a1}?True?\tme{a1}?)
     \end{minted}
     \end{textblock*}
 
     \begin{textblock*}{120mm}[0.5,0](80mm,55mm)
     \begin{center}
         \only<2>{\cset{
-            \tikzmark{a2_start}\pytype{Literal[True]}\tikzmark{a2_end}
+            \tmm{a2}{\pytype{Literal[True]}}
             \preceq
-            \tikzmark{p2_start}\pytype{bool}\tikzmark{p2_end}
+            \tmm{p2}{\pytype{bool}}
         }}
         \only<3>{\cset{\always}}
     \end{center}
@@ -262,18 +266,18 @@
     \only<2>{\highlightmath{blue!15}{p2}}
     \begin{textblock*}{80mm}[0.5,0](80mm,30mm)
     \begin{minted}{python}
-        def takes_bool(?\tikzmark{p1_start}?x: bool?\tikzmark{p1_end}?) -> bool: ...
+        def takes_bool(?\tms{p1}?x: bool?\tme{p1}?) -> bool: ...
 
-        takes_bool(?\tikzmark{a1_start}?1?\tikzmark{a1_end}?)
+        takes_bool(?\tms{a1}?1?\tme{a1}?)
     \end{minted}
     \end{textblock*}
 
     \begin{textblock*}{120mm}[0.5,0](80mm,55mm)
     \begin{center}
         \only<2>{\cset{
-            \tikzmark{a2_start}\pytype{Literal[1]}\tikzmark{a2_end}
+            \tmm{a2}{\pytype{Literal[1]}}
             \preceq
-            \tikzmark{p2_start}\pytype{bool}\tikzmark{p2_end}
+            \tmm{p2}{\pytype{bool}}
         }}
         \only<3>{\cset{\never}}
     \end{center}
@@ -288,18 +292,18 @@
     \only<2>{\highlightmath{blue!15}{p2}}
     \begin{textblock*}{80mm}[0.5,0](80mm,30mm)
     \begin{minted}{python}
-        def identity[T](?\tikzmark{p1_start}?x: T?\tikzmark{p1_end}?) -> T: ...
+        def identity[T](?\tms{p1}?x: T?\tme{p1}?) -> T: ...
 
-        identity(?\tikzmark{a1_start}?True?\tikzmark{a1_end}?)
+        identity(?\tms{a1}?True?\tme{a1}?)
     \end{minted}
     \end{textblock*}
 
     \begin{textblock*}{120mm}[0.5,0](80mm,55mm)
     \begin{center}
         \only<2-3>{\cset{
-            \tikzmark{a2_start}\pytype{Literal[True]}\tikzmark{a2_end}
+            \tmm{a2}{\pytype{Literal[True]}}
             \preceq
-            \tikzmark{p2_start}\typevar{T}\tikzmark{p2_end}
+            \tmm{p2}{\typevar{T}}
         }}
     \end{center}
     \end{textblock*}
@@ -317,9 +321,9 @@
     \only<3>{\highlightmath{blue!15}{p4}}
     \begin{textblock*}{80mm}[0.5,0](80mm,30mm)
     \begin{minted}{python}
-        def identity[T](?\tikzmark{p1_start}?x: T?\tikzmark{p1_end}?) -> ?\tikzmark{p3_start}?T?\tikzmark{p3_end}?: ...
+        def identity[T](?\tms{p1}?x: T?\tme{p1}?) -> ?\tms{p3}?T?\tme{p3}?: ...
 
-        ?\tikzmark{a3_start}?result: bool?\tikzmark{a3_end}? = identity(?\tikzmark{a1_start}?True?\tikzmark{a1_end}?)
+        ?\tms{a3}?result: bool?\tme{a3}? = identity(?\tms{a1}?True?\tme{a1}?)
     \end{minted}
     \end{textblock*}
 
@@ -328,14 +332,14 @@
         \cset{
         \only<3-4>{(}
         \only<2-4>{
-            \tikzmark{a2_start}\pytype{Literal[True]}\tikzmark{a2_end}
+            \tmm{a2}{\pytype{Literal[True]}}
             \preceq
-            \tikzmark{p2_start}\typevar{T}\tikzmark{p2_end}
+            \tmm{p2}{\typevar{T}}
         }
         \only<3-4>{) \wedge (
-            \tikzmark{p4_start}\typevar{T}\tikzmark{p4_end}
+            \tmm{p4}{\typevar{T}}
             \preceq
-            \tikzmark{a4_start}\pytype{bool}\tikzmark{a4_end}
+            \tmm{a4}{\pytype{bool}}
         )}
         }
     \end{center}
