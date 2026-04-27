@@ -87,6 +87,37 @@
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Math equation spacing
+
+\newcommand{\zerodisplayskips}{%
+  \abovedisplayskip=0pt
+  \belowdisplayskip=0pt
+  \abovedisplayshortskip=0pt
+  \belowdisplayshortskip=0pt
+}
+\newcommand{\removedisplayskips}{%
+  \appto\normalsize{\zerodisplayskips}
+  \appto\small{\zerodisplayskips}
+  \zerodisplayskips
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Constraint sets
+
+\newcommand\defalt{\mathrel{\:\mid\:}}
+\newcommand\defeq{\mathrel{\,\triangleq\,}}
+
+\newcommand{\cset}[1]{\ensuremath{\textcolor{DodgerBlue3}{#1}}}
+
+\newcommand\always{\textcolor{DodgerBlue3}{\texttt{always}}}
+\newcommand\never{\textcolor{DodgerBlue3}{\texttt{never}}}
+\newcommand\constraints{\textcolor{DodgerBlue3}{\mathcal{C}}}
+
+\newcommand{\pytype}[1]{\textcolor{DodgerBlue3}{\texttt{#1}}}
+\newcommand{\typevar}[1]{\textcolor{DodgerBlue3}{\texttt{#1}}}
+\newcommand{\assignment}[2]{\textcolor{DodgerBlue3}{\texttt{#1 = #2}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Front matter
 
 \begin{document}
@@ -193,13 +224,13 @@
     \begin{center}
     \begin{tabular}{p{60mm}p{60mm}}
         \verb|takes_bool(True)|
-        & \textcolor{DodgerBlue3}{$\hphantom{(} \texttt{always}$} \\
+        & \cset{\hphantom{(} \always} \\
         \verb|takes_bool(1)|
-        & \textcolor{DodgerBlue3}{$\hphantom{(} \texttt{never}$} \\
+        & \cset{\hphantom{(} \never} \\
         \verb|identity(True)|
-        & \textcolor{DodgerBlue3}{$\hphantom{(} \texttt{Literal[True]} \preceq \texttt{T}$} \\
+        & \cset{\hphantom{(} \pytype{Literal[True]} \preceq \typevar{T}} \\
         \verb|result: bool = identity(True)|
-        & \textcolor{DodgerBlue3}{$(\texttt{Literal[True]} \preceq \texttt{T}) \wedge (\texttt{T} \preceq \texttt{bool})$} \\
+        & \cset{(\pytype{Literal[True]} \preceq \typevar{T}) \wedge (\typevar{T} \preceq \pytype{bool})} \\
     \end{tabular}
     \end{center}
 \end{frame}
@@ -209,14 +240,14 @@
 
     \begin{uncoverenv}<2->
     \begin{displaymath}
-        \textcolor{DodgerBlue3}{\texttt{Literal[True]} \preceq \texttt{T}} =
+        \cset{\pytype{Literal[True]} \preceq \typevar{T}} =
         \left\{
             \begin{array}{l}
-                \texttt{T = bool} \\
-                \texttt{T = Literal[True]} \\
-                \texttt{T = int} \\
-                \texttt{T = object} \\
-                \texttt{T = SupportsIndex} \\
+                \assignment{T}{bool} \\
+                \assignment{T}{Literal[True]} \\
+                \assignment{T}{int} \\
+                \assignment{T}{object} \\
+                \assignment{T}{SupportsIndex} \\
                 \multicolumn{1}{c}{\vdots} \\
             \end{array}
         \right\}
@@ -227,17 +258,34 @@
 
     \begin{uncoverenv}<3->
     \begin{displaymath}
-        \textcolor{DodgerBlue3}{
-            (\texttt{Literal[True]} \preceq \texttt{T}) \wedge (\texttt{T} \preceq \texttt{bool})
+        \cset{
+            (\pytype{Literal[True]} \preceq \typevar{T}) \wedge
+            (\typevar{T} \preceq \pytype{bool})
         } =
         \left\{
             \begin{array}{l}
-                \texttt{T = bool} \\
-                \texttt{T = Literal[True]} \\
+                \assignment{T}{bool} \\
+                \assignment{T}{Literal[True]} \\
             \end{array}
         \right\}
     \end{displaymath}
     \end{uncoverenv}
+\end{frame}
+
+\begin{frame}[t,fragile]
+    \frametitle{Math!}
+    \removedisplayskips
+    \begin{equation*}
+    \begin{array}{c@{\enspace}c@{\enspace}l@{\qquad}c}
+        \uncover<1->{\constraints &\defeq& \always} \\
+        \uncover<1->{&\defalt& \never} \\
+        \uncover<2->{&\defalt& \cset{\pytype{type} \preceq \typevar{T}} & \textsf{\smaller[2]{(lower bound)}}} \\
+        \uncover<2->{&\defalt& \cset{\typevar{T} \preceq \pytype{type}} & \textsf{\smaller[2]{(upper bound)}}} \\
+        \uncover<3->{&\defalt& \cset{\neg \, \constraints} & \textsf{\smaller[2]{(not)}}} \\
+        \uncover<3->{&\defalt& \cset{\constraints \wedge \constraints} & \textsf{\smaller[2]{(and)}}} \\
+        \uncover<3->{&\defalt& \cset{\constraints \vee \constraints} & \textsf{\smaller[2]{(or)}}} \\
+    \end{array}%
+    \end{equation*}%
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
