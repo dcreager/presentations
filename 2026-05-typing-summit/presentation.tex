@@ -386,11 +386,11 @@
         \cset{\pytype{Literal[True]} \preceq \typevar{T}} =
         \left\{
             \begin{array}{l}
-                \assignment{T}{bool} \\
-                \assignment{T}{Literal[True]} \\
-                \assignment{T}{int} \\
-                \assignment{T}{object} \\
-                \assignment{T}{SupportsIndex} \\
+                \assignment{T}{bool}, \\
+                \assignment{T}{Literal[True]}, \\
+                \assignment{T}{int}, \\
+                \assignment{T}{object}, \\
+                \assignment{T}{SupportsIndex}, \\
                 \multicolumn{1}{c}{\vdots} \\
             \end{array}
         \right\}
@@ -407,7 +407,7 @@
         } =
         \left\{
             \begin{array}{l}
-                \assignment{T}{bool} \\
+                \assignment{T}{bool}, \\
                 \assignment{T}{Literal[True]} \\
             \end{array}
         \right\}
