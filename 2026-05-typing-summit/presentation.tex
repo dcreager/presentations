@@ -521,6 +521,210 @@
     \end{textblock*}
 \end{frame}
 
+\begin{frame}[fragile]
+    \frametitle{Partial application}
+    \only<2>{\highlightcode{red!15}{a1}}
+    \only<2>{\highlightmath{red!15}{a2}}
+    \only<2>{\highlightcode{blue!15}{p1}}
+    \only<2>{\highlightmath{blue!15}{p2}}
+    \only<3>{\highlightcode{red!15}{a3}}
+    \only<3>{\highlightmath{red!15}{a4}}
+    \only<3>{\highlightcode{blue!15}{p3}}
+    \only<3>{\highlightmath{blue!15}{p4}}
+    \only<6>{\highlightmath{yellow!25}{a5}}
+    \begin{textblock*}{120mm}[0.5,0](80mm,25mm)
+    \begin{minted}{python}
+        def second[A](?\tms{p1}?a1: A?\tme{p1}?, ?\tms{p3}?a2: A?\tme{p3}?) -> A:
+            return a2
+
+        second(?\tms{a1}?True?\tme{a1}?, ?\tms{a3}?2?\tme{a3}?)
+    \end{minted}
+    \end{textblock*}
+
+    \begin{textblock*}{155mm}[0.5,0](80mm,60mm)
+    \begin{displaymath}
+    \begin{array}{c}
+        \cset{
+            \only<2->{
+                \tmm{a2}{\pytype{Literal[True]}}
+                \preceq
+                \tmm{p2}{\typevar{A}}
+            }
+            \only<3->{
+                \wedge
+                \tmm{a4}{\pytype{Literal[2]}}
+                \preceq
+                \tmm{p4}{\typevar{A}}
+            }
+        }
+        \\[1em]
+        \only<5-6>{
+            \left\{
+                \assignment{A}{Literal[True, 2]},\,
+                \tmm{a5}{\assignment{A}{bool | int}},\,
+                \dots
+            \right\}
+        }
+        \only<7>{
+            \left\{
+                \assignment{A}{Literal[True, 2]},\,
+                \assignment{A}{int},\,
+                \dots
+            \right\}
+        }
+    \end{array}
+    \end{displaymath}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Partial application}
+    \only<2,11,15,21>{\highlightcode{yellow!25}{a0}}
+    \only<3>{\highlightcode{red!15}{a1a}}
+    \only<3>{\highlightcode{red!15}{a1b}}
+    \only<3>{\highlightmath{red!15}{a2}}
+    \only<3>{\highlightcode{blue!15}{p1}}
+    \only<3>{\highlightmath{blue!15}{p2}}
+    \only<5>{\highlightcode{red!15}{a3}}
+    \only<5>{\highlightmath{red!15}{a4}}
+    \only<5>{\highlightcode{blue!15}{p3}}
+    \only<5>{\highlightmath{blue!15}{p4}}
+    \only<7>{\highlightmath{yellow!25}{a5}}
+    \only<7>{\highlightmath{yellow!25}{a6}}
+    \only<9>{\highlightmath{yellow!25}{a7}}
+    \only<9,14>{\highlightmath{yellow!25}{a8}}
+    \only<11,15>{\highlightcode{yellow!25}{a9}}
+    \only<12>{\highlightmath{yellow!25}{a10}}
+    \only<13>{\highlightmath{yellow!25}{a11}}
+    \only<16,23>{\highlightcode{red!15}{a12}}
+    \only<16>{\highlightmath{blue!15}{p12}}
+    \only<21>{\highlightmath{yellow!25}{a13}}
+    \only<23>{\highlightmath{blue!15}{p14}}
+    \only<23>{\highlightmath{red!15}{a15}}
+    \only<23>{\highlightmath{blue!15}{p15}}
+    \only<24>{\highlightmath{yellow!25}{a16}}
+    \only<24>{\highlightmath{yellow!25}{a17}}
+    \only<26>{\highlightmath{yellow!25}{a18}}
+    \only<26>{\highlightmath{yellow!25}{a19}}
+    \begin{textblock*}{120mm}[0.5,0](80mm,25mm)
+    \begin{minted}{python}
+        def second?\tms{a1b}?[A](a1: A, a2: A) -> A?\tme{a1b}?:
+            return a2
+
+        def partial[X, Y, Z](?\tms{p1}?fn: Callable[[X, Y], Z]?\tme{p1}?, ?\tms{p3}?x: X?\tme{p3}?) -> ?\tms{a9}?Callable[[Y], Z]?\tme{a9}?: ...
+
+        ?\tms{a0}?partial(?\tms{a1a}?second?\tme{a1a}?, ?\tms{a3}?True?\tme{a3}?)?\tme{a0}?(?\tms{a12}?2?\tme{a12}?)
+    \end{minted}
+    \end{textblock*}
+
+    \begin{textblock*}{155mm}[0.5,0](80mm,55mm)
+    \begin{displaymath}
+    \begin{array}{c}
+        \only<1-21>{
+        \cset{
+            \only<3>{
+                \tmm{a2}{\pytype{Callable[[A, A], A]}}
+                \preceq
+                \tmm{p2}{\pytype{Callable[[X, Y], Z]}}
+            }
+            \only<4->{
+                \tmm{a5}{\typevar{X} \preceq \typevar{A}}
+                \wedge
+                \tmm{a11}{\typevar{Y} \preceq \typevar{A}}
+                \wedge
+                \tmm{a7}{\typevar{A} \preceq \typevar{Z}}
+            }
+            \only<5->{
+                \wedge
+                \tmm{a6}{
+                \tmm{a4}{\pytype{Literal[True]}}
+                \preceq
+                \tmm{p4}{\typevar{X}}
+                }
+            }
+        }
+        \\
+        \cset{
+            \only<8->{
+                {} \wedge
+                \tmm{a8}{\pytype{Literal[True]} \preceq \typevar{A}}
+            }
+            \only<10->{
+                \wedge
+                \tmm{a10}{\pytype{Literal[True]} \preceq \typevar{Z}}
+            }
+        }
+        }
+        \only<12-17>{
+        \\[1em]
+        \begin{array}{l@{\qquad}l}
+            \begin{array}{c}
+                \uncover<15-16>{\pytype{Callable[[\tmm{p12}{bool}], bool]}} \\[0.25em]
+                \uncover<16>{\textcolor{red}{\texttt{[invalid-argument-type]}}} \\
+            \end{array}
+            &
+            \begin{array}{l}
+                \uncover<13->{\assignment{Y}{\alt<13>{A}{bool}}} \\
+                \uncover<12->{\assignment{Z}{bool}} \\
+            \end{array}
+        \end{array}
+        }
+        \only<18-21>{
+        \\[2em]
+        \begin{array}{l@{\quad}c@{\quad}l}
+            \uncover<19->{\tms{a13}\pytype{Callable[[Y], Z]}}
+            &
+            \uncover<20->{\pytype{where}}
+            &
+            \uncover<18->{\cset{
+                (\typevar{Y} \preceq \typevar{Z})
+                \wedge
+                (\pytype{Literal[True]} \preceq \typevar{Z})\tme{a13}
+            }}
+        \end{array}
+        }
+        \only<22->{
+        \pytype{Callable[[\tmm{p14}{Y}], Z]}
+        \\[1em]
+        \cset{
+            \tmm{a17}{(\typevar{Y} \preceq \typevar{Z})}
+            \wedge
+            \tmm{a18}{(\pytype{Literal[True]} \preceq \typevar{Z})}\tme{a13}
+            \only<23->{
+                \wedge
+                \tmm{a16}{
+                (\tmm{a15}{\pytype{Literal[2]}}
+                \preceq
+                \tmm{p15}{\typevar{Y}})
+                }
+            }
+            \only<25->{
+                \wedge
+                \tmm{a19}{(\pytype{Literal[2]} \preceq \typevar{Z})}
+            }
+        }
+        \\[1em]
+        \only<27->{
+            \left\{
+                \begin{array}{l}
+                    \assignment{Y}{Literal[True, 2]} \\
+                    \assignment{Z}{Literal[True, 2]} \\
+                \end{array}
+                ,\,
+                \begin{array}{l}
+                    \assignment{Y}{int} \\
+                    \assignment{Z}{int} \\
+                \end{array}
+                ,\,
+                \dots
+            \right\}
+        }
+        }
+    \end{array}
+    \end{displaymath}
+    \end{textblock*}
+\end{frame}
+
 \begin{frame}[t,fragile]
     \frametitle{Math!}
     \removedisplayskips
