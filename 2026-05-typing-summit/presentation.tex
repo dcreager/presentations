@@ -76,6 +76,7 @@
     extendedchars=true,
     literate=
       {->}{{->}}2
+      {==>}{{==>}}3
     ,
 }
 
@@ -146,6 +147,36 @@
 
 \begin{frame}
     \titlepage
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Runtime
+
+\begin{frame}[fragile]
+    \frametitle{A motivating example}
+    \begin{lstlisting}
+        def second[A](a1: A, a2: A) -> A:
+            return a2
+
+        ?\uncover<2->{second(None, 2)}?
+        ?\uncover<2->{\textcolor{blue!50}{\textbf{==> 2}}}?
+        ?\uncover<3->{second(None, "hello")}?
+        ?\uncover<3->{\textcolor{blue!50}{\textbf{==> "hello"}}}?
+    \end{lstlisting}
+    \begin{uncoverenv}<4->
+    \begin{lstlisting}
+        def partial[X, Y, Z](f: Callable[[X, Y], Z], x: X) -> Callable[[Y], Z]:
+            def p(y: Y) -> Z:
+                return f(x, y)
+            return p
+
+        ?\uncover<5->{p = partial(second, None)}?
+        ?\uncover<5->{p(2)}?
+        ?\uncover<5->{\textcolor{blue!50}{\textbf{==> 2}}}?
+        ?\uncover<6->{p("hello")}?
+        ?\uncover<6->{\textcolor{blue!50}{\textbf{==> "hello"}}}?
+    \end{lstlisting}
+    \end{uncoverenv}
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
