@@ -2,6 +2,7 @@
 \mode<presentation>
 
 \usepackage{calc}
+\usepackage{listings}
 \usepackage{relsize}
 \usepackage[overlay,absolute]{textpos}
 \usepackage{ulem}
@@ -66,9 +67,17 @@
     \end{textblock*}
 }
 
-\usepackage{minted}
-\usemintedstyle{colorful}
-\setminted{autogobble,fontsize=\relscale{0.8},framesep=0mm,escapeinside=??}
+\lstset{
+    basicstyle=\relscale{0.8}\color{black!60}\ttfamily,%
+    gobble=8,
+    columns=fullflexible,
+    keepspaces=true,
+    escapechar=?,
+    extendedchars=true,
+    literate=
+      {->}{{->}}2
+    ,
+}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % tikz stuff
@@ -154,11 +163,11 @@
     \frametitle{Is this expression valid? What is its type?}
     \highlightcode{yellow!25}{quiz}
     \begin{textblock*}{80mm}[0,0.5](10mm,45mm)
-    \begin{minted}{python}
+    \begin{lstlisting}
         def takes_bool(x: bool) -> bool: ...
 
         ?\tms{quiz}?takes_bool(True)?\tme{quiz}?
-    \end{minted}
+    \end{lstlisting}
     \end{textblock*}
 
     \begin{textblock*}{60mm}[1,0.5](150mm,45mm)
@@ -172,11 +181,11 @@
     \frametitle{Is this expression valid? What is its type?}
     \highlightcode{yellow!25}{quiz}
     \begin{textblock*}{80mm}[0,0.5](10mm,45mm)
-    \begin{minted}{python}
+    \begin{lstlisting}
         def takes_bool(x: bool) -> bool: ...
 
         ?\tms{quiz}?takes_bool(1)?\tme{quiz}?
-    \end{minted}
+    \end{lstlisting}
     \end{textblock*}
 
     \begin{textblock*}{60mm}[1,0.5](150mm,45mm)
@@ -190,11 +199,11 @@
     \frametitle{Is this expression valid? What is its type?}
     \highlightcode{yellow!25}{quiz}
     \begin{textblock*}{80mm}[0,0.5](10mm,45mm)
-    \begin{minted}{python}
+    \begin{lstlisting}
         def identity[T](x: T) -> T: ...
 
         ?\tms{quiz}?identity(True)?\tme{quiz}?
-    \end{minted}
+    \end{lstlisting}
     \end{textblock*}
 
     \begin{textblock*}{60mm}[1,0.5](150mm,45mm)
@@ -213,11 +222,11 @@
     \frametitle{Is this expression valid? What is its type?}
     \highlightcode{yellow!25}{quiz}
     \begin{textblock*}{80mm}[0,0.5](10mm,45mm)
-    \begin{minted}{python}
+    \begin{lstlisting}
         def identity[T](x: T) -> T: ...
 
         result: bool = ?\tms{quiz}?identity(True)?\tme{quiz}?
-    \end{minted}
+    \end{lstlisting}
     \end{textblock*}
 
     \begin{textblock*}{60mm}[1,0.5](150mm,45mm)
@@ -239,11 +248,11 @@
     \only<2>{\highlightcode{blue!15}{p1}}
     \only<2>{\highlightmath{blue!15}{p2}}
     \begin{textblock*}{80mm}[0.5,0](80mm,30mm)
-    \begin{minted}{python}
+    \begin{lstlisting}
         def takes_bool(?\tms{p1}?x: bool?\tme{p1}?) -> bool: ...
 
         takes_bool(?\tms{a1}?True?\tme{a1}?)
-    \end{minted}
+    \end{lstlisting}
     \end{textblock*}
 
     \begin{textblock*}{120mm}[0.5,0](80mm,55mm)
@@ -265,11 +274,11 @@
     \only<2>{\highlightcode{blue!15}{p1}}
     \only<2>{\highlightmath{blue!15}{p2}}
     \begin{textblock*}{80mm}[0.5,0](80mm,30mm)
-    \begin{minted}{python}
+    \begin{lstlisting}
         def takes_bool(?\tms{p1}?x: bool?\tme{p1}?) -> bool: ...
 
         takes_bool(?\tms{a1}?1?\tme{a1}?)
-    \end{minted}
+    \end{lstlisting}
     \end{textblock*}
 
     \begin{textblock*}{120mm}[0.5,0](80mm,55mm)
@@ -291,11 +300,11 @@
     \only<2>{\highlightcode{blue!15}{p1}}
     \only<2>{\highlightmath{blue!15}{p2}}
     \begin{textblock*}{80mm}[0.5,0](80mm,30mm)
-    \begin{minted}{python}
+    \begin{lstlisting}
         def identity[T](?\tms{p1}?x: T?\tme{p1}?) -> T: ...
 
         identity(?\tms{a1}?True?\tme{a1}?)
-    \end{minted}
+    \end{lstlisting}
     \end{textblock*}
 
     \begin{textblock*}{120mm}[0.5,0](80mm,55mm)
@@ -320,11 +329,11 @@
     \only<3>{\highlightcode{blue!15}{p3}}
     \only<3>{\highlightmath{blue!15}{p4}}
     \begin{textblock*}{80mm}[0.5,0](80mm,30mm)
-    \begin{minted}{python}
+    \begin{lstlisting}
         def identity[T](?\tms{p1}?x: T?\tme{p1}?) -> ?\tms{p3}?T?\tme{p3}?: ...
 
         ?\tms{a3}?result: bool?\tme{a3}? = identity(?\tms{a1}?True?\tme{a1}?)
-    \end{minted}
+    \end{lstlisting}
     \end{textblock*}
 
     \begin{textblock*}{120mm}[0.5,0](80mm,55mm)
@@ -450,7 +459,7 @@
     \only<6>{\highlightcode{blue!15}{p7}}
     \only<6>{\highlightmath{blue!15}{p8}}
     \begin{textblock*}{80mm}[0.5,0](80mm,25mm)
-    \begin{minted}{python}
+    \begin{lstlisting}
         def invoke[A, B](?\tms{p1}?fn: Callable[[A], B]?\tme{p1}?, value: ?\tms{p7}?A?\tme{p7}?) -> ?\tms{a23}?B?\tme{a23}?:
             return fn(value)
 
@@ -458,7 +467,7 @@
             return xs[0]
 
         ?\tms{a21}?invoke(?\tms{a1a}?head?\tme{a1a}?, ?\tms{a7}?[?\tms{a9}?1?\tme{a9}?, ?\tms{a11}?2?\tme{a11}?]?\tme{a7}?)?\tme{a21}?
-    \end{minted}
+    \end{lstlisting}
     \end{textblock*}
 
     \begin{textblock*}{155mm}[0.5,0](80mm,60mm)
@@ -549,12 +558,12 @@
     \only<3>{\highlightmath{blue!15}{p4}}
     \only<6>{\highlightmath{yellow!25}{a5}}
     \begin{textblock*}{120mm}[0.5,0](80mm,25mm)
-    \begin{minted}{python}
+    \begin{lstlisting}
         def second[A](?\tms{p1}?a1: A?\tme{p1}?, ?\tms{p3}?a2: A?\tme{p3}?) -> A:
             return a2
 
         second(?\tms{a1}?True?\tme{a1}?, ?\tms{a3}?2?\tme{a3}?)
-    \end{minted}
+    \end{lstlisting}
     \end{textblock*}
 
     \begin{textblock*}{155mm}[0.5,0](80mm,60mm)
@@ -623,14 +632,14 @@
     \only<26>{\highlightmath{yellow!25}{a18}}
     \only<26>{\highlightmath{yellow!25}{a19}}
     \begin{textblock*}{120mm}[0.5,0](80mm,25mm)
-    \begin{minted}{python}
+    \begin{lstlisting}
         def second?\tms{a1b}?[A](a1: A, a2: A) -> A?\tme{a1b}?:
             return a2
 
         def partial[X, Y, Z](?\tms{p1}?fn: Callable[[X, Y], Z]?\tme{p1}?, ?\tms{p3}?x: X?\tme{p3}?) -> ?\tms{a9}?Callable[[Y], Z]?\tme{a9}?: ...
 
         ?\tms{a0}?partial(?\tms{a1a}?second?\tme{a1a}?, ?\tms{a3}?True?\tme{a3}?)?\tme{a0}?(?\tms{a12}?2?\tme{a12}?)
-    \end{minted}
+    \end{lstlisting}
     \end{textblock*}
 
     \begin{textblock*}{155mm}[0.5,0](80mm,55mm)
