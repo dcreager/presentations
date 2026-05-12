@@ -185,6 +185,38 @@
         ?\uncover<6->{\textcolor{blue!50}{\textbf{==> "hello"}}}?
     \end{lstlisting}
     \end{uncoverenv}
+
+    \begin{textblock*}{20mm}[0,1](100mm,90mm)
+        \only<7>{\includegraphics[height=30mm]{scotty-mouse.jpg}}
+    \end{textblock*}
+    \begin{textblock*}{35mm}[0,0.5](125mm,72mm)
+        \only<7>{\textsmaller[3]{%
+            Hello computer, please \\[-1em]
+            invoke \texttt{multiplay}
+        }}
+    \end{textblock*}
+
+    \begin{textblock*}{10mm}[0.5,0.5](60mm,32mm)
+        \only<8>{\includegraphics[width=10mm]{icons/check-mark.png}}
+    \end{textblock*}
+    \begin{textblock*}{10mm}[0.5,0.5](60mm,75mm)
+        \only<8>{\includegraphics[width=10mm]{icons/red-x.jpg}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}[0,0.5](73mm,75mm)
+        \only<8>{\includegraphics[width=15mm]{minions.jpg}}
+    \end{textblock*}
+    \begin{textblock*}{70mm}[0,0.5](90mm,75mm)
+    \begin{onlyenv}<8>
+    \begin{lstlisting}[basicstyle=\relscale{0.5}\ttfamily]
+        error[invalid-argument-type] Argument is incorrect: Expected `Y@partial | X@partial | None`, found `Literal[2]`
+        error: Argument of type "Literal[2]" cannot be assigned to parameter of type "None"
+        ERROR Argument `Literal[2]` is not assignable to parameter with type `None` [bad-argument-type]
+        error: Argument 1 has incompatible type "int"; expected "None" [arg-type]
+        error: Argument 1 has incompatible type "int"; expected "None" [arg-type]
+        Any
+    \end{lstlisting}
+    \end{onlyenv}
+    \end{textblock*}
 \end{frame}
 
 \begin{frame}
