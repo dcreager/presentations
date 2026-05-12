@@ -127,18 +127,22 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Constraint sets
 
+\definecolor{constraintsbg}{named}{LightBlue3}
+\definecolor{constraintsfg}{named}{DodgerBlue3}
+
 \newcommand\defalt{\mathrel{\:\mid\:}}
 \newcommand\defeq{\mathrel{\,\triangleq\,}}
+\newcommand\subtypeof{\mathrel{\textcolor{constraintsfg}{\preceq}}}
 
-\newcommand{\cset}[1]{\ensuremath{\textcolor{DodgerBlue3}{#1}}}
+\newcommand{\cset}[1]{\ensuremath{\textcolor{constraintsbg}{#1}}}
 
-\newcommand\always{\textcolor{DodgerBlue3}{\texttt{always}}}
-\newcommand\never{\textcolor{DodgerBlue3}{\texttt{never}}}
-\newcommand\constraints{\textcolor{DodgerBlue3}{\mathcal{C}}}
+\newcommand\always{\textcolor{constraintsfg}{\texttt{always}}}
+\newcommand\never{\textcolor{constraintsfg}{\texttt{never}}}
+\newcommand\constraints{\textcolor{constraintsfg}{\mathcal{C}}}
 
-\newcommand{\pytype}[1]{\textcolor{DodgerBlue3}{\texttt{#1}}}
-\newcommand{\typevar}[1]{\textcolor{DodgerBlue3}{\texttt{#1}}}
-\newcommand{\assignment}[2]{\textcolor{DodgerBlue3}{\texttt{#1 = #2}}}
+\newcommand{\pytype}[1]{\textcolor{constraintsfg}{\texttt{#1}}}
+\newcommand{\typevar}[1]{\textcolor{constraintsfg}{\texttt{#1}}}
+\newcommand{\assignment}[2]{\textcolor{constraintsfg}{\texttt{#1 = #2}}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Front matter
@@ -290,7 +294,7 @@
     \begin{center}
         \only<2>{\cset{
             \tmm{a2}{\pytype{Literal[2]}}
-            \preceq
+            \subtypeof
             \tmm{p2}{\pytype{int}}
         }}
         \only<3>{\cset{\always}}
@@ -316,7 +320,7 @@
     \begin{center}
         \only<2>{\cset{
             \tmm{a2}{\pytype{None}}
-            \preceq
+            \subtypeof
             \tmm{p2}{\pytype{int}}
         }}
         \only<3>{\cset{\never}}
@@ -342,7 +346,7 @@
     \begin{center}
         \only<2-3>{\cset{
             \tmm{a2}{\pytype{Literal[2]}}
-            \preceq
+            \subtypeof
             \tmm{p2}{\typevar{T}}
         }}
     \end{center}
@@ -370,17 +374,16 @@
     \begin{textblock*}{120mm}[0.5,0](80mm,55mm)
     \begin{center}
         \cset{
-        \only<3-4>{(}
         \only<2-4>{
             \tmm{a2}{\pytype{Literal[2]}}
-            \preceq
+            \subtypeof
             \tmm{p2}{\typevar{T}}
         }
-        \only<3-4>{) \wedge (
+        \only<3-4>{\wedge
             \tmm{p4}{\typevar{T}}
-            \preceq
+            \subtypeof
             \tmm{a4}{\pytype{int}}
-        )}
+        }
         }
     \end{center}
     \end{textblock*}
@@ -391,13 +394,13 @@
     \begin{center}
     \begin{tabular}{p{60mm}p{60mm}}
         \verb|takes_int(2)|
-        & \cset{\hphantom{(} \always} \\
+        & \cset{\always} \\
         \verb|takes_int(None)|
-        & \cset{\hphantom{(} \never} \\
+        & \cset{\never} \\
         \verb|identity(2)|
-        & \cset{\hphantom{(} \pytype{Literal[2]} \preceq \typevar{T}} \\
+        & \cset{\pytype{Literal[2]} \subtypeof \typevar{T}} \\
         \verb|result: int = identity(2)|
-        & \cset{(\pytype{Literal[2]} \preceq \typevar{T}) \wedge (\typevar{T} \preceq \pytype{int})} \\
+        & \cset{\pytype{Literal[2]} \subtypeof \typevar{T} \wedge \typevar{T} \subtypeof \pytype{int}} \\
     \end{tabular}
     \end{center}
 \end{frame}
@@ -407,7 +410,7 @@
 
     \begin{uncoverenv}<2->
     \begin{displaymath}
-        \cset{\pytype{Literal[2]} \preceq \typevar{T}} =
+        \cset{\pytype{Literal[2]} \subtypeof \typevar{T}} =
         \left\{
             \begin{array}{l}
                 \assignment{T}{int}, \\
@@ -426,8 +429,8 @@
     \begin{uncoverenv}<3->
     \begin{displaymath}
         \cset{
-            (\pytype{Literal[2]} \preceq \typevar{T}) \wedge
-            (\typevar{T} \preceq \pytype{int})
+            \pytype{Literal[2]} \subtypeof \typevar{T} \wedge
+            \typevar{T} \subtypeof \pytype{int}
         } =
         \left\{
             \begin{array}{l}
@@ -464,13 +467,13 @@
         \cset{
             \only<2->{
                 \tmm{a2}{\pytype{None}}
-                \preceq
+                \subtypeof
                 \tmm{p2}{\typevar{A}}
             }
             \only<3->{
                 \wedge
                 \tmm{a4}{\pytype{Literal[2]}}
-                \preceq
+                \subtypeof
                 \tmm{p4}{\typevar{A}}
             }
         }
@@ -534,21 +537,21 @@
         \cset{
             \only<3>{
                 \tmm{a2}{\pytype{Callable[[A, A], A]}}
-                \preceq
+                \subtypeof
                 \tmm{p2}{\pytype{Callable[[X, Y], Z]}}
             }
             \only<4->{
-                \tmm{a5}{\typevar{X} \preceq \typevar{A}}
+                \tmm{a5}{\typevar{X} \subtypeof \typevar{A}}
                 \wedge
-                \tmm{a11}{\typevar{Y} \preceq \typevar{A}}
+                \tmm{a11}{\typevar{Y} \subtypeof \typevar{A}}
                 \wedge
-                \tmm{a7}{\typevar{A} \preceq \typevar{Z}}
+                \tmm{a7}{\typevar{A} \subtypeof \typevar{Z}}
             }
             \only<5->{
                 \wedge
                 \tmm{a6}{
                 \tmm{a4}{\pytype{None}}
-                \preceq
+                \subtypeof
                 \tmm{p4}{\typevar{X}}
                 }
             }
@@ -557,11 +560,11 @@
         \cset{
             \only<8->{
                 {} \wedge
-                \tmm{a8}{\pytype{None} \preceq \typevar{A}}
+                \tmm{a8}{\pytype{None} \subtypeof \typevar{A}}
             }
             \only<10->{
                 \wedge
-                \tmm{a10}{\pytype{None} \preceq \typevar{Z}}
+                \tmm{a10}{\pytype{None} \subtypeof \typevar{Z}}
             }
         }
         }
@@ -587,9 +590,9 @@
             \uncover<20->{\pytype{where}}
             &
             \uncover<18->{\cset{
-                (\typevar{Y} \preceq \typevar{Z})
+                \typevar{Y} \subtypeof \typevar{Z}
                 \wedge
-                (\pytype{None} \preceq \typevar{Z})\tme{a13}
+                \pytype{None} \subtypeof \typevar{Z}\tme{a13}
             }}
         \end{array}
         }
@@ -597,20 +600,20 @@
         \pytype{Callable[[\tmm{p14}{Y}], Z]}
         \\[1em]
         \cset{
-            \tmm{a17}{(\typevar{Y} \preceq \typevar{Z})}
+            \tmm{a17}{\typevar{Y} \subtypeof \typevar{Z}}
             \wedge
-            \tmm{a18}{(\pytype{None} \preceq \typevar{Z})}\tme{a13}
+            \tmm{a18}{\pytype{None} \subtypeof \typevar{Z}}\tme{a13}
             \only<23->{
                 \wedge
                 \tmm{a16}{
-                (\tmm{a15}{\pytype{Literal[2]}}
-                \preceq
-                \tmm{p15}{\typevar{Y}})
+                \tmm{a15}{\pytype{Literal[2]}}
+                \subtypeof
+                \tmm{p15}{\typevar{Y}}
                 }
             }
             \only<25->{
                 \wedge
-                \tmm{a19}{(\pytype{Literal[2]} \preceq \typevar{Z})}
+                \tmm{a19}{\pytype{Literal[2]} \subtypeof \typevar{Z}}
             }
         }
         \\[1em]
@@ -704,56 +707,55 @@
         \cset{
             \only<2-4>{
                 \tmm{a2}{\pytype{Callable[[\tmm{p4}{list[T]}], \tmm{p6}{T}]}}
-                \preceq
+                \subtypeof
                 \tmm{p2}{\pytype{Callable[[\tmm{a4}{A}], \tmm{a6}{B}]}}
             }
             \only<5->{
-                \tmm{a14}{(\typevar{A} \preceq \pytype{list[T]})}
+                \tmm{a14}{\typevar{A} \subtypeof \pytype{list[T]}}
                 \wedge
-                \tmm{a18}{(\typevar{T} \preceq \typevar{B})}
+                \tmm{a18}{\typevar{T} \subtypeof \typevar{B}}
             }
             \only<6->{
                 \wedge
-                \tmm{a15}{(\tmm{a8}{\pytype{list[L]}} \preceq \tmm{p8}{\typevar{A}})}
+                \tmm{a15}{\tmm{a8}{\pytype{list[L]}} \subtypeof \tmm{p8}{\typevar{A}}}
             }
             \only<7-10>{
                 \wedge
-                \tms{a13}(\tmm{a10}{\pytype{Literal[1]}} \preceq \typevar{L})
+                \tms{a13}\tmm{a10}{\pytype{Literal[1]}} \subtypeof \typevar{L}
             }
             \only<8-10>{
                 \wedge
-                (\tmm{a12}{\pytype{Literal[2]}} \preceq \typevar{L})\tme{a13}
+                \tmm{a12}{\pytype{Literal[2]}} \subtypeof \typevar{L}\tme{a13}
             }
             \only<11->{
                 \wedge
-                \tmm{a20}{(\pytype{Literal[1, 2]} \preceq \typevar{L})}
+                \tmm{a20}{\pytype{Literal[1, 2]} \subtypeof \typevar{L}}
             }
         }
         \\
         \cset{
             \only<13-14>{
-                {} \wedge \tmm{a16}{(\pytype{list[L]} \preceq \pytype{list[T]})}
+                {} \wedge \tmm{a16}{\pytype{list[L]} \subtypeof \pytype{list[T]}}
             }
             \only<15->{
-                {} \wedge \tmm{a17}{(\typevar{L} \preceq \typevar{T})}
-                \wedge (\typevar{T} \preceq \typevar{L})
+                {} \wedge \tmm{a17}{\typevar{L} \subtypeof \typevar{T}}
+                \wedge \typevar{T} \subtypeof \typevar{L}
             }
             \only<17->{
-                \wedge \tmm{a19}{(\typevar{L} \preceq \typevar{B})}
+                \wedge \tmm{a19}{\typevar{L} \subtypeof \typevar{B}}
             }
             \only<19->{
-                \wedge \tmm{a22}{(\pytype{Literal[1, 2]} \preceq \typevar{B})}
+                \wedge \tmm{a22}{\pytype{Literal[1, 2]} \subtypeof \typevar{B}}
             }
         }
         \\[1em]
         \cset{
-            \only<4>{(}
             \only<3-4>{
-                \tmm{a3}{\typevar{A}} \preceq \tmm{p3}{\pytype{list[T]}}
+                \tmm{a3}{\typevar{A}} \subtypeof \tmm{p3}{\pytype{list[T]}}
             }
-            \only<4>{) \wedge (
-                \tmm{p5}{\typevar{T}} \preceq \tmm{a5}{\typevar{B}}
-            )}
+            \only<4>{\wedge
+                \tmm{p5}{\typevar{T}} \subtypeof \tmm{a5}{\typevar{B}}
+            }
         }
         \only<21>{
             \left\{
@@ -781,8 +783,8 @@
     \begin{array}{c@{\enspace}c@{\enspace}l@{\qquad}c}
         \uncover<1->{\constraints &\defeq& \always} \\
         \uncover<1->{&\defalt& \never} \\
-        \uncover<2->{&\defalt& \cset{\pytype{type} \preceq \typevar{T}} & \textsf{\smaller[2]{(lower bound)}}} \\
-        \uncover<2->{&\defalt& \cset{\typevar{T} \preceq \pytype{type}} & \textsf{\smaller[2]{(upper bound)}}} \\
+        \uncover<2->{&\defalt& \cset{\pytype{type} \subtypeof \typevar{T}} & \textsf{\smaller[2]{(lower bound)}}} \\
+        \uncover<2->{&\defalt& \cset{\typevar{T} \subtypeof \pytype{type}} & \textsf{\smaller[2]{(upper bound)}}} \\
         \uncover<3->{&\defalt& \cset{\neg \, \constraints} & \textsf{\smaller[2]{(not)}}} \\
         \uncover<3->{&\defalt& \cset{\constraints \wedge \constraints} & \textsf{\smaller[2]{(and)}}} \\
         \uncover<3->{&\defalt& \cset{\constraints \vee \constraints} & \textsf{\smaller[2]{(or)}}} \\
