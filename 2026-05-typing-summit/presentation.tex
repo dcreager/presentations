@@ -195,15 +195,15 @@
     \highlightcode{yellow!25}{quiz}
     \begin{textblock*}{80mm}[0,0.5](10mm,45mm)
     \begin{lstlisting}
-        def takes_bool(x: bool) -> bool: ...
+        def takes_int(x: int) -> int: ...
 
-        ?\tms{quiz}?takes_bool(True)?\tme{quiz}?
+        ?\tms{quiz}?takes_int(2)?\tme{quiz}?
     \end{lstlisting}
     \end{textblock*}
 
     \begin{textblock*}{60mm}[1,0.5](150mm,45mm)
     \begin{center}
-        \uncover<2>{\texttt{bool}}
+        \uncover<2>{\texttt{int}}
     \end{center}
     \end{textblock*}
 \end{frame}
@@ -213,9 +213,9 @@
     \highlightcode{yellow!25}{quiz}
     \begin{textblock*}{80mm}[0,0.5](10mm,45mm)
     \begin{lstlisting}
-        def takes_bool(x: bool) -> bool: ...
+        def takes_int(x: int) -> int: ...
 
-        ?\tms{quiz}?takes_bool(1)?\tme{quiz}?
+        ?\tms{quiz}?takes_int(None)?\tme{quiz}?
     \end{lstlisting}
     \end{textblock*}
 
@@ -233,15 +233,15 @@
     \begin{lstlisting}
         def identity[T](x: T) -> T: ...
 
-        ?\tms{quiz}?identity(True)?\tme{quiz}?
+        ?\tms{quiz}?identity(2)?\tme{quiz}?
     \end{lstlisting}
     \end{textblock*}
 
     \begin{textblock*}{60mm}[1,0.5](150mm,45mm)
     \begin{center}
-        \only<2->{\texttt{bool} \\}
-        \only<3->{\texttt{Literal[True]} \\}
-        \only<4->{\texttt{int} \\}
+        \only<2->{\texttt{int} \\}
+        \only<3->{\texttt{Literal[2]} \\}
+        \only<4->{\texttt{int | None} \\}
         \only<5->{\texttt{object} \\}
         \only<6->{\texttt{SupportsIndex} \\}
         \only<6->{$\vdots$}
@@ -256,15 +256,15 @@
     \begin{lstlisting}
         def identity[T](x: T) -> T: ...
 
-        result: bool = ?\tms{quiz}?identity(True)?\tme{quiz}?
+        result: int = ?\tms{quiz}?identity(2)?\tme{quiz}?
     \end{lstlisting}
     \end{textblock*}
 
     \begin{textblock*}{60mm}[1,0.5](150mm,45mm)
     \begin{center}
-        \only<2>{\texttt{bool} \\}
-        \only<2>{\texttt{Literal[True]} \\}
-        \only<2>{\textcolor{gray!50}{\sout{\texttt{int}}} \\}
+        \only<2>{\texttt{int} \\}
+        \only<2>{\texttt{Literal[2]} \\}
+        \only<2>{\textcolor{gray!50}{\sout{\texttt{int | None}}} \\}
         \only<2>{\textcolor{gray!50}{\sout{\texttt{object}}} \\}
         \only<2>{\textcolor{gray!50}{\sout{\texttt{SupportsIndex}}} \\}
         \only<2>{\textcolor{gray!50}{$\vdots$}}
@@ -280,18 +280,18 @@
     \only<2>{\highlightmath{blue!15}{p2}}
     \begin{textblock*}{80mm}[0.5,0](80mm,30mm)
     \begin{lstlisting}
-        def takes_bool(?\tms{p1}?x: bool?\tme{p1}?) -> bool: ...
+        def takes_int(?\tms{p1}?x: int?\tme{p1}?) -> int: ...
 
-        takes_bool(?\tms{a1}?True?\tme{a1}?)
+        takes_int(?\tms{a1}?2?\tme{a1}?)
     \end{lstlisting}
     \end{textblock*}
 
     \begin{textblock*}{120mm}[0.5,0](80mm,55mm)
     \begin{center}
         \only<2>{\cset{
-            \tmm{a2}{\pytype{Literal[True]}}
+            \tmm{a2}{\pytype{Literal[2]}}
             \preceq
-            \tmm{p2}{\pytype{bool}}
+            \tmm{p2}{\pytype{int}}
         }}
         \only<3>{\cset{\always}}
     \end{center}
@@ -306,18 +306,18 @@
     \only<2>{\highlightmath{blue!15}{p2}}
     \begin{textblock*}{80mm}[0.5,0](80mm,30mm)
     \begin{lstlisting}
-        def takes_bool(?\tms{p1}?x: bool?\tme{p1}?) -> bool: ...
+        def takes_int(?\tms{p1}?x: int?\tme{p1}?) -> int: ...
 
-        takes_bool(?\tms{a1}?1?\tme{a1}?)
+        takes_int(?\tms{a1}?None?\tme{a1}?)
     \end{lstlisting}
     \end{textblock*}
 
     \begin{textblock*}{120mm}[0.5,0](80mm,55mm)
     \begin{center}
         \only<2>{\cset{
-            \tmm{a2}{\pytype{Literal[1]}}
+            \tmm{a2}{\pytype{None}}
             \preceq
-            \tmm{p2}{\pytype{bool}}
+            \tmm{p2}{\pytype{int}}
         }}
         \only<3>{\cset{\never}}
     \end{center}
@@ -334,14 +334,14 @@
     \begin{lstlisting}
         def identity[T](?\tms{p1}?x: T?\tme{p1}?) -> T: ...
 
-        identity(?\tms{a1}?True?\tme{a1}?)
+        identity(?\tms{a1}?2?\tme{a1}?)
     \end{lstlisting}
     \end{textblock*}
 
     \begin{textblock*}{120mm}[0.5,0](80mm,55mm)
     \begin{center}
         \only<2-3>{\cset{
-            \tmm{a2}{\pytype{Literal[True]}}
+            \tmm{a2}{\pytype{Literal[2]}}
             \preceq
             \tmm{p2}{\typevar{T}}
         }}
@@ -363,7 +363,7 @@
     \begin{lstlisting}
         def identity[T](?\tms{p1}?x: T?\tme{p1}?) -> ?\tms{p3}?T?\tme{p3}?: ...
 
-        ?\tms{a3}?result: bool?\tme{a3}? = identity(?\tms{a1}?True?\tme{a1}?)
+        ?\tms{a3}?result: int?\tme{a3}? = identity(?\tms{a1}?2?\tme{a1}?)
     \end{lstlisting}
     \end{textblock*}
 
@@ -372,14 +372,14 @@
         \cset{
         \only<3-4>{(}
         \only<2-4>{
-            \tmm{a2}{\pytype{Literal[True]}}
+            \tmm{a2}{\pytype{Literal[2]}}
             \preceq
             \tmm{p2}{\typevar{T}}
         }
         \only<3-4>{) \wedge (
             \tmm{p4}{\typevar{T}}
             \preceq
-            \tmm{a4}{\pytype{bool}}
+            \tmm{a4}{\pytype{int}}
         )}
         }
     \end{center}
@@ -390,14 +390,14 @@
     \frametitle{\textit{When} is this expression valid?}
     \begin{center}
     \begin{tabular}{p{60mm}p{60mm}}
-        \verb|takes_bool(True)|
+        \verb|takes_int(2)|
         & \cset{\hphantom{(} \always} \\
-        \verb|takes_bool(1)|
+        \verb|takes_int(None)|
         & \cset{\hphantom{(} \never} \\
-        \verb|identity(True)|
-        & \cset{\hphantom{(} \pytype{Literal[True]} \preceq \typevar{T}} \\
-        \verb|result: bool = identity(True)|
-        & \cset{(\pytype{Literal[True]} \preceq \typevar{T}) \wedge (\typevar{T} \preceq \pytype{bool})} \\
+        \verb|identity(2)|
+        & \cset{\hphantom{(} \pytype{Literal[2]} \preceq \typevar{T}} \\
+        \verb|result: int = identity(2)|
+        & \cset{(\pytype{Literal[2]} \preceq \typevar{T}) \wedge (\typevar{T} \preceq \pytype{int})} \\
     \end{tabular}
     \end{center}
 \end{frame}
@@ -423,12 +423,12 @@
 
     \begin{uncoverenv}<2->
     \begin{displaymath}
-        \cset{\pytype{Literal[True]} \preceq \typevar{T}} =
+        \cset{\pytype{Literal[2]} \preceq \typevar{T}} =
         \left\{
             \begin{array}{l}
-                \assignment{T}{bool}, \\
-                \assignment{T}{Literal[True]}, \\
                 \assignment{T}{int}, \\
+                \assignment{T}{Literal[2]}, \\
+                \assignment{T}{int | None}, \\
                 \assignment{T}{object}, \\
                 \assignment{T}{SupportsIndex}, \\
                 \multicolumn{1}{c}{\vdots} \\
@@ -442,13 +442,13 @@
     \begin{uncoverenv}<3->
     \begin{displaymath}
         \cset{
-            (\pytype{Literal[True]} \preceq \typevar{T}) \wedge
-            (\typevar{T} \preceq \pytype{bool})
+            (\pytype{Literal[2]} \preceq \typevar{T}) \wedge
+            (\typevar{T} \preceq \pytype{int})
         } =
         \left\{
             \begin{array}{l}
-                \assignment{T}{bool}, \\
-                \assignment{T}{Literal[True]} \\
+                \assignment{T}{int}, \\
+                \assignment{T}{Literal[2]} \\
             \end{array}
         \right\}
     \end{displaymath}
@@ -587,13 +587,12 @@
     \only<3>{\highlightmath{red!15}{a4}}
     \only<3>{\highlightcode{blue!15}{p3}}
     \only<3>{\highlightmath{blue!15}{p4}}
-    \only<6>{\highlightmath{yellow!25}{a5}}
     \begin{textblock*}{120mm}[0.5,0](80mm,25mm)
     \begin{lstlisting}
         def second[A](?\tms{p1}?a1: A?\tme{p1}?, ?\tms{p3}?a2: A?\tme{p3}?) -> A:
             return a2
 
-        second(?\tms{a1}?True?\tme{a1}?, ?\tms{a3}?2?\tme{a3}?)
+        second(?\tms{a1}?None?\tme{a1}?, ?\tms{a3}?2?\tme{a3}?)
     \end{lstlisting}
     \end{textblock*}
 
@@ -602,7 +601,7 @@
     \begin{array}{c}
         \cset{
             \only<2->{
-                \tmm{a2}{\pytype{Literal[True]}}
+                \tmm{a2}{\pytype{None}}
                 \preceq
                 \tmm{p2}{\typevar{A}}
             }
@@ -614,17 +613,10 @@
             }
         }
         \\[1em]
-        \only<5-6>{
+        \only<5>{
             \left\{
-                \assignment{A}{Literal[True, 2]},\,
-                \tmm{a5}{\assignment{A}{bool | int}},\,
-                \dots
-            \right\}
-        }
-        \only<7>{
-            \left\{
-                \assignment{A}{Literal[True, 2]},\,
-                \assignment{A}{int},\,
+                \assignment{A}{None | Literal[2]},\,
+                \assignment{A}{None | int},\,
                 \dots
             \right\}
         }
@@ -669,7 +661,7 @@
 
         def partial[X, Y, Z](?\tms{p1}?fn: Callable[[X, Y], Z]?\tme{p1}?, ?\tms{p3}?x: X?\tme{p3}?) -> ?\tms{a9}?Callable[[Y], Z]?\tme{a9}?: ...
 
-        ?\tms{a0}?partial(?\tms{a1a}?second?\tme{a1a}?, ?\tms{a3}?True?\tme{a3}?)?\tme{a0}?(?\tms{a12}?2?\tme{a12}?)
+        ?\tms{a0}?partial(?\tms{a1a}?second?\tme{a1a}?, ?\tms{a3}?None?\tme{a3}?)?\tme{a0}?(?\tms{a12}?2?\tme{a12}?)
     \end{lstlisting}
     \end{textblock*}
 
@@ -693,7 +685,7 @@
             \only<5->{
                 \wedge
                 \tmm{a6}{
-                \tmm{a4}{\pytype{Literal[True]}}
+                \tmm{a4}{\pytype{None}}
                 \preceq
                 \tmm{p4}{\typevar{X}}
                 }
@@ -703,11 +695,11 @@
         \cset{
             \only<8->{
                 {} \wedge
-                \tmm{a8}{\pytype{Literal[True]} \preceq \typevar{A}}
+                \tmm{a8}{\pytype{None} \preceq \typevar{A}}
             }
             \only<10->{
                 \wedge
-                \tmm{a10}{\pytype{Literal[True]} \preceq \typevar{Z}}
+                \tmm{a10}{\pytype{None} \preceq \typevar{Z}}
             }
         }
         }
@@ -715,13 +707,13 @@
         \\[1em]
         \begin{array}{l@{\qquad}l}
             \begin{array}{c}
-                \uncover<15-16>{\pytype{Callable[[\tmm{p12}{bool}], bool]}} \\[0.25em]
+                \uncover<15-16>{\pytype{Callable[[\tmm{p12}{None}], None]}} \\[0.25em]
                 \uncover<16>{\textcolor{red}{\texttt{[invalid-argument-type]}}} \\
             \end{array}
             &
             \begin{array}{l}
-                \uncover<13->{\assignment{Y}{\alt<13>{A}{bool}}} \\
-                \uncover<12->{\assignment{Z}{bool}} \\
+                \uncover<13->{\assignment{Y}{\alt<13>{A}{None}}} \\
+                \uncover<12->{\assignment{Z}{None}} \\
             \end{array}
         \end{array}
         }
@@ -735,7 +727,7 @@
             \uncover<18->{\cset{
                 (\typevar{Y} \preceq \typevar{Z})
                 \wedge
-                (\pytype{Literal[True]} \preceq \typevar{Z})\tme{a13}
+                (\pytype{None} \preceq \typevar{Z})\tme{a13}
             }}
         \end{array}
         }
@@ -745,7 +737,7 @@
         \cset{
             \tmm{a17}{(\typevar{Y} \preceq \typevar{Z})}
             \wedge
-            \tmm{a18}{(\pytype{Literal[True]} \preceq \typevar{Z})}\tme{a13}
+            \tmm{a18}{(\pytype{None} \preceq \typevar{Z})}\tme{a13}
             \only<23->{
                 \wedge
                 \tmm{a16}{
@@ -763,13 +755,13 @@
         \only<27->{
             \left\{
                 \begin{array}{l}
-                    \assignment{Y}{Literal[True, 2]} \\
-                    \assignment{Z}{Literal[True, 2]} \\
+                    \assignment{Y}{None | Literal[2]} \\
+                    \assignment{Z}{None | Literal[2]} \\
                 \end{array}
                 ,\,
                 \begin{array}{l}
-                    \assignment{Y}{int} \\
-                    \assignment{Z}{int} \\
+                    \assignment{Y}{None | int} \\
+                    \assignment{Z}{None | int} \\
                 \end{array}
                 ,\,
                 \dots
