@@ -402,22 +402,6 @@
     \end{center}
 \end{frame}
 
-\begin{frame}[t,fragile]
-    \frametitle{Math!}
-    \removedisplayskips
-    \begin{equation*}
-    \begin{array}{c@{\enspace}c@{\enspace}l@{\qquad}c}
-        \uncover<1->{\constraints &\defeq& \always} \\
-        \uncover<1->{&\defalt& \never} \\
-        \uncover<2->{&\defalt& \cset{\pytype{type} \preceq \typevar{T}} & \textsf{\smaller[2]{(lower bound)}}} \\
-        \uncover<2->{&\defalt& \cset{\typevar{T} \preceq \pytype{type}} & \textsf{\smaller[2]{(upper bound)}}} \\
-        \uncover<3->{&\defalt& \cset{\neg \, \constraints} & \textsf{\smaller[2]{(not)}}} \\
-        \uncover<3->{&\defalt& \cset{\constraints \wedge \constraints} & \textsf{\smaller[2]{(and)}}} \\
-        \uncover<3->{&\defalt& \cset{\constraints \vee \constraints} & \textsf{\smaller[2]{(or)}}} \\
-    \end{array}%
-    \end{equation*}%
-\end{frame}
-
 \begin{frame}[fragile]
     \frametitle{Constraint sets are sets of typevar assignments}
 
@@ -788,6 +772,22 @@
     \end{array}
     \end{displaymath}
     \end{textblock*}
+\end{frame}
+
+\begin{frame}[t,fragile]
+    \frametitle{Math!}
+    \removedisplayskips
+    \begin{equation*}
+    \begin{array}{c@{\enspace}c@{\enspace}l@{\qquad}c}
+        \uncover<1->{\constraints &\defeq& \always} \\
+        \uncover<1->{&\defalt& \never} \\
+        \uncover<2->{&\defalt& \cset{\pytype{type} \preceq \typevar{T}} & \textsf{\smaller[2]{(lower bound)}}} \\
+        \uncover<2->{&\defalt& \cset{\typevar{T} \preceq \pytype{type}} & \textsf{\smaller[2]{(upper bound)}}} \\
+        \uncover<3->{&\defalt& \cset{\neg \, \constraints} & \textsf{\smaller[2]{(not)}}} \\
+        \uncover<3->{&\defalt& \cset{\constraints \wedge \constraints} & \textsf{\smaller[2]{(and)}}} \\
+        \uncover<3->{&\defalt& \cset{\constraints \vee \constraints} & \textsf{\smaller[2]{(or)}}} \\
+    \end{array}%
+    \end{equation*}%
 \end{frame}
 
 
