@@ -456,128 +456,6 @@
 \end{frame}
 
 \begin{frame}[fragile]
-    \frametitle{More complex examples}
-    \only<2>{\highlightcode{red!15}{a1a}}
-    \only<2>{\highlightcode{red!15}{a1b}}
-    \only<2>{\highlightmath{red!15}{a2}}
-    \only<3>{\highlightmath{red!15}{a3}}
-    \only<3>{\highlightmath{red!15}{a4}}
-    \only<4>{\highlightmath{red!15}{a5}}
-    \only<4>{\highlightmath{red!15}{a6}}
-    \only<6>{\highlightcode{red!15}{a7}}
-    \only<6>{\highlightmath{red!15}{a8}}
-    \only<7>{\highlightcode{red!15}{a9}}
-    \only<7>{\highlightmath{red!15}{a10}}
-    \only<8>{\highlightcode{red!15}{a11}}
-    \only<8>{\highlightmath{red!15}{a12}}
-    \only<10>{\highlightmath{yellow!25}{a13}}
-    \only<12>{\highlightmath{yellow!25}{a14}}
-    \only<12>{\highlightmath{yellow!25}{a15}}
-    \only<14>{\highlightmath{yellow!25}{a16}}
-    \only<16>{\highlightmath{yellow!25}{a17}}
-    \only<16>{\highlightmath{yellow!25}{a18}}
-    \only<18>{\highlightmath{yellow!25}{a19}}
-    \only<18>{\highlightmath{yellow!25}{a20}}
-    \only<20>{\highlightmath{yellow!25}{a21}}
-    \only<20>{\highlightmath{yellow!25}{a22}}
-    \only<20>{\highlightmath{yellow!25}{a23}}
-    \only<2>{\highlightcode{blue!15}{p1}}
-    \only<2>{\highlightmath{blue!15}{p2}}
-    \only<3>{\highlightmath{blue!15}{p3}}
-    \only<3>{\highlightmath{blue!15}{p4}}
-    \only<4>{\highlightmath{blue!15}{p5}}
-    \only<4>{\highlightmath{blue!15}{p6}}
-    \only<6>{\highlightcode{blue!15}{p7}}
-    \only<6>{\highlightmath{blue!15}{p8}}
-    \begin{textblock*}{80mm}[0.5,0](80mm,25mm)
-    \begin{lstlisting}
-        def invoke[A, B](?\tms{p1}?fn: Callable[[A], B]?\tme{p1}?, value: ?\tms{p7}?A?\tme{p7}?) -> ?\tms{a23}?B?\tme{a23}?:
-            return fn(value)
-
-        def head?\tms{a1b}?[T](xs: list[T]) -> T?\tme{a1b}?:
-            return xs[0]
-
-        ?\tms{a21}?invoke(?\tms{a1a}?head?\tme{a1a}?, ?\tms{a7}?[?\tms{a9}?1?\tme{a9}?, ?\tms{a11}?2?\tme{a11}?]?\tme{a7}?)?\tme{a21}?
-    \end{lstlisting}
-    \end{textblock*}
-
-    \begin{textblock*}{155mm}[0.5,0](80mm,60mm)
-    \begin{displaymath}
-    \begin{array}{c}
-        \cset{
-            \only<2-4>{
-                \tmm{a2}{\pytype{Callable[[\tmm{p4}{list[T]}], \tmm{p6}{T}]}}
-                \preceq
-                \tmm{p2}{\pytype{Callable[[\tmm{a4}{A}], \tmm{a6}{B}]}}
-            }
-            \only<5->{
-                \tmm{a14}{(\typevar{A} \preceq \pytype{list[T]})}
-                \wedge
-                \tmm{a18}{(\typevar{T} \preceq \typevar{B})}
-            }
-            \only<6->{
-                \wedge
-                \tmm{a15}{(\tmm{a8}{\pytype{list[L]}} \preceq \tmm{p8}{\typevar{A}})}
-            }
-            \only<7-10>{
-                \wedge
-                \tms{a13}(\tmm{a10}{\pytype{Literal[1]}} \preceq \typevar{L})
-            }
-            \only<8-10>{
-                \wedge
-                (\tmm{a12}{\pytype{Literal[2]}} \preceq \typevar{L})\tme{a13}
-            }
-            \only<11->{
-                \wedge
-                \tmm{a20}{(\pytype{Literal[1, 2]} \preceq \typevar{L})}
-            }
-        }
-        \\
-        \cset{
-            \only<13-14>{
-                {} \wedge \tmm{a16}{(\pytype{list[L]} \preceq \pytype{list[T]})}
-            }
-            \only<15->{
-                {} \wedge \tmm{a17}{(\typevar{L} \preceq \typevar{T})}
-                \wedge (\typevar{T} \preceq \typevar{L})
-            }
-            \only<17->{
-                \wedge \tmm{a19}{(\typevar{L} \preceq \typevar{B})}
-            }
-            \only<19->{
-                \wedge \tmm{a22}{(\pytype{Literal[1, 2]} \preceq \typevar{B})}
-            }
-        }
-        \\[1em]
-        \cset{
-            \only<4>{(}
-            \only<3-4>{
-                \tmm{a3}{\typevar{A}} \preceq \tmm{p3}{\pytype{list[T]}}
-            }
-            \only<4>{) \wedge (
-                \tmm{p5}{\typevar{T}} \preceq \tmm{a5}{\typevar{B}}
-            )}
-        }
-        \only<21>{
-            \left\{
-                \begin{array}{l}
-                \assignment{A}{list[Literal[1, 2]]} \\
-                \assignment{B}{Literal[1, 2]} \\
-                \end{array}
-                ,\,
-                \begin{array}{l}
-                \assignment{A}{list[int]} \\
-                \assignment{B}{int} \\
-                \end{array}
-                ,\, \dots
-            \right\}
-        }
-    \end{array}
-    \end{displaymath}
-    \end{textblock*}
-\end{frame}
-
-\begin{frame}[fragile]
     \frametitle{Partial application}
     \only<2>{\highlightcode{red!15}{a1}}
     \only<2>{\highlightmath{red!15}{a2}}
@@ -781,6 +659,135 @@
     \begin{tabular}{lp{0.75\textwidth}}
     \picturecredits
     \end{tabular}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Scratch
+
+\begin{frame}
+    \flattitle{80mm - 0.5\titlewidth}{40mm}{Scratch}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Invariant types}
+    \only<2>{\highlightcode{red!15}{a1a}}
+    \only<2>{\highlightcode{red!15}{a1b}}
+    \only<2>{\highlightmath{red!15}{a2}}
+    \only<3>{\highlightmath{red!15}{a3}}
+    \only<3>{\highlightmath{red!15}{a4}}
+    \only<4>{\highlightmath{red!15}{a5}}
+    \only<4>{\highlightmath{red!15}{a6}}
+    \only<6>{\highlightcode{red!15}{a7}}
+    \only<6>{\highlightmath{red!15}{a8}}
+    \only<7>{\highlightcode{red!15}{a9}}
+    \only<7>{\highlightmath{red!15}{a10}}
+    \only<8>{\highlightcode{red!15}{a11}}
+    \only<8>{\highlightmath{red!15}{a12}}
+    \only<10>{\highlightmath{yellow!25}{a13}}
+    \only<12>{\highlightmath{yellow!25}{a14}}
+    \only<12>{\highlightmath{yellow!25}{a15}}
+    \only<14>{\highlightmath{yellow!25}{a16}}
+    \only<16>{\highlightmath{yellow!25}{a17}}
+    \only<16>{\highlightmath{yellow!25}{a18}}
+    \only<18>{\highlightmath{yellow!25}{a19}}
+    \only<18>{\highlightmath{yellow!25}{a20}}
+    \only<20>{\highlightmath{yellow!25}{a21}}
+    \only<20>{\highlightmath{yellow!25}{a22}}
+    \only<20>{\highlightmath{yellow!25}{a23}}
+    \only<2>{\highlightcode{blue!15}{p1}}
+    \only<2>{\highlightmath{blue!15}{p2}}
+    \only<3>{\highlightmath{blue!15}{p3}}
+    \only<3>{\highlightmath{blue!15}{p4}}
+    \only<4>{\highlightmath{blue!15}{p5}}
+    \only<4>{\highlightmath{blue!15}{p6}}
+    \only<6>{\highlightcode{blue!15}{p7}}
+    \only<6>{\highlightmath{blue!15}{p8}}
+    \begin{textblock*}{80mm}[0.5,0](80mm,25mm)
+    \begin{lstlisting}
+        def invoke[A, B](?\tms{p1}?fn: Callable[[A], B]?\tme{p1}?, value: ?\tms{p7}?A?\tme{p7}?) -> ?\tms{a23}?B?\tme{a23}?:
+            return fn(value)
+
+        def head?\tms{a1b}?[T](xs: list[T]) -> T?\tme{a1b}?:
+            return xs[0]
+
+        ?\tms{a21}?invoke(?\tms{a1a}?head?\tme{a1a}?, ?\tms{a7}?[?\tms{a9}?1?\tme{a9}?, ?\tms{a11}?2?\tme{a11}?]?\tme{a7}?)?\tme{a21}?
+    \end{lstlisting}
+    \end{textblock*}
+
+    \begin{textblock*}{155mm}[0.5,0](80mm,60mm)
+    \begin{displaymath}
+    \begin{array}{c}
+        \cset{
+            \only<2-4>{
+                \tmm{a2}{\pytype{Callable[[\tmm{p4}{list[T]}], \tmm{p6}{T}]}}
+                \preceq
+                \tmm{p2}{\pytype{Callable[[\tmm{a4}{A}], \tmm{a6}{B}]}}
+            }
+            \only<5->{
+                \tmm{a14}{(\typevar{A} \preceq \pytype{list[T]})}
+                \wedge
+                \tmm{a18}{(\typevar{T} \preceq \typevar{B})}
+            }
+            \only<6->{
+                \wedge
+                \tmm{a15}{(\tmm{a8}{\pytype{list[L]}} \preceq \tmm{p8}{\typevar{A}})}
+            }
+            \only<7-10>{
+                \wedge
+                \tms{a13}(\tmm{a10}{\pytype{Literal[1]}} \preceq \typevar{L})
+            }
+            \only<8-10>{
+                \wedge
+                (\tmm{a12}{\pytype{Literal[2]}} \preceq \typevar{L})\tme{a13}
+            }
+            \only<11->{
+                \wedge
+                \tmm{a20}{(\pytype{Literal[1, 2]} \preceq \typevar{L})}
+            }
+        }
+        \\
+        \cset{
+            \only<13-14>{
+                {} \wedge \tmm{a16}{(\pytype{list[L]} \preceq \pytype{list[T]})}
+            }
+            \only<15->{
+                {} \wedge \tmm{a17}{(\typevar{L} \preceq \typevar{T})}
+                \wedge (\typevar{T} \preceq \typevar{L})
+            }
+            \only<17->{
+                \wedge \tmm{a19}{(\typevar{L} \preceq \typevar{B})}
+            }
+            \only<19->{
+                \wedge \tmm{a22}{(\pytype{Literal[1, 2]} \preceq \typevar{B})}
+            }
+        }
+        \\[1em]
+        \cset{
+            \only<4>{(}
+            \only<3-4>{
+                \tmm{a3}{\typevar{A}} \preceq \tmm{p3}{\pytype{list[T]}}
+            }
+            \only<4>{) \wedge (
+                \tmm{p5}{\typevar{T}} \preceq \tmm{a5}{\typevar{B}}
+            )}
+        }
+        \only<21>{
+            \left\{
+                \begin{array}{l}
+                \assignment{A}{list[Literal[1, 2]]} \\
+                \assignment{B}{Literal[1, 2]} \\
+                \end{array}
+                ,\,
+                \begin{array}{l}
+                \assignment{A}{list[int]} \\
+                \assignment{B}{int} \\
+                \end{array}
+                ,\, \dots
+            \right\}
+        }
+    \end{array}
+    \end{displaymath}
+    \end{textblock*}
 \end{frame}
 
 
