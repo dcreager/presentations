@@ -5,7 +5,9 @@
 \usepackage{calc}
 \usepackage{graphicx}
 \usepackage{listings}
+\usepackage{mathtools}
 \usepackage{relsize}
+\usepackage[most]{tcolorbox}
 \usepackage[overlay,absolute]{textpos}
 \usepackage{ulem}
 \usepackage[x11names]{xcolor}
@@ -96,23 +98,17 @@
 \newcommand{\tme}[1]{\tikzmark{#1_end}}
 \newcommand{\tmm}[2]{\tms{#1}#2\tme{#1}}
 
-\newcommand{\highlightcode}[2]{%
+\newcommand{\customhighlight}[5]{%
     \tikz[remember picture]
       \draw [overlay, draw=none, fill=#1]
-        ([xshift=-1pt, yshift=8pt] pic cs:#2_start)
+        ([xshift=-1pt, yshift=#2] {#4})
         rectangle
-        ([xshift=1pt, yshift=-2pt] pic cs:#2_end)
+        ([xshift=1pt, yshift=-#3] {#5})
         ;%
 }
 
-\newcommand{\highlightmath}[2]{%
-    \tikz[remember picture]
-      \draw [overlay, draw=none, fill=#1]
-        ([xshift=-1pt, yshift=10pt] pic cs:#2_start)
-        rectangle
-        ([xshift=1pt, yshift=-4pt] pic cs:#2_end)
-        ;%
-}
+\newcommand{\highlightcode}[2]{\customhighlight{#1}{8pt}{2pt}{pic cs:#2_start}{pic cs:#2_end}}
+\newcommand{\highlightmath}[2]{\customhighlight{#1}{10pt}{4pt}{pic cs:#2_start}{pic cs:#2_end}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Math equation spacing
@@ -537,11 +533,52 @@
     \end{array}
     \end{displaymath}
     \end{textblock*}
+
+    % Goal
+    \begin{textblock*}{85mm}[1,0](155mm,5mm)%
+    \begin{onlyenv}<6->%
+        \begin{tcolorbox}[sharp corners, size=title, halign=center]%
+            \begin{math}
+                \left\{
+                    \assignment{A}{None | Literal[2]},\,
+                    \assignment{A}{None | int},\,
+                    \dots
+                \right\}
+            \end{math}
+        \end{tcolorbox}
+    \end{onlyenv}
+    \end{textblock*}
 \end{frame}
 
 \begin{frame}[fragile]
     \frametitle{Partial application}
-    \only<2,11,15,21>{\highlightcode{yellow!25}{a0}}
+
+    % Goal
+    \begin{textblock*}{85mm}[1,0](155mm,5mm)%
+        \begin{tcolorbox}[
+            sharp corners,
+            size=title,
+            halign=center,
+            only=<{17,22}>{
+                colframe=black!50!red,
+                colback=red!15,
+            },
+            only=<33>{
+                colframe=black!50!green,
+                colback=green!15,
+            },
+        ]%
+            \begin{math}
+                \left\{
+                    \assignment{A}{None | Literal[2]},\,
+                    \assignment{A}{None | int},\,
+                    \dots
+                \right\}
+            \end{math}
+        \end{tcolorbox}
+    \end{textblock*}
+
+    \only<2,11,12,16,26>{\highlightcode{yellow!25}{a0}}
     \only<3>{\highlightcode{red!15}{a1a}}
     \only<3>{\highlightcode{red!15}{a1b}}
     \only<3>{\highlightmath{red!15}{a2}}
@@ -553,21 +590,28 @@
     \only<5>{\highlightmath{blue!15}{p4}}
     \only<7>{\highlightmath{yellow!25}{a5}}
     \only<7>{\highlightmath{yellow!25}{a6}}
-    \only<9>{\highlightmath{yellow!25}{a7}}
-    \only<9,14>{\highlightmath{yellow!25}{a8}}
-    \only<11,15>{\highlightcode{yellow!25}{a9}}
-    \only<12>{\highlightmath{yellow!25}{a10}}
-    \only<13>{\highlightmath{yellow!25}{a11}}
-    \only<16,23>{\highlightcode{red!15}{a12}}
-    \only<16>{\highlightmath{blue!15}{p12}}
-    \only<21>{\highlightmath{yellow!25}{a13}}
-    \only<23>{\highlightmath{blue!15}{p14}}
-    \only<23>{\highlightmath{red!15}{a15}}
-    \only<23>{\highlightmath{blue!15}{p15}}
-    \only<24>{\highlightmath{yellow!25}{a16}}
-    \only<24>{\highlightmath{yellow!25}{a17}}
-    \only<26>{\highlightmath{yellow!25}{a18}}
-    \only<26>{\highlightmath{yellow!25}{a19}}
+    \only<9,19>{\highlightmath{yellow!25}{a7}}
+    \only<9,15>{\highlightmath{yellow!25}{a8}}
+    \only<11,12>{\highlightcode{yellow!25}{a9}}
+    \only<13>{\highlightmath{yellow!25}{a10}}
+    \only<14,19>{\highlightmath{yellow!25}{a11}}
+    \only<17,21,28>{\highlightcode{red!15}{a12}}
+    \only<17>{\highlightmath{blue!15}{p12}}
+    \only<26>{\highlightmath{yellow!25}{a13}}
+    \only<28>{\highlightmath{blue!15}{p14}}
+    \only<28>{\highlightmath{red!15}{a15}}
+    \only<28>{\highlightmath{blue!15}{p15}}
+    \only<29>{\highlightmath{yellow!25}{a16}}
+    \only<29>{\highlightmath{yellow!25}{a17}}
+    \only<31>{\highlightmath{yellow!25}{a18}}
+    \only<31>{\highlightmath{yellow!25}{a19}}
+    \only<16>{\highlightmath{yellow!25}{a20}}
+    \only<22>{\highlightmath{red!15}{a21}}
+    \only<33>{
+        \customhighlight{green!15}{10pt}{4pt}{{pic cs:a22b_start} -| {pic cs:a22a_start}}{{pic cs:a22b_end} -| {pic cs:a22a_end}}
+    }
+    \only<21>{\highlightmath{blue!15}{a23}}
+
     \begin{textblock*}{120mm}[0.5,0](80mm,25mm)
     \begin{lstlisting}
         def second?\tms{a1b}?[A](a1: A, a2: A) -> A?\tme{a1b}?:
@@ -582,7 +626,7 @@
     \begin{textblock*}{155mm}[0.5,0](80mm,55mm)
     \begin{displaymath}
     \begin{array}{c}
-        \only<1-21>{
+        \only<1-26>{
         \cset{
             \only<3>{
                 \tmm{a2}{\pytype{Callable[[A, A], A]}}
@@ -617,42 +661,62 @@
             }
         }
         }
-        \only<12-17>{
+        \only<12-22>{
         \\[1em]
         \begin{array}{l@{\qquad}l}
             \begin{array}{c}
-                \uncover<15-16>{\pytype{Callable[[\tmm{p12}{None}], None]}} \\[0.25em]
-                \uncover<16>{\textcolor{red}{\texttt{[invalid-argument-type]}}} \\
+                \uncover<12-22>{
+                    \tmm{a20}{\pytype{
+                        \makebox[\widthof{Callable[[None], None]}]{
+                            Callable[[\alt<12-15,18-19>{Y}{\alt<20-22>{A}{\tmm{p12}{None}}}],
+                              \alt<12-15,18-19>{Z}{\alt<20-22>{A}{None}}]
+                        }
+                    }}} \\[0.25em]
+                \uncover<17,21-22>{
+                    \mathmakebox[50mm]{
+                        \alt<17>{
+                            \textcolor{red}{\texttt{[invalid-argument-type]}}
+                        }{
+                            \tmm{a21}{\left\{
+                                \assignment{A}{Literal[\tmm{a23}{2}]},\,
+                                \assignment{A}{int},\,
+                                \dots
+                            \right\}}
+                        }
+                    }
+                }\\
             \end{array}
             &
             \begin{array}{l}
-                \uncover<13->{\assignment{Y}{\alt<13>{A}{None}}} \\
-                \uncover<12->{\assignment{Z}{None}} \\
+                \uncover<14->{\assignment{Y}{\alt<14,19-22>{A}{None}}} \\
+                \uncover<13->{\assignment{Z}{%
+                    \makebox[\widthof{None}][l]{\alt<19-22>{A}{None}}
+                }} \\
             \end{array}
         \end{array}
         }
-        \only<18-21>{
+        \only<23-26>{
         \\[2em]
         \begin{array}{l@{\quad}c@{\quad}l}
-            \uncover<19->{\tms{a13}\pytype{Callable[[Y], Z]}}
+            \uncover<24->{\tms{a13}\pytype{Callable[[Y], Z]}}
             &
-            \uncover<20->{\pytype{where}}
+            \uncover<25->{\pytype{where}}
             &
-            \uncover<18->{\cset{
+            \uncover<23->{\cset{
                 \typevar{Y} \subtypeof \typevar{Z}
                 \wedge
                 \pytype{None} \subtypeof \typevar{Z}\tme{a13}
             }}
         \end{array}
         }
-        \only<22->{
+        \only<27->{
         \pytype{Callable[[\tmm{p14}{Y}], Z]}
         \\[1em]
         \cset{
             \tmm{a17}{\typevar{Y} \subtypeof \typevar{Z}}
             \wedge
             \tmm{a18}{\pytype{None} \subtypeof \typevar{Z}}\tme{a13}
-            \only<23->{
+            \only<28->{
                 \wedge
                 \tmm{a16}{
                 \tmm{a15}{\pytype{Literal[2]}}
@@ -660,26 +724,29 @@
                 \tmm{p15}{\typevar{Y}}
                 }
             }
-            \only<25->{
+            \only<30->{
                 \wedge
                 \tmm{a19}{\pytype{Literal[2]} \subtypeof \typevar{Z}}
             }
         }
         \\[1em]
-        \only<27->{
+        \only<32->{
+            \tms{a22a}
             \left\{
                 \begin{array}{l}
+                    \tms{a22b}
                     \assignment{Y}{None | Literal[2]} \\
                     \assignment{Z}{None | Literal[2]} \\
                 \end{array}
                 ,\,
                 \begin{array}{l}
                     \assignment{Y}{None | int} \\
-                    \assignment{Z}{None | int} \\
+                    \assignment{Z}{None | int} \tme{a22b} \\
                 \end{array}
                 ,\,
                 \dots
             \right\}
+            \tme{a22a}
         }
         }
     \end{array}
