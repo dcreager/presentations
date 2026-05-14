@@ -592,7 +592,7 @@
         \end{tcolorbox}
     \end{textblock*}
 
-    \only<2,11,12,16,26>{\highlightcode{yellow!25}{a0}}
+    \only<2,11,12,16,18,23,26>{\highlightcode{yellow!25}{a0}}
     \only<3>{\highlightcode{red!15}{a1a}}
     \only<3>{\highlightcode{red!15}{a1b}}
     \only<3>{\highlightmath{red!15}{a2}}
@@ -606,7 +606,7 @@
     \only<7>{\highlightmath{yellow!25}{a6}}
     \only<9,19>{\highlightmath{yellow!25}{a7}}
     \only<9,15>{\highlightmath{yellow!25}{a8}}
-    \only<11,12>{\highlightcode{yellow!25}{a9}}
+    \only<11,12,18,23>{\highlightcode{yellow!25}{a9}}
     \only<13>{\highlightmath{yellow!25}{a10}}
     \only<14,19>{\highlightmath{yellow!25}{a11}}
     \only<17,21,28>{\highlightcode{red!15}{a12}}
@@ -702,8 +702,8 @@
             \end{array}
             &
             \begin{array}{l}
-                \uncover<14->{\assignment{Y}{\alt<14,19-22>{A}{None}}} \\
-                \uncover<13->{\assignment{Z}{%
+                \uncover<14-17,19->{\assignment{Y}{\alt<14,19-22>{A}{None}}} \\
+                \uncover<13-17,19->{\assignment{Z}{%
                     \makebox[\widthof{None}][l]{\alt<19-22>{A}{None}}
                 }} \\
             \end{array}
@@ -712,11 +712,11 @@
         \only<23-26>{
         \\[2em]
         \begin{array}{l@{\quad}c@{\quad}l}
-            \uncover<24->{\tms{a13}\pytype{Callable[[Y], Z]}}
+            \uncover<23->{\tms{a13}\pytype{Callable[[Y], Z]}}
             &
             \uncover<25->{\pytype{where}}
             &
-            \uncover<23->{\cset{
+            \uncover<24->{\cset{
                 \typevar{Y} \subtypeof \typevar{Z}
                 \wedge
                 \pytype{None} \subtypeof \typevar{Z}\tme{a13}
