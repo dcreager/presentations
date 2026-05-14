@@ -159,13 +159,13 @@
 \begin{frame}[fragile]
     \frametitle{A motivating example}
     \begin{lstlisting}
-        def second[A](a1: A, a2: A) -> A:
-            return a2
+        def choose[A](a1: A, a2: A) -> A:
+            return random.choice([a1, a2])
 
-        ?\uncover<2->{second(None, 2)}?
-        ?\uncover<2->{\textcolor{blue!50}{\textbf{==> 2}}}?
-        ?\uncover<3->{second(None, "hello")}?
-        ?\uncover<3->{\textcolor{blue!50}{\textbf{==> "hello"}}}?
+        ?\uncover<2->{choose(None, 2)}?
+        ?\uncover<2->{\textcolor{blue!50}{\textbf{==> None \qquad ==> 2}}}?
+        ?\uncover<3->{choose(None, "hello")}?
+        ?\uncover<3->{\textcolor{blue!50}{\textbf{==> None \qquad ==> "hello"}}}?
     \end{lstlisting}
     \begin{uncoverenv}<4->
     \begin{lstlisting}
@@ -174,11 +174,11 @@
                 return f(x, y)
             return p
 
-        ?\uncover<5->{p = partial(second, None)}?
+        ?\uncover<5->{p = partial(choose, None)}?
         ?\uncover<5->{p(2)}?
-        ?\uncover<5->{\textcolor{blue!50}{\textbf{==> 2}}}?
+        ?\uncover<5->{\textcolor{blue!50}{\textbf{==> None \qquad ==> 2}}}?
         ?\uncover<6->{p("hello")}?
-        ?\uncover<6->{\textcolor{blue!50}{\textbf{==> "hello"}}}?
+        ?\uncover<6->{\textcolor{blue!50}{\textbf{==> None \qquad ==> "hello"}}}?
     \end{lstlisting}
     \end{uncoverenv}
 
@@ -513,10 +513,10 @@
 
     \begin{textblock*}{120mm}[0.5,0](80mm,20mm)
     \begin{lstlisting}
-        def second[A](?\tms{p1}?a1: A?\tme{p1}?, ?\tms{p3}?a2: A?\tme{p3}?) -> A:
-            return a2
+        def choose[A](?\tms{p1}?a1: A?\tme{p1}?, ?\tms{p3}?a2: A?\tme{p3}?) -> A:
+            return random.choice([a1, a2])
 
-        second(?\tms{a1}?None?\tme{a1}?, ?\tms{a3}?2?\tme{a3}?)
+        choose(?\tms{a1}?None?\tme{a1}?, ?\tms{a3}?2?\tme{a3}?)
     \end{lstlisting}
     \end{textblock*}
 
@@ -628,12 +628,12 @@
 
     \begin{textblock*}{120mm}[0.5,0](80mm,20mm)
     \begin{lstlisting}
-        def second?\tms{a1b}?[A](a1: A, a2: A) -> A?\tme{a1b}?:
-            return a2
+        def choose?\tms{a1b}?[A](a1: A, a2: A) -> A?\tme{a1b}?:
+            return random.choice([a1, a2])
 
         def partial[X, Y, Z](?\tms{p1}?fn: Callable[[X, Y], Z]?\tme{p1}?, ?\tms{p3}?x: X?\tme{p3}?) -> ?\tms{a9}?Callable[[Y], Z]?\tme{a9}?: ...
 
-        p = ?\tms{a0}?partial(?\tms{a1a}?second?\tme{a1a}?, ?\tms{a3}?None?\tme{a3}?)?\tme{a0}?
+        p = ?\tms{a0}?partial(?\tms{a1a}?choose?\tme{a1a}?, ?\tms{a3}?None?\tme{a3}?)?\tme{a0}?
         p(?\tms{a12}?2?\tme{a12}?)
     \end{lstlisting}
     \end{textblock*}
