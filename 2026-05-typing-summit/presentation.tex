@@ -592,7 +592,7 @@
         \end{tcolorbox}
     \end{textblock*}
 
-    \only<2,11,12,16,18,23,26>{\highlightcode{yellow!25}{a0}}
+    \only<2,11,12,16,18,20,23,26>{\highlightcode{yellow!25}{a0}}
     \only<3-4>{\highlightcode{red!15}{a1a}}
     \only<3-4>{\highlightcode{red!15}{a1b}}
     \only<3>{\highlightmath{red!15}{a2}}
@@ -610,7 +610,7 @@
     \only<13>{\highlightmath{yellow!25}{a10}}
     \only<14,19>{\highlightmath{yellow!25}{a11}}
     \only<17,21,28>{\highlightcode{red!15}{a12}}
-    \only<17>{\highlightmath{blue!15}{p12}}
+    \only<17,21>{\highlightmath{blue!15}{p12}}
     \only<26>{\highlightmath{yellow!25}{a13}}
     \only<28>{\highlightmath{blue!15}{p14}}
     \only<28>{\highlightmath{red!15}{a15}}
@@ -619,12 +619,12 @@
     \only<29>{\highlightmath{yellow!25}{a17}}
     \only<31>{\highlightmath{yellow!25}{a18}}
     \only<31>{\highlightmath{yellow!25}{a19}}
-    \only<16>{\highlightmath{yellow!25}{a20}}
+    \only<16,20>{\highlightmath{yellow!25}{a20}}
     \only<22>{\highlightmath{red!15}{a21}}
     \only<33>{
         \customhighlight{green!15}{10pt}{4pt}{{pic cs:a22b_start} -| {pic cs:a22a_start}}{{pic cs:a22b_end} -| {pic cs:a22a_end}}
     }
-    \only<21>{\highlightmath{blue!15}{a23}}
+    \only<27>{\highlightcode{yellow!25}{a23}}
 
     \begin{textblock*}{120mm}[0.5,0](80mm,20mm)
     \begin{lstlisting}
@@ -634,7 +634,7 @@
         def partial[X, Y, Z](?\tms{p1}?fn: Callable[[X, Y], Z]?\tme{p1}?, ?\tms{p3}?x: X?\tme{p3}?) -> ?\tms{a9}?Callable[[Y], Z]?\tme{a9}?: ...
 
         p = ?\tms{a0}?partial(?\tms{a1a}?choose?\tme{a1a}?, ?\tms{a3}?None?\tme{a3}?)?\tme{a0}?
-        p(?\tms{a12}?2?\tme{a12}?)
+        ?\tms{a23}?p(?\tms{a12}?2?\tme{a12}?)?\tme{a23}?
     \end{lstlisting}
     \end{textblock*}
 
@@ -680,19 +680,19 @@
         \begin{array}{l@{\qquad}l}
             \begin{array}{c}
                 \uncover<12-22>{
-                    \tmm{a20}{\pytype{
+                    \pytype{
                         \makebox[\widthof{Callable[[None], None]}]{
-                            Callable[[\alt<12-15,18-19>{Y}{\alt<20-22>{A}{\tmm{p12}{None}}}],
-                              \alt<12-15,18-19>{Z}{\alt<20-22>{A}{None}}]
+                            \tmm{a20}{Callable[[\tmm{p12}{\alt<12-15,18-19>{Y}{\alt<20-22>{A}{None}}}],
+                              \alt<12-15,18-19>{Z}{\alt<20-22>{A}{None}}]}
                         }
-                    }}} \\[0.25em]
+                    }} \\[0.25em]
                 \uncover<17,21-22>{
                     \mathmakebox[50mm]{
                         \alt<17>{
                             \textcolor{red}{\texttt{[invalid-argument-type]}}
                         }{
                             \tmm{a21}{\left\{
-                                \assignment{A}{Literal[\tmm{a23}{2}]},\,
+                                \assignment{A}{Literal[2]},\,
                                 \assignment{A}{int},\,
                                 \dots
                             \right\}}
