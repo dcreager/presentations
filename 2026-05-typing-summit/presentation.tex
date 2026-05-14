@@ -159,7 +159,7 @@
 \begin{frame}[fragile]
     \frametitle{A motivating example}
     \begin{lstlisting}
-        def choose[A](a1: A, a2: A) -> A:
+        def choose?\only<8->{[A]}?(a1?\only<8->{: A}?, a2?\only<8->{: A}?)?\only<8->{ -> A}?:
             return random.choice([a1, a2])
 
         ?\uncover<2->{choose(None, 2)}?
@@ -169,40 +169,40 @@
     \end{lstlisting}
     \begin{uncoverenv}<4->
     \begin{lstlisting}
-        def partial[X, Y, Z](f: Callable[[X, Y], Z], x: X) -> Callable[[Y], Z]:
-            def p(y: Y) -> Z:
+        def partial?\only<8->{[X, Y, Z]}?(f?\only<8->{: Callable[[X, Y], Z]}?, x?\only<8->{: X}?)?\only<8->{ -> Callable[[Y], Z]}?:
+            def p(y?\only<8->{: Y}?)?\only<8->{ -> Z}?:
                 return f(x, y)
             return p
 
         ?\uncover<5->{p = partial(choose, None)}?
-        ?\uncover<5->{p(2)}?
-        ?\uncover<5->{\textcolor{blue!50}{\textbf{==> None \qquad ==> 2}}}?
-        ?\uncover<6->{p("hello")}?
-        ?\uncover<6->{\textcolor{blue!50}{\textbf{==> None \qquad ==> "hello"}}}?
+        ?\uncover<6->{p(2)}?
+        ?\uncover<6->{\textcolor{blue!50}{\textbf{==> None \qquad ==> 2}}}?
+        ?\uncover<7->{p("hello")}?
+        ?\uncover<7->{\textcolor{blue!50}{\textbf{==> None \qquad ==> "hello"}}}?
     \end{lstlisting}
     \end{uncoverenv}
 
     \begin{textblock*}{20mm}[0,1](100mm,90mm)
-        \only<7>{\includegraphics[height=30mm]{scotty-mouse.jpg}}
+        \only<9>{\includegraphics[height=30mm]{scotty-mouse.jpg}}
     \end{textblock*}
     \begin{textblock*}{35mm}[0,0.5](125mm,72mm)
-        \only<7>{\textsmaller[3]{%
+        \only<9>{\textsmaller[3]{%
             Hello computer, please \\[-1em]
             invoke \texttt{multiplay}
         }}
     \end{textblock*}
 
     \begin{textblock*}{10mm}[0.5,0.5](60mm,32mm)
-        \only<8>{\includegraphics[width=10mm]{icons/check-mark.png}}
+        \only<10>{\includegraphics[width=10mm]{icons/check-mark.png}}
     \end{textblock*}
     \begin{textblock*}{10mm}[0.5,0.5](60mm,75mm)
-        \only<8>{\includegraphics[width=10mm]{icons/red-x.jpg}}
+        \only<10>{\includegraphics[width=10mm]{icons/red-x.jpg}}
     \end{textblock*}
     \begin{textblock*}{15mm}[0,0.5](73mm,75mm)
-        \only<8>{\includegraphics[width=15mm]{minions.jpg}}
+        \only<10>{\includegraphics[width=15mm]{minions.jpg}}
     \end{textblock*}
     \begin{textblock*}{70mm}[0,0.5](90mm,75mm)
-    \begin{onlyenv}<8>
+    \begin{onlyenv}<10>
     \begin{lstlisting}[basicstyle=\relscale{0.5}\ttfamily]
         error[invalid-argument-type] Argument is incorrect: Expected `Y@partial | X@partial | None`, found `Literal[2]`
         error: Argument of type "Literal[2]" cannot be assigned to parameter of type "None"
