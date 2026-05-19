@@ -1,0 +1,950 @@
+\documentclass[aspectratio=169]{beamer}
+\mode<presentation>
+
+\usepackage{adjustbox}
+\usepackage{calc}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{relsize}
+\usepackage[most]{tcolorbox}
+\usepackage[overlay,absolute]{textpos}
+\usepackage{ulem}
+\usepackage[x11names]{xcolor}
+
+\usepackage{tikz}
+\usetikzlibrary{tikzmark}
+
+\graphicspath{{../images}}
+
+\usepackage{fontspec}
+\setsansfont{Helvetica Neue Light}[
+    BoldFont={Helvetica Neue Bold},
+    BoldItalicFont={Helvetica Neue Bold Italic},
+    ItalicFont={Helvetica Neue Light Italic}
+]
+\setmonofont[Contextuals=Alternate]{Iosevka Term}
+\newfontface\helvreg{Helvetica Neue}
+
+\title{Constraint sets in ty}
+\author{Douglas Creager}
+\institute{Astral\vspace{2em}}
+
+\setbeamercolor{title}{fg=black}
+\setbeamerfont{title}{series=\bfseries,size=\larger[1]}
+\setbeamerfont{subtitle}{series=\mdseries,size=\smaller[2]}
+\setbeamerfont{author}{size=\smaller[1]}
+\setbeamerfont{institute}{size=\normalsize}
+\setbeamertemplate{navigation symbols}{}
+\setbeamercolor{frametitle}{fg=black}
+\setbeamerfont{frametitle}{series=\bfseries}
+
+% Picture credits
+
+\makeatletter
+\def\picturecredits{}
+\newcommand{\picturecredit}[4]{
+    \protected@xappto\picturecredits{
+        \textsmaller[3]{Slide \theframenumber} &
+        \textsmaller[2]{#1, “#2”} \vspace*{-0.4em} \newline
+        \textsmaller[3]{#3, \url{#4}} \\
+    }
+}
+\makeatother
+
+\newlength{\titlewidth}
+\newcommand{\customtitle}[3]{
+    \settowidth{\titlewidth}{#3}
+    \begin{textblock*}{\titlewidth}(#1,#2)
+        #3
+    \end{textblock*}
+}
+\newcommand{\flattitle}[3]{\customtitle{#1}{#2}{\textbf{\LARGE #3}}}
+
+\newcommand{\customshadowedtitle}[4]{
+    \settowidth{\titlewidth}{#4}
+    \addtolength{\titlewidth}{#3}
+    \addtolength{\titlewidth}{0.1mm}
+    \begin{textblock*}{\titlewidth}(#3+#1,#3+#2)
+        #4
+    \end{textblock*}
+    \begin{textblock*}{\titlewidth}(#1,#2)
+        \textcolor{white}{#4}
+    \end{textblock*}
+}
+\newcommand{\shadowedtitle}[3]{\customshadowedtitle{#1}{#2}{0.4mm}{\textbf{\LARGE #3}}}
+
+\lstset{
+    basicstyle=\relscale{0.8}\color{black!60}\ttfamily,%
+    gobble=8,
+    columns=fullflexible,
+    keepspaces=true,
+    escapechar=?,
+    extendedchars=true,
+    literate=
+      {->}{{->}}2
+      {==>}{{==>}}3
+    ,
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% tikz stuff
+
+\makeatletter
+\tikzset{tikzmark suffix=-\theframenumber-\the\beamer@slideinframe}
+\makeatother
+
+\newcommand{\tms}[1]{\tikzmark{#1_start}}
+\newcommand{\tme}[1]{\tikzmark{#1_end}}
+\newcommand{\tmm}[2]{\tms{#1}#2\tme{#1}}
+
+\newcommand{\customhighlight}[5]{%
+    \tikz[remember picture]
+      \draw [overlay, draw=none, fill=#1]
+        ([xshift=-1pt, yshift=#2] {#4})
+        rectangle
+        ([xshift=1pt, yshift=-#3] {#5})
+        ;%
+}
+
+\newcommand{\highlightcode}[2]{\customhighlight{#1}{8pt}{2pt}{pic cs:#2_start}{pic cs:#2_end}}
+\newcommand{\highlightmath}[2]{\customhighlight{#1}{10pt}{4pt}{pic cs:#2_start}{pic cs:#2_end}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Math equation spacing
+
+\newcommand{\zerodisplayskips}{%
+  \abovedisplayskip=0pt
+  \belowdisplayskip=0pt
+  \abovedisplayshortskip=0pt
+  \belowdisplayshortskip=0pt
+}
+\newcommand{\removedisplayskips}{%
+  \appto\normalsize{\zerodisplayskips}
+  \appto\small{\zerodisplayskips}
+  \zerodisplayskips
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Constraint sets
+
+\definecolor{constraintsbg}{named}{LightBlue3}
+\definecolor{constraintsfg}{named}{DodgerBlue3}
+
+\newcommand\defalt{\mathrel{\:\mid\:}}
+\newcommand\defeq{\mathrel{\,\triangleq\,}}
+\newcommand\subtypeof{\mathrel{\textcolor{constraintsfg}{\preceq}}}
+
+\newcommand{\cset}[1]{\ensuremath{\textcolor{constraintsbg}{#1}}}
+
+\newcommand\always{\textcolor{constraintsfg}{\texttt{always}}}
+\newcommand\never{\textcolor{constraintsfg}{\texttt{never}}}
+\newcommand\constraints{\textcolor{constraintsfg}{\mathcal{C}}}
+
+\newcommand{\pytype}[1]{\textcolor{constraintsfg}{\texttt{#1}}}
+\newcommand{\typevar}[1]{\textcolor{constraintsfg}{\texttt{#1}}}
+\newcommand{\assignment}[2]{\textcolor{constraintsfg}{\texttt{#1 = #2}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Front matter
+
+\begin{document}
+
+\begin{frame}
+    \begin{textblock*}{12mm}[0.5,0.5](80mm,45mm)
+        \includegraphics[width=12mm]{languages/python.png}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{A motivating example}
+    \begin{lstlisting}
+        def choose?\only<8->{[A]}?(a1?\only<8->{: A}?, a2?\only<8->{: A}?)?\only<8->{ -> A}?:
+            return random.choice([a1, a2])
+
+        ?\uncover<2->{choose(None, 2)}?
+        ?\uncover<2->{\textcolor{blue!50}{\textbf{==> None \qquad ==> 2}}}?
+        ?\uncover<3->{choose(None, "hello")}?
+        ?\uncover<3->{\textcolor{blue!50}{\textbf{==> None \qquad ==> "hello"}}}?
+    \end{lstlisting}
+    \begin{uncoverenv}<4->
+    \begin{lstlisting}
+        def partial?\only<8->{[X, Y, Z]}?(f?\only<8->{: Callable[[X, Y], Z]}?, x?\only<8->{: X}?)?\only<8->{ -> Callable[[Y], Z]}?:
+            def p(y?\only<8->{: Y}?)?\only<8->{ -> Z}?:
+                return f(x, y)
+            return p
+
+        ?\uncover<5->{p = partial(choose, None)}?
+        ?\uncover<6->{p(2)}?
+        ?\uncover<6->{\textcolor{blue!50}{\textbf{==> None \qquad ==> 2}}}?
+        ?\uncover<7->{p("hello")}?
+        ?\uncover<7->{\textcolor{blue!50}{\textbf{==> None \qquad ==> "hello"}}}?
+    \end{lstlisting}
+    \end{uncoverenv}
+
+    \begin{textblock*}{20mm}[0,1](100mm,90mm)
+        \only<9>{\includegraphics[height=30mm]{scotty-mouse.jpg}}
+    \end{textblock*}
+    \begin{textblock*}{35mm}[0,0.5](125mm,72mm)
+        \only<9>{\textsmaller[3]{%
+            Hello computer, please \\[-1em]
+            invoke \texttt{multiplay}
+        }}
+    \end{textblock*}
+
+    \begin{textblock*}{10mm}[0.5,0.5](60mm,32mm)
+        \only<10>{\includegraphics[width=10mm]{icons/check-mark.png}}
+    \end{textblock*}
+    \begin{textblock*}{10mm}[0.5,0.5](60mm,75mm)
+        \only<10>{\includegraphics[width=10mm]{icons/red-x.jpg}}
+    \end{textblock*}
+    \begin{textblock*}{15mm}[0,0.5](73mm,75mm)
+        \only<10>{\includegraphics[width=15mm]{minions.jpg}}
+    \end{textblock*}
+    \begin{textblock*}{70mm}[0,0.5](90mm,75mm)
+    \begin{onlyenv}<10>
+    \begin{lstlisting}[basicstyle=\relscale{0.5}\ttfamily]
+        error[invalid-argument-type] Argument is incorrect: Expected `Y@partial | X@partial | None`, found `Literal[2]`
+        error: Argument of type "Literal[2]" cannot be assigned to parameter of type "None"
+        ERROR Argument `Literal[2]` is not assignable to parameter with type `None` [bad-argument-type]
+        error: Argument 1 has incompatible type "int"; expected "None" [arg-type]
+        error: Argument 1 has incompatible type "int"; expected "None" [arg-type]
+        Any
+    \end{lstlisting}
+    \end{onlyenv}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}
+    \begin{textblock*}{160mm}(0mm,0mm)
+        \only<1>{\picturecredit{David Brossard}{Fenceposts in Argyllshire}{CC BY-SA 2.0}{https://flic.kr/p/2nagXBQ}}
+        \adjincludegraphics[width=160mm]{fenceposts.jpg}
+    \end{textblock*}
+    \customshadowedtitle{130mm - 0.5\titlewidth}{18mm}{0.2mm}{\textbf{\textlarger[1]{\inserttitle}}}
+    \customshadowedtitle{130mm - 0.5\titlewidth}{26mm}{0.2mm}{\helvreg{\textsmaller[1]{\insertauthor}}}
+    \customshadowedtitle{130mm - 0.5\titlewidth}{30mm}{0.2mm}{\helvreg{\textsmaller[2]{\insertinstitute}}}
+    \customshadowedtitle{130mm - 0.5\titlewidth}{33.5mm}{0.2mm}{\uncover<2>{\helvreg{\textsmaller[3]{(an OpenAI joint)}}}}
+    \customshadowedtitle{130mm - 0.5\titlewidth}{39mm}{0.2mm}{\helvreg{\textsmaller[2]{PyCon Typing Summit}}}
+    \customshadowedtitle{130mm - 0.5\titlewidth}{42.5mm}{0.2mm}{\helvreg{\textsmaller[3]{May 14, 2026 – Long Beach, CA}}}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Pop quiz
+
+\begin{frame}
+    \begin{textblock*}{160mm}(0mm,0mm)
+        \only<1>{\picturecredit{Geoffrey Whiteway}{School test}{Equalicense}{https://freerangestock.com/photos/27702/school-test.html}}
+        \adjincludegraphics[width=160mm]{school-test.jpg}
+    \end{textblock*}
+    \flattitle{150mm - \titlewidth}{21mm}{Pop quiz!}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Is this expression valid? What is its type?}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Is this expression valid? What is its type?}
+    \highlightcode{yellow!25}{quiz}
+    \begin{textblock*}{80mm}[0,0.5](10mm,45mm)
+    \begin{lstlisting}
+        def takes_int(x: int) -> int: ...
+
+        ?\tms{quiz}?takes_int(2)?\tme{quiz}?
+    \end{lstlisting}
+    \end{textblock*}
+
+    \begin{textblock*}{60mm}[1,0.5](150mm,45mm)
+    \begin{center}
+        \uncover<2>{\texttt{int}}
+    \end{center}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Is this expression valid? What is its type?}
+    \highlightcode{yellow!25}{quiz}
+    \begin{textblock*}{80mm}[0,0.5](10mm,45mm)
+    \begin{lstlisting}
+        def takes_int(x: int) -> int: ...
+
+        ?\tms{quiz}?takes_int(None)?\tme{quiz}?
+    \end{lstlisting}
+    \end{textblock*}
+
+    \begin{textblock*}{60mm}[1,0.5](150mm,45mm)
+    \begin{center}
+        \uncover<2>{\textcolor{red}{\texttt{[invalid-argument-type]}}}
+    \end{center}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Is this expression valid? What is its type?}
+    \highlightcode{yellow!25}{quiz}
+    \begin{textblock*}{80mm}[0,0.5](10mm,45mm)
+    \begin{lstlisting}
+        def identity[T](x: T) -> T: ...
+
+        ?\tms{quiz}?identity(2)?\tme{quiz}?
+    \end{lstlisting}
+    \end{textblock*}
+
+    \begin{textblock*}{60mm}[1,0.5](150mm,45mm)
+    \begin{center}
+        \only<2->{\texttt{int} \\}
+        \only<3->{\texttt{Literal[2]} \\}
+        \only<4->{\texttt{int | None} \\}
+        \only<5->{\texttt{object} \\}
+        \only<6->{\texttt{SupportsIndex} \\}
+        \only<6->{$\vdots$}
+    \end{center}
+    \end{textblock*}
+
+    \begin{textblock*}{30mm}[0.5,0.5](80mm,45mm)
+        \only<3>{\includegraphics[width=30mm]{mcmahon1.png}}
+    \end{textblock*}
+    \begin{textblock*}{30mm}[0.5,0.5](80mm,45mm)
+        \only<4>{\includegraphics[width=30mm]{mcmahon2.png}}
+    \end{textblock*}
+    \begin{textblock*}{30mm}[0.5,0.5](80mm,45mm)
+        \only<5>{\includegraphics[width=30mm]{mcmahon3.png}}
+    \end{textblock*}
+    \begin{textblock*}{30mm}[0.5,0.5](80mm,45mm)
+        \only<6>{\includegraphics[width=30mm]{mcmahon4.png}}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Is this expression valid? What is its type?}
+    \highlightcode{yellow!25}{quiz}
+    \begin{textblock*}{80mm}[0,0.5](10mm,45mm)
+    \begin{lstlisting}
+        def identity[T](x: T) -> T: ...
+
+        result: int = ?\tms{quiz}?identity(2)?\tme{quiz}?
+    \end{lstlisting}
+    \end{textblock*}
+
+    \begin{textblock*}{60mm}[1,0.5](150mm,45mm)
+    \begin{center}
+        \only<2>{\texttt{int} \\}
+        \only<2>{\texttt{Literal[2]} \\}
+        \only<2>{\textcolor{gray!50}{\sout{\texttt{int | None}}} \\}
+        \only<2>{\textcolor{gray!50}{\sout{\texttt{object}}} \\}
+        \only<2>{\textcolor{gray!50}{\sout{\texttt{SupportsIndex}}} \\}
+        \only<2>{\textcolor{gray!50}{$\vdots$}}
+    \end{center}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{\textit{When} is this expression valid?}
+    \only<2>{\highlightcode{red!15}{a1}}
+    \only<2>{\highlightmath{red!15}{a2}}
+    \only<2>{\highlightcode{blue!15}{p1}}
+    \only<2>{\highlightmath{blue!15}{p2}}
+    \begin{textblock*}{80mm}[0.5,0](80mm,30mm)
+    \begin{lstlisting}
+        def takes_int(?\tms{p1}?x: int?\tme{p1}?) -> int: ...
+
+        takes_int(?\tms{a1}?2?\tme{a1}?)
+    \end{lstlisting}
+    \end{textblock*}
+
+    \begin{textblock*}{120mm}[0.5,0](80mm,55mm)
+    \begin{center}
+        \only<2>{\cset{
+            \tmm{a2}{\pytype{Literal[2]}}
+            \subtypeof
+            \tmm{p2}{\pytype{int}}
+        }}
+        \only<3>{\cset{\always}}
+    \end{center}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{\textit{When} is this expression valid?}
+    \only<2>{\highlightcode{red!15}{a1}}
+    \only<2>{\highlightmath{red!15}{a2}}
+    \only<2>{\highlightcode{blue!15}{p1}}
+    \only<2>{\highlightmath{blue!15}{p2}}
+    \begin{textblock*}{80mm}[0.5,0](80mm,30mm)
+    \begin{lstlisting}
+        def takes_int(?\tms{p1}?x: int?\tme{p1}?) -> int: ...
+
+        takes_int(?\tms{a1}?None?\tme{a1}?)
+    \end{lstlisting}
+    \end{textblock*}
+
+    \begin{textblock*}{120mm}[0.5,0](80mm,55mm)
+    \begin{center}
+        \only<2>{\cset{
+            \tmm{a2}{\pytype{None}}
+            \subtypeof
+            \tmm{p2}{\pytype{int}}
+        }}
+        \only<3>{\cset{\never}}
+    \end{center}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{\textit{When} is this expression valid?}
+    \only<2>{\highlightcode{red!15}{a1}}
+    \only<2>{\highlightmath{red!15}{a2}}
+    \only<2>{\highlightcode{blue!15}{p1}}
+    \only<2>{\highlightmath{blue!15}{p2}}
+    \begin{textblock*}{80mm}[0.5,0](80mm,30mm)
+    \begin{lstlisting}
+        def identity[T](?\tms{p1}?x: T?\tme{p1}?) -> T: ...
+
+        identity(?\tms{a1}?2?\tme{a1}?)
+    \end{lstlisting}
+    \end{textblock*}
+
+    \begin{textblock*}{120mm}[0.5,0](80mm,55mm)
+    \begin{center}
+        \only<2-3>{\cset{
+            \tmm{a2}{\pytype{Literal[2]}}
+            \subtypeof
+            \tmm{p2}{\typevar{T}}
+        }}
+    \end{center}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{\textit{When} is this expression valid?}
+    \only<2>{\highlightcode{red!15}{a1}}
+    \only<2>{\highlightmath{red!15}{a2}}
+    \only<3>{\highlightcode{red!15}{a3}}
+    \only<3>{\highlightmath{red!15}{a4}}
+    \only<2>{\highlightcode{blue!15}{p1}}
+    \only<2>{\highlightmath{blue!15}{p2}}
+    \only<3>{\highlightcode{blue!15}{p3}}
+    \only<3>{\highlightmath{blue!15}{p4}}
+    \begin{textblock*}{80mm}[0.5,0](80mm,30mm)
+    \begin{lstlisting}
+        def identity[T](?\tms{p1}?x: T?\tme{p1}?) -> ?\tms{p3}?T?\tme{p3}?: ...
+
+        ?\tms{a3}?result: int?\tme{a3}? = identity(?\tms{a1}?2?\tme{a1}?)
+    \end{lstlisting}
+    \end{textblock*}
+
+    \begin{textblock*}{120mm}[0.5,0](80mm,55mm)
+    \begin{center}
+        \cset{
+        \only<2-4>{
+            \tmm{a2}{\pytype{Literal[2]}}
+            \subtypeof
+            \tmm{p2}{\typevar{T}}
+        }
+        \only<3-4>{\wedge
+            \tmm{p4}{\typevar{T}}
+            \subtypeof
+            \tmm{a4}{\pytype{int}}
+        }
+        }
+    \end{center}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{\textit{When} is this expression valid?}
+    \begin{center}
+    \begin{tabular}{p{60mm}p{60mm}}
+        \verb|takes_int(2)|
+        & \cset{\always} \\
+        \verb|takes_int(None)|
+        & \cset{\never} \\
+        \verb|identity(2)|
+        & \cset{\pytype{Literal[2]} \subtypeof \typevar{T}} \\
+        \verb|result: int = identity(2)|
+        & \cset{\pytype{Literal[2]} \subtypeof \typevar{T} \wedge \typevar{T} \subtypeof \pytype{int}} \\
+    \end{tabular}
+    \end{center}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Sets of assignments}
+
+    \begin{uncoverenv}<2->
+    \begin{displaymath}
+        \cset{\pytype{Literal[2]} \subtypeof \typevar{T}} =
+        \left\{
+            \begin{array}{l}
+                \assignment{T}{int}, \\
+                \assignment{T}{Literal[2]}, \\
+                \assignment{T}{int | None}, \\
+                \assignment{T}{object}, \\
+                \assignment{T}{SupportsIndex}, \\
+                \multicolumn{1}{c}{\vdots} \\
+            \end{array}
+        \right\}
+    \end{displaymath}
+    \end{uncoverenv}
+
+    \vskip 4ex
+
+    \begin{uncoverenv}<3->
+    \begin{displaymath}
+        \cset{
+            \pytype{Literal[2]} \subtypeof \typevar{T} \wedge
+            \typevar{T} \subtypeof \pytype{int}
+        } =
+        \left\{
+            \begin{array}{l}
+                \assignment{T}{int}, \\
+                \assignment{T}{Literal[2]} \\
+            \end{array}
+        \right\}
+    \end{displaymath}
+    \end{uncoverenv}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Partial application}
+    \only<2>{\highlightcode{red!15}{a1}}
+    \only<2>{\highlightmath{red!15}{a2}}
+    \only<2>{\highlightcode{blue!15}{p1}}
+    \only<2>{\highlightmath{blue!15}{p2}}
+    \only<3>{\highlightcode{red!15}{a3}}
+    \only<3>{\highlightmath{red!15}{a4}}
+    \only<3>{\highlightcode{blue!15}{p3}}
+    \only<3>{\highlightmath{blue!15}{p4}}
+
+    \begin{textblock*}{120mm}[0.5,0](80mm,20mm)
+    \begin{lstlisting}
+        def choose[A](?\tms{p1}?a1: A?\tme{p1}?, ?\tms{p3}?a2: A?\tme{p3}?) -> A:
+            return random.choice([a1, a2])
+
+        choose(?\tms{a1}?None?\tme{a1}?, ?\tms{a3}?2?\tme{a3}?)
+    \end{lstlisting}
+    \end{textblock*}
+
+    \begin{textblock*}{155mm}[0.5,0](80mm,60mm)
+    \begin{displaymath}
+    \begin{array}{c}
+        \cset{
+            \only<2->{
+                \tmm{a2}{\pytype{None}}
+                \subtypeof
+                \tmm{p2}{\typevar{A}}
+            }
+            \only<3->{
+                \wedge
+                \tmm{a4}{\pytype{Literal[2]}}
+                \subtypeof
+                \tmm{p4}{\typevar{A}}
+            }
+        }
+        \\[1em]
+        \only<5>{
+            \left\{
+                \assignment{A}{None | Literal[2]},\,
+                \assignment{A}{None | int},\,
+                \dots
+            \right\}
+        }
+    \end{array}
+    \end{displaymath}
+    \end{textblock*}
+
+    % Goal
+    \begin{textblock*}{85mm}[1,0](155mm,5mm)%
+    \begin{onlyenv}<6->%
+        \begin{tcolorbox}[sharp corners, size=title, halign=center]%
+            \begin{math}
+                \left\{
+                    \assignment{A}{None | Literal[2]},\,
+                    \assignment{A}{None | int},\,
+                    \dots
+                \right\}
+            \end{math}
+        \end{tcolorbox}
+    \end{onlyenv}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Partial application}
+
+    % Goal
+    \begin{textblock*}{85mm}[1,0](155mm,5mm)%
+        \begin{tcolorbox}[
+            sharp corners,
+            size=title,
+            halign=center,
+            only=<{17,22}>{
+                colframe=black!50!red,
+                colback=red!15,
+            },
+            only=<33>{
+                colframe=black!50!green,
+                colback=green!15,
+            },
+        ]%
+            \begin{math}
+                \left\{
+                    \assignment{A}{None | Literal[2]},\,
+                    \assignment{A}{None | int},\,
+                    \dots
+                \right\}
+            \end{math}
+        \end{tcolorbox}
+    \end{textblock*}
+
+    \only<2,11,12,16,18,20,23,26>{\highlightcode{yellow!25}{a0}}
+    \only<3-4>{\highlightcode{red!15}{a1a}}
+    \only<3-4>{\highlightcode{red!15}{a1b}}
+    \only<3>{\highlightmath{red!15}{a2}}
+    \only<3-4>{\highlightcode{blue!15}{p1}}
+    \only<3>{\highlightmath{blue!15}{p2}}
+    \only<5>{\highlightcode{red!15}{a3}}
+    \only<5>{\highlightmath{red!15}{a4}}
+    \only<5>{\highlightcode{blue!15}{p3}}
+    \only<5>{\highlightmath{blue!15}{p4}}
+    \only<7>{\highlightmath{yellow!25}{a5}}
+    \only<7>{\highlightmath{yellow!25}{a6}}
+    \only<9,19>{\highlightmath{yellow!25}{a7}}
+    \only<9,15>{\highlightmath{yellow!25}{a8}}
+    \only<11,12,18,23>{\highlightcode{yellow!25}{a9}}
+    \only<13>{\highlightmath{yellow!25}{a10}}
+    \only<14,19>{\highlightmath{yellow!25}{a11}}
+    \only<17,21,28>{\highlightcode{red!15}{a12}}
+    \only<17,21>{\highlightmath{blue!15}{p12}}
+    \only<26>{\highlightmath{yellow!25}{a13}}
+    \only<28>{\highlightmath{blue!15}{p14}}
+    \only<28>{\highlightmath{red!15}{a15}}
+    \only<28>{\highlightmath{blue!15}{p15}}
+    \only<29>{\highlightmath{yellow!25}{a16}}
+    \only<29>{\highlightmath{yellow!25}{a17}}
+    \only<31>{\highlightmath{yellow!25}{a18}}
+    \only<31>{\highlightmath{yellow!25}{a19}}
+    \only<16,20>{\highlightmath{yellow!25}{a20}}
+    \only<22>{\highlightmath{red!15}{a21}}
+    \only<33>{
+        \customhighlight{green!15}{10pt}{4pt}{{pic cs:a22b_start} -| {pic cs:a22a_start}}{{pic cs:a22b_end} -| {pic cs:a22a_end}}
+    }
+    \only<27>{\highlightcode{yellow!25}{a23}}
+
+    \begin{textblock*}{120mm}[0.5,0](80mm,20mm)
+    \begin{lstlisting}
+        def choose?\tms{a1b}?[A](a1: A, a2: A) -> A?\tme{a1b}?:
+            return random.choice([a1, a2])
+
+        def partial[X, Y, Z](?\tms{p1}?fn: Callable[[X, Y], Z]?\tme{p1}?, ?\tms{p3}?x: X?\tme{p3}?) -> ?\tms{a9}?Callable[[Y], Z]?\tme{a9}?: ...
+
+        p = ?\tms{a0}?partial(?\tms{a1a}?choose?\tme{a1a}?, ?\tms{a3}?None?\tme{a3}?)?\tme{a0}?
+        ?\tms{a23}?p(?\tms{a12}?2?\tme{a12}?)?\tme{a23}?
+    \end{lstlisting}
+    \end{textblock*}
+
+    \begin{textblock*}{155mm}[0.5,0](80mm,55mm)
+    \begin{displaymath}
+    \begin{array}{c}
+        \only<1-26>{
+        \cset{
+            \only<3>{
+                \tmm{a2}{\pytype{Callable[[A, A], A]}}
+                \subtypeof
+                \tmm{p2}{\pytype{Callable[[X, Y], Z]}}
+            }
+            \only<4->{
+                \tmm{a5}{\typevar{X} \subtypeof \typevar{A}}
+                \wedge
+                \tmm{a11}{\typevar{Y} \subtypeof \typevar{A}}
+                \wedge
+                \tmm{a7}{\typevar{A} \subtypeof \typevar{Z}}
+            }
+            \only<5->{
+                \wedge
+                \tmm{a6}{
+                \tmm{a4}{\pytype{None}}
+                \subtypeof
+                \tmm{p4}{\typevar{X}}
+                }
+            }
+            \only<8->{
+                \wedge
+                \tmm{a8}{\pytype{None} \subtypeof \typevar{A}}
+            }
+            \only<10->{
+                \wedge
+                \tmm{a10}{\pytype{None} \subtypeof \typevar{Z}}
+            }
+        }
+        }
+        \only<1-22>{
+        \\[1em]
+        }
+        \only<12-22>{
+        \begin{array}{l@{\qquad}l}
+            \begin{array}{c}
+                \uncover<12-22>{
+                    \pytype{
+                        \makebox[\widthof{Callable[[None], None]}]{
+                            \tmm{a20}{Callable[[\tmm{p12}{\alt<12-15,18-19>{Y}{\alt<20-22>{A}{None}}}],
+                              \alt<12-15,18-19>{Z}{\alt<20-22>{A}{None}}]}
+                        }
+                    }} \\[0.25em]
+                \uncover<17,21-22>{
+                    \mathmakebox[50mm]{
+                        \alt<17>{
+                            \textcolor{red}{\texttt{[invalid-argument-type]}}
+                        }{
+                            \tmm{a21}{\left\{
+                                \assignment{A}{Literal[2]},\,
+                                \assignment{A}{int},\,
+                                \dots
+                            \right\}}
+                        }
+                    }
+                }\\
+            \end{array}
+            &
+            \begin{array}{l}
+                \uncover<14-17,19->{\assignment{Y}{\alt<14,19-22>{A}{None}}} \\
+                \uncover<13-17,19->{\assignment{Z}{%
+                    \makebox[\widthof{None}][l]{\alt<19-22>{A}{None}}
+                }} \\
+            \end{array}
+        \end{array}
+        }
+        \only<23-26>{
+        \\[2em]
+        \begin{array}{l@{\quad}c@{\quad}l}
+            \uncover<23->{\tms{a13}\pytype{Callable[[Y], Z]}}
+            &
+            \uncover<25->{\pytype{where}}
+            &
+            \uncover<24->{\cset{
+                \typevar{Y} \subtypeof \typevar{Z}
+                \wedge
+                \pytype{None} \subtypeof \typevar{Z}\tme{a13}
+            }}
+        \end{array}
+        }
+        \only<27->{
+        \pytype{Callable[[\tmm{p14}{Y}], Z]}
+        \\[1em]
+        \cset{
+            \tmm{a17}{\typevar{Y} \subtypeof \typevar{Z}}
+            \wedge
+            \tmm{a18}{\pytype{None} \subtypeof \typevar{Z}}\tme{a13}
+            \only<28->{
+                \wedge
+                \tmm{a16}{
+                \tmm{a15}{\pytype{Literal[2]}}
+                \subtypeof
+                \tmm{p15}{\typevar{Y}}
+                }
+            }
+            \only<30->{
+                \wedge
+                \tmm{a19}{\pytype{Literal[2]} \subtypeof \typevar{Z}}
+            }
+        }
+        \\[1em]
+        \only<32->{
+            \tms{a22a}
+            \left\{
+                \begin{array}{l}
+                    \tms{a22b}
+                    \assignment{Y}{None | Literal[2]} \\
+                    \assignment{Z}{None | Literal[2]} \\
+                \end{array}
+                ,\,
+                \begin{array}{l}
+                    \assignment{Y}{None | int} \\
+                    \assignment{Z}{None | int} \tme{a22b} \\
+                \end{array}
+                ,\,
+                \dots
+            \right\}
+            \tme{a22a}
+        }
+        }
+    \end{array}
+    \end{displaymath}
+    \end{textblock*}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Conclusion
+
+\begin{frame}
+    \begin{textblock*}{160mm}(0mm,0mm)
+        \only<1>{\picturecredit{Dr. Matthias Ripp}{Any Questions?}{CC BY 2.0}{https://flic.kr/p/pqiJNt}}
+        \adjincludegraphics[Trim=4in 0pt, height=90mm]{inquisitive-parrot.jpg}
+    \end{textblock*}
+    \shadowedtitle{120mm - 0.5\titlewidth}{7mm}{Open questions}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Open questions}
+    \begin{center}
+        \uncover<1->{Are there other examples where “constrained callables” are useful?} \\[1.5em]
+        \uncover<2->{Are they worth the extra complexity?} \\[1.5em]
+        \uncover<3->{How are they implemented?}
+    \end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% End matter
+
+\begin{frame}[t]
+    \frametitle{Picture credits}
+    \begin{tabular}{lp{0.75\textwidth}}
+    \picturecredits
+    \end{tabular}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Scratch
+
+\begin{frame}
+    \flattitle{80mm - 0.5\titlewidth}{40mm}{Scratch}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Invariant types}
+    \only<2>{\highlightcode{red!15}{a1a}}
+    \only<2>{\highlightcode{red!15}{a1b}}
+    \only<2>{\highlightmath{red!15}{a2}}
+    \only<3>{\highlightmath{red!15}{a3}}
+    \only<3>{\highlightmath{red!15}{a4}}
+    \only<4>{\highlightmath{red!15}{a5}}
+    \only<4>{\highlightmath{red!15}{a6}}
+    \only<6>{\highlightcode{red!15}{a7}}
+    \only<6>{\highlightmath{red!15}{a8}}
+    \only<7>{\highlightcode{red!15}{a9}}
+    \only<7>{\highlightmath{red!15}{a10}}
+    \only<8>{\highlightcode{red!15}{a11}}
+    \only<8>{\highlightmath{red!15}{a12}}
+    \only<10>{\highlightmath{yellow!25}{a13}}
+    \only<12>{\highlightmath{yellow!25}{a14}}
+    \only<12>{\highlightmath{yellow!25}{a15}}
+    \only<14>{\highlightmath{yellow!25}{a16}}
+    \only<16>{\highlightmath{yellow!25}{a17}}
+    \only<16>{\highlightmath{yellow!25}{a18}}
+    \only<18>{\highlightmath{yellow!25}{a19}}
+    \only<18>{\highlightmath{yellow!25}{a20}}
+    \only<20>{\highlightmath{yellow!25}{a21}}
+    \only<20>{\highlightmath{yellow!25}{a22}}
+    \only<20>{\highlightmath{yellow!25}{a23}}
+    \only<2>{\highlightcode{blue!15}{p1}}
+    \only<2>{\highlightmath{blue!15}{p2}}
+    \only<3>{\highlightmath{blue!15}{p3}}
+    \only<3>{\highlightmath{blue!15}{p4}}
+    \only<4>{\highlightmath{blue!15}{p5}}
+    \only<4>{\highlightmath{blue!15}{p6}}
+    \only<6>{\highlightcode{blue!15}{p7}}
+    \only<6>{\highlightmath{blue!15}{p8}}
+    \begin{textblock*}{80mm}[0.5,0](80mm,25mm)
+    \begin{lstlisting}
+        def invoke[A, B](?\tms{p1}?fn: Callable[[A], B]?\tme{p1}?, value: ?\tms{p7}?A?\tme{p7}?) -> ?\tms{a23}?B?\tme{a23}?:
+            return fn(value)
+
+        def head?\tms{a1b}?[T](xs: list[T]) -> T?\tme{a1b}?:
+            return xs[0]
+
+        ?\tms{a21}?invoke(?\tms{a1a}?head?\tme{a1a}?, ?\tms{a7}?[?\tms{a9}?1?\tme{a9}?, ?\tms{a11}?2?\tme{a11}?]?\tme{a7}?)?\tme{a21}?
+    \end{lstlisting}
+    \end{textblock*}
+
+    \begin{textblock*}{155mm}[0.5,0](80mm,60mm)
+    \begin{displaymath}
+    \begin{array}{c}
+        \cset{
+            \only<2-4>{
+                \tmm{a2}{\pytype{Callable[[\tmm{p4}{list[T]}], \tmm{p6}{T}]}}
+                \subtypeof
+                \tmm{p2}{\pytype{Callable[[\tmm{a4}{A}], \tmm{a6}{B}]}}
+            }
+            \only<5->{
+                \tmm{a14}{\typevar{A} \subtypeof \pytype{list[T]}}
+                \wedge
+                \tmm{a18}{\typevar{T} \subtypeof \typevar{B}}
+            }
+            \only<6->{
+                \wedge
+                \tmm{a15}{\tmm{a8}{\pytype{list[L]}} \subtypeof \tmm{p8}{\typevar{A}}}
+            }
+            \only<7-10>{
+                \wedge
+                \tms{a13}\tmm{a10}{\pytype{Literal[1]}} \subtypeof \typevar{L}
+            }
+            \only<8-10>{
+                \wedge
+                \tmm{a12}{\pytype{Literal[2]}} \subtypeof \typevar{L}\tme{a13}
+            }
+            \only<11->{
+                \wedge
+                \tmm{a20}{\pytype{Literal[1, 2]} \subtypeof \typevar{L}}
+            }
+        }
+        \\
+        \cset{
+            \only<13-14>{
+                {} \wedge \tmm{a16}{\pytype{list[L]} \subtypeof \pytype{list[T]}}
+            }
+            \only<15->{
+                {} \wedge \tmm{a17}{\typevar{L} \subtypeof \typevar{T}}
+                \wedge \typevar{T} \subtypeof \typevar{L}
+            }
+            \only<17->{
+                \wedge \tmm{a19}{\typevar{L} \subtypeof \typevar{B}}
+            }
+            \only<19->{
+                \wedge \tmm{a22}{\pytype{Literal[1, 2]} \subtypeof \typevar{B}}
+            }
+        }
+        \\[1em]
+        \cset{
+            \only<3-4>{
+                \tmm{a3}{\typevar{A}} \subtypeof \tmm{p3}{\pytype{list[T]}}
+            }
+            \only<4>{\wedge
+                \tmm{p5}{\typevar{T}} \subtypeof \tmm{a5}{\typevar{B}}
+            }
+        }
+        \only<21>{
+            \left\{
+                \begin{array}{l}
+                \assignment{A}{list[Literal[1, 2]]} \\
+                \assignment{B}{Literal[1, 2]} \\
+                \end{array}
+                ,\,
+                \begin{array}{l}
+                \assignment{A}{list[int]} \\
+                \assignment{B}{int} \\
+                \end{array}
+                ,\, \dots
+            \right\}
+        }
+    \end{array}
+    \end{displaymath}
+    \end{textblock*}
+\end{frame}
+
+\begin{frame}[t,fragile]
+    \frametitle{Math!}
+    \removedisplayskips
+    \begin{equation*}
+    \begin{array}{c@{\enspace}c@{\enspace}l@{\qquad}c}
+        \uncover<1->{\constraints &\defeq& \always} \\
+        \uncover<1->{&\defalt& \never} \\
+        \uncover<2->{&\defalt& \cset{\pytype{type} \subtypeof \typevar{T}} & \textsf{\smaller[2]{(lower bound)}}} \\
+        \uncover<2->{&\defalt& \cset{\typevar{T} \subtypeof \pytype{type}} & \textsf{\smaller[2]{(upper bound)}}} \\
+        \uncover<3->{&\defalt& \cset{\neg \, \constraints} & \textsf{\smaller[2]{(not)}}} \\
+        \uncover<3->{&\defalt& \cset{\constraints \wedge \constraints} & \textsf{\smaller[2]{(and)}}} \\
+        \uncover<3->{&\defalt& \cset{\constraints \vee \constraints} & \textsf{\smaller[2]{(or)}}} \\
+    \end{array}%
+    \end{equation*}%
+\end{frame}
+
+
+\end{document}
